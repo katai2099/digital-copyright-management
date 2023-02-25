@@ -18,14 +18,14 @@ export const ExistingContent = (props: ExistingContentProps) => {
       <div className="modal-box">
         <div className="app-card">
           <button className="btn-corner" onClick={()=>props.onConfirm()}>
-            <span>
+            <span >
               <FontAwesomeIcon icon={faTimesCircle} />{" "}
             </span>
           </button>
           <ContentDetail
             copyrightImage={copyrightImage}
             displayButton={false}
-          />
+            />
         </div>
       </div>
     </div>

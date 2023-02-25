@@ -10,11 +10,13 @@ export const Blocklist = () => {
     const imageCount = await state.state.contract!.methods.imageCount().call();
     let tmpImages = [];
     for (let i = 0; i < imageCount; i++) {
-      const imageDetail : CopyrightImage = await state.state.contract!.methods.images(i).call();
+      const imageDetail: CopyrightImage = await state.state
+        .contract!.methods.images(i)
+        .call();
       // console.log(imageDetail);
       tmpImages.push(imageDetail);
     }
-   // console.log(tmpImages.length, " length of get request")
+    // console.log(tmpImages.length, " length of get request")
     setImages(tmpImages);
   }
   useEffect(() => {
@@ -22,7 +24,7 @@ export const Blocklist = () => {
   }, []);
   return (
     <div className="container">
-      <Contents contents={ images}/>
+      <Contents contents={images} />
     </div>
   );
 };

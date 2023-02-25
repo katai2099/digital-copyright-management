@@ -6,59 +6,8 @@
   
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-
-
-
-
-.copyright-upload-container {
-  width: 480px;
-  margin-left: auto;
-  margin-right: auto;
-  justify-content: center;
-}
-
-.image-display{
-  cursor: pointer;
-  border: 1px solid #ced4da;
-  border-radius: .25rem;
-  margin: 0px auto ;
-  text-align: center;
-  color: #495057;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-}
-
-.image-display img {
-  /* height: 360px; */
-  object-fit: scale-down;
-  width: 100%;  
-  height: 100%;
-
-}
-
-
-
-
 .main {
-  padding: 140px 0;
+  padding: 120px 0;
 }
 
 .blocklist-container {
@@ -67,14 +16,6 @@
   grid-auto-flow: row;
   gap: 10px;
   margin: 0 10px;
-}
-
-
-.content-detail img{
-  padding: 10px;
-  object-fit: cover;
-  width: 100%;
-  height: 100%;
 }
 
 .backdrop {
@@ -89,11 +30,37 @@
 
 .modal-box{
   position: fixed;
-  height:400px;
-  bottom : 40vh;
+  display: flex;
+  height:80%;
+  /* overflow: hidden; */
   left: 10%;
   width: 80%;
   z-index:100;
+}
+
+.app-card  {
+  width: 100%;
+  height: 100%;
+  margin: auto;
+  padding : 5px;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+  border-radius: 10px;
+}
+
+.content-detail{
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.img-container img{
+  padding: 10px;
+  object-fit: scale-down;
+  width: 50%;
+  height: 50%;
+  align-items: center;
+  justify-content: center;
 }
 
 .actions {
@@ -116,23 +83,13 @@
   padding: 1rem;
 }
 
-.app-card  {
-  padding : 5px;
-  background: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
-  border-radius: 10px;
-}
-
 .btn-corner{
   position : absolute;
   top: 0 ;
   right: 0;
   background-color: white;
-}
-
-.btn-click-here {
-  padding : 0px 0px;
-  margin : 0px 0px;
+  z-index: 1;
+  border: none;
 }
 
 .wait{

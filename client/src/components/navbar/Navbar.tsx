@@ -16,7 +16,7 @@ export const Navbar = () => {
           <p className="text-center text-light">Active account : {state.accounts[0]}</p>
         </div>
       }
-      <form className="d-inline-flex">
+      <div className="d-inline-flex">
         <Link
           className="btn btn-sm outline-light ms-2 me-2 btn-light"
           to="/blockList"
@@ -26,7 +26,7 @@ export const Navbar = () => {
         <Link className="btn btn-sm outline-light ms-2 me-2 btn-light" to="/">
           UPLOAD A NEW IMAGE
         </Link>
-      </form>
+      </div>
     </nav>
   );
 };

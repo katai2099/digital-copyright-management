@@ -12,3 +12,4 @@ ipfsRouter.post('/uploadFile',upload.single('image'),async (req,res)=>{
     let cid : string= await uploadNewFile(req.file!.buffer);
     res.send(cid);
 })
+

@@ -10,10 +10,10 @@ contract CopyrightManagement {
     struct ImageInfo{
         address ownerAddress;
         uint imageID;
-        string pHash; 
+        string pHash;
         string IPFSAddress;
         string imageTitle;
-        string ownerName; 
+        string ownerName;
         string ownerEmail;
         uint publishDate;
     }

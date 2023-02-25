@@ -1,0 +1,33 @@
+
+.copyright-upload-container {
+    width: 40%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .image-display{
+    height: 480px;
+    cursor: pointer;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    margin: 0px auto ;
+    text-align: center;
+    color: #495057;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .image-display img {
+    object-fit: scale-down;
+    width: 100%;  
+    height: 90%;
+  }
+
+
+  .btn-click-here {
+    padding : 0px 0px;
+    margin : 0px 0px;
+  }
+  

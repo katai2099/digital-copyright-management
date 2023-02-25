@@ -1,0 +1,14 @@
+services:
+  mysql-docker:
+    container_name: mysql-docker
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: "dejavu"
+      MYSQL_ROOT_PASSWORD: "admin"
+  adminer:
+    container_name: adminer
+    image: adminer:latest
+    ports:
+      - "8080:8080"

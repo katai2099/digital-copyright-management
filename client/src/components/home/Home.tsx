@@ -10,6 +10,7 @@ import {
   DeploymentStep,
 } from "../common/BlockchainDeploymentLoading";
 import { ExistingContent } from "./ExistingContent";
+import "./home.css"
 
 export const Home = () => {
   const { state } = UseEth();
@@ -258,7 +259,7 @@ export const Home = () => {
               id="displayImage"
               alt="Whatever"
             />
-            <span className="mt-2">Select image</span>
+            <span className="mt-3">Select image</span>
           </div>
           <input
             hidden={true}
@@ -272,7 +273,7 @@ export const Home = () => {
         <button type="submit" className="form-control btn btn-dark btn-block">
           Submit
         </button>
-        {isError() && (
+        {true && (
           <div style={{ marginTop: "20px" }}>
             <p>Image already exist.</p>
             <p>
