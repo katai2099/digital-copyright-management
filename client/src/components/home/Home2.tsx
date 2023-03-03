@@ -10,7 +10,7 @@ import {
   DeploymentStep,
 } from "../common/BlockchainDeploymentLoading";
 import { ExistingContent } from "./ExistingContent";
-import "./home.css"
+import "./home2.css";
 
 export const Home = () => {
   const { state } = UseEth();
@@ -195,8 +195,8 @@ export const Home = () => {
   }
 
   const test = () => {
-    document.getElementById('uploadImage')!.click();
-  }
+    document.getElementById("uploadImage")!.click();
+  };
 
   return (
     <div className="copyright-upload-container">
@@ -255,7 +255,11 @@ export const Home = () => {
         <div className="form-group mb-3">
           <div className="image-display" onClick={test}>
             <img
-              src={selectedImage==null ? "./img/icons8-upload-100.png" : URL.createObjectURL(selectedImage)}
+              src={
+                selectedImage == null
+                  ? "./img/icons8-upload-100.png"
+                  : URL.createObjectURL(selectedImage)
+              }
               id="displayImage"
               alt="Whatever"
             />
