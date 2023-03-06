@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import { Blocklist } from "../../components/blocklist/Blocklist";
 // import { Home } from "../../components/home/Home2";
 import { UseEth } from "../../contexts/UseEth";
+import { DigitalContent } from "../digitalContent/DigitalContent";
 import { Explore } from "../explore/Explore";
 import { Home } from "../home/Home";
 import { Launch } from "../register/Launch";
@@ -26,9 +27,10 @@ export const Main = () => {
         </div>
       )} */}
       <Routes>
-        <Route path="/" element={<Explore />} />
+        <Route path="/" element={<DigitalContent />} />
         <Route path="/launch" element={<Launch />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/explore" element={<Explore />} />
       </Routes>
     </div>
   );

@@ -14,22 +14,20 @@ export const ExistingContent = (props: ExistingContentProps) => {
 
   return (
     <div>
-      <Backdrop onClick={()=>props.onConfirm()}/>
+      <Backdrop onClick={() => props.onConfirm()} />
       <div className="modal-box">
         <div className="app-card">
-          <button className="btn-corner" onClick={()=>props.onConfirm()}>
-            <span >
-              <FontAwesomeIcon icon={faTimesCircle} />{" "}
+          <button className="btn-corner" onClick={() => props.onConfirm()}>
+            <span>
+              <FontAwesomeIcon icon={faTimesCircle} />
             </span>
           </button>
           <ContentDetail
             copyrightImage={copyrightImage}
             displayButton={false}
-            />
+          />
         </div>
       </div>
     </div>
   );
 };
-
-
