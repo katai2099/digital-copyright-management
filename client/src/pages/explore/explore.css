@@ -35,14 +35,14 @@
 }
 
 .content-area {
-  display: flex;
 }
 
 .filter-area {
+  display: inline-block;
   width: 320px;
-  /* //background-color: red; */
-  /* height: 20vh; */
-  border-bottom: 0.5px solid #888;
+  padding-right: 16px;
+  /* background-color: red; */
+  vertical-align: top;
   position: sticky;
 }
 
@@ -52,10 +52,47 @@
   justify-content: space-between;
 }
 
+.filter-separator {
+  width: 100%;
+  height: 1px;
+  background-color: #888;
+  margin: 16px 0;
+}
+
 .content-lists-area {
-  flex: 1;
+  display: inline-block;
+  width: calc(100% - 320px);
   height: 20vh;
-  background-color: blue;
+  /* background-color: blue; */
+}
+
+.explore-input-wrapper {
+  position: relative;
+  /* width: 100%; */
+  margin-bottom: 16px;
+  border-radius: 16px;
+  background-color: #888;
+}
+
+.input-icon {
+  position: absolute;
+  top: 8px;
+  left: 10px;
+}
+
+.explore-input {
+  width: 100%;
+  padding: 8px 8px 8px 36px;
+  /* border: none; */
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: #888;
+}
+
+.contents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minMax(30%, 1fr));
+  gap: 6px;
 }
 
 .selected1 {
