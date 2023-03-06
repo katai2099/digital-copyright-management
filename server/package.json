@@ -13,7 +13,6 @@
   "devDependencies": {
     "@types/cors": "^2.8.12",
     "@types/express": "^4.17.14",
-    "@types/jsonwebtoken": "^9.0.1",
     "@types/multer": "^1.4.7",
     "@types/node": "^18.11.9",
     "nodemon": "^2.0.20",
@@ -28,9 +27,9 @@
     "http-status-codes": "^2.2.0",
     "image-hash": "^5.3.1",
     "ipfs-http-client": "^56.0.2",
-    "jsonwebtoken": "^9.0.0",
     "multer": "^1.4.5-lts.1",
     "tlsh_ts": "^0.1.2",
-    "ts-node": "^10.9.1"
+    "ts-node": "^10.9.1",
+    "web3": "^1.8.2"
   }
 }
