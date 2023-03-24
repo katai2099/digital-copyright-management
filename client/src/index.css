@@ -1,25 +1,39 @@
 * {
   padding: 0;
   margin: 0;
-  color: white;
+  box-sizing: border-box;
 }
-* a,
+
+a,
 a:link,
 a:visited {
   text-decoration: none;
-  color: transparent;
+  color: #212121;
 }
 
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: "Sora", sans-serif;
+  color: #212121;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
-}
+/* Primary color #0e68fa */
+
+/* tint #88a9ea */
+
+/* button hover effect #002c9b */
+
+/* whit background hover effect #e3e8f4; */
+
+/* whit background hover effect alternative #f2f2f2 */
+
+/* #f2f4f6 */
+
+/* border #bbc0c5 */
+
+/* shawdow #0000001a */
+
+/* #0376c933 */
+
+/* box shadow #555 */
+
+/* Text color #757575 */

@@ -1,0 +1,54 @@
+/* .main-content  {
+  padding: 0;
+} */
+
+.profile-cover-image {
+  height: 240px;
+  width: 100%;
+  background-color: purple;
+  background-image: url("../../../public/img/cookie.jpg");
+}
+
+.profile-image {
+  height: 240px;
+  width: 240px;
+  border-radius: 16px;
+  border: 4px solid #000;
+  background-color: purple;
+  margin-top: -180px;
+  background-image: url("../../../public/img/cookie.jpg");
+  background-size: contain;
+}
+
+.wallet-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 36px;
+}
+
+.wallet-detail-box {
+  display: inline-block;
+  margin-right: 8px;
+  padding: 0 8px;
+  border-radius: 100px;
+  background-color: #444;
+  font-size: 16px;
+  text-align: left;
+  cursor: pointer;
+  color: #fff;
+  font-weight: 400;
+}
+
+.ether-io-box {
+  display: inline-block;
+}
+
+.event-type {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px;
+}
+
+input[type="checkbox"] {
+  transform: scale(1.5);
+}

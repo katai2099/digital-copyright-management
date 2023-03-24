@@ -1,0 +1,85 @@
+.icon {
+  width: 20px;
+  height: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  line-height: 1.5;
+  overflow-x: auto;
+}
+th {
+  padding: 0 16px;
+  text-align: left;
+  height: 48px;
+}
+
+thead tr:last-child th {
+  border-bottom: thin solid #888;
+}
+
+td {
+  padding: 0 16px;
+  text-align: left;
+}
+
+tr:not(:last-child) {
+  border-bottom: thin solid #888;
+}
+
+tbody tr {
+  max-height: 48px;
+}
+
+.content-img-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 56px;
+  height: 56px;
+  margin: 6px;
+  border-radius: 6px;
+  border: 1px solid #000;
+  overflow: hidden;
+}
+
+.content-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.content-name {
+  display: inline-block;
+  line-clamp: 2;
+  text-overflow: ellipsis;
+  white-space: normal;
+  max-width: calc(100% - 70px);
+  word-wrap: break-word;
+  vertical-align: top;
+  overflow: hidden;
+  max-height: 75px;
+}
+
+.eth-cur-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.ether-price-wrapper {
+  display: flex;
+}
+
+.ether-price {
+  align-self: flex-end;
+  padding-top: 4px;
+}
+.fiat-price {
+  padding-left: 2px;
+  font-size: 14px;
+  color: #888;
+}
+
+.no-wrap {
+  white-space: nowrap;
+}

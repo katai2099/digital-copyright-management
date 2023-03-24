@@ -5,11 +5,12 @@ import { authRouter } from "./routers/auth";
 import bodyParser from "body-parser";
 import { create } from "ipfs-http-client";
 import cors from "cors";
-import { blockchainRouter } from "./routers/blockchain";
+import { nodeRouter } from "./routers/blockchain";
 import { initWeb3 } from "./controllers/web3";
-
+import { submitRouter } from "./routers/submit";
 export const client = create();
-export const contract = initWeb3();
+initWeb3();
+
 const app: Express = ExpressApp();
 const port = 8082;
 
@@ -26,7 +27,8 @@ app.use(
 app.use("/hash", hashingRouter);
 app.use("/ipfs", ipfsRouter);
 app.use("/auth", authRouter);
-app.use("/images", blockchainRouter);
+app.use("/web3", nodeRouter);
+app.use("/submit", submitRouter);
 app.get("/", (req: Request, res: Response) => {
   res.send("Express typescript server");
 });

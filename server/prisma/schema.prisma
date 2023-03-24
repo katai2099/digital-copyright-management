@@ -10,26 +10,56 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model wallet {
-  id     Int    @id @default(autoincrement())
-  userId Int    @unique
-  hash   String @unique
-  owner  users  @relation(fields: [userId], references: [id])
-}
-
 model users {
-  id              Int      @id @default(autoincrement())
-  email           String   @unique
-  firstname       String
-  lastname        String
-  password        String
-  address         String
-  walletAddresses wallet[]
+  id            Int    @id @default(autoincrement())
+  email         String @unique
+  username      String @unique
+  firstname     String
+  lastname      String
+  password      String
+  address       String
+  walletAddress String
+  imageUrl      String @default("")
 }
 
-model content_pricing {
+model Image {
   id           Int    @id @default(autoincrement())
-  contentId    Int
-  license_type String
+  contentId    Int    @unique
+  ownerAddress String
+  pHash        String @unique
+  IPFSAddress  String
+  title        String
+  ownerName    String
+  ownerEmail   String
+  desc         String
   price        Int
+  publishDate  String
+}
+
+model Audio {
+  id           Int    @id @default(autoincrement())
+  contentId    Int    @unique
+  ownerAddress String
+  pHash        String @unique
+  IPFSAddress  String
+  title        String
+  ownerName    String
+  ownerEmail   String
+  desc         String
+  price        Int
+  publishDate  String
+}
+
+model Text {
+  id           Int    @id @default(autoincrement())
+  contentId    Int    @unique
+  ownerAddress String
+  pHash        String @unique
+  IPFSAddress  String
+  title        String
+  ownerName    String
+  ownerEmail   String
+  desc         String
+  price        Int
+  publishDate  String
 }

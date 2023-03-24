@@ -1,14 +1,16 @@
 import { Routes, Route } from "react-router-dom";
 import { Blocklist } from "../../components/blocklist/Blocklist";
 // import { Home } from "../../components/home/Home2";
-import { UseEth } from "../../contexts/UseEth";
-import { DigitalContent } from "../digitalContent/DigitalContent";
+// import { UseEth } from "../../contexts/UseEth";
+import { Detail } from "../detail/Detail";
 import { Explore } from "../explore/Explore";
 import { Home } from "../home/Home";
+import { Profile } from "../profile/profile";
 import { Launch } from "../register/Launch";
+import { Setting } from "../setting/Setting";
 
 export const Main = () => {
-  const { state } = UseEth();
+  // const { state } = UseEth();
   return (
     <div className="main-content">
       {/* {state.web3 != null &&
@@ -27,10 +29,12 @@ export const Main = () => {
         </div>
       )} */}
       <Routes>
-        <Route path="/" element={<DigitalContent />} />
+        <Route path="/" element={<Home />} />
         <Route path="/launch" element={<Launch />} />
-        <Route path="/home" element={<Home />} />
+        <Route path="/content" element={<Detail />} />
         <Route path="/explore" element={<Explore />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/setting" element={<Setting />} />
       </Routes>
     </div>
   );

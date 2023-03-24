@@ -13,22 +13,18 @@ contract CopyrightManagement {
     }
     struct Content {
         address ownerAddress;
-        uint256 contentID;
+        uint256 Id;
         string pHash;
         string IPFSAddress;
-        string contentTitle;
+        string title;
         string ownerName;
         string ownerEmail;
         string desc;
         uint256 price;
         uint256 publishDate;
     }
-    event addContentEvent(
-        address indexed _creator,
-        uint256 indexed _id,
-        ContentType _content_type,
-        ContentAction _content_action
-    );
+    event addContentEvent(Content _content, ContentType _contentType);
+
     event updateContentPriceEvent(
         address indexed _caller,
         uint256 indexed _id,
@@ -70,12 +66,7 @@ contract CopyrightManagement {
         );
         images[imageCount] = image;
         imageCount++;
-        emit addContentEvent(
-            msg.sender,
-            imageCount,
-            ContentType.IMAGE,
-            ContentAction.CREATE
-        );
+        emit addContentEvent(image, ContentType.IMAGE);
     }
 
     function updateImageData(
@@ -117,12 +108,7 @@ contract CopyrightManagement {
         );
         audio[audioCount] = tmpAudio;
         audioCount++;
-        emit addContentEvent(
-            msg.sender,
-            audioCount,
-            ContentType.AUDIO,
-            ContentAction.CREATE
-        );
+        emit addContentEvent(tmpAudio, ContentType.AUDIO);
     }
 
     function updateAudioData(
@@ -132,11 +118,12 @@ contract CopyrightManagement {
     ) public {
         audio[_id].desc = _desc;
         audio[_id].price = _price;
-        emit addContentEvent(
+        emit updateContentPriceEvent(
             msg.sender,
-            audioCount,
+            _id,
+            _price,
             ContentType.AUDIO,
-            ContentAction.CREATE
+            ContentAction.UPDATE
         );
     }
 
@@ -163,12 +150,7 @@ contract CopyrightManagement {
         );
         texts[textCount] = text;
         textCount++;
-        emit addContentEvent(
-            msg.sender,
-            textCount,
-            ContentType.TEXT,
-            ContentAction.CREATE
-        );
+        emit addContentEvent(text, ContentType.TEXT);
     }
 
     function updateTextData(

@@ -6,9 +6,10 @@
   padding: 12px 48px;
   display: flex;
   justify-content: space-between;
-  background-color: black;
+  background-color: #212121;
   align-items: center;
   text-align: left;
+  z-index: 10;
 }
 
 .left-area {
@@ -24,9 +25,38 @@
   margin-right: 10px;
 }
 
-.search-box {
-  margin-left: 6px;
+.search-bar {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  margin-left: 16px;
+}
+
+.search-icon {
+  position: absolute;
+  top: 8px;
+  left: 10px;
+  color: #fff;
+}
+
+.search-input {
+  /* margin-left: 6px; */
   width: 680px;
+  border: none;
+  padding: 8px 8px 8px 36px;
+  border: none;
+  border-radius: 8px;
+  background-color: #666;
+}
+
+.search-input:focus,
+.search-input:hover {
+  outline: none;
+  /* background-color: #888; */
+}
+
+.search-input::placeholder {
+  color: #888;
 }
 
 .right-area {
@@ -63,4 +93,91 @@
   font-size: 16px;
   font-weight: 900;
   cursor: pointer;
+}
+
+.profile-area {
+  display: inline-block;
+  position: relative;
+}
+
+.profile-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: red;
+  cursor: pointer;
+}
+
+.profile-menu {
+  display: none;
+  position: absolute;
+  top: 45px;
+  right: 3px;
+  width: 230px;
+  padding: 8px 0;
+  cursor: pointer;
+  background-color: #fff;
+  border: 1px solid #bbc0c5;
+  box-shadow: 0 0 10px #0000002a;
+}
+
+.profile-menu div {
+  color: #000;
+}
+
+.profile-area-button {
+  color: #000;
+  font-size: 16px;
+  padding: 8px 16px;
+}
+
+.profile-area-button:hover {
+  background-color: #e3e8f4;
+}
+
+.profile-logo {
+  font-size: 16px;
+  margin-right: 8px;
+}
+
+.profile-menu-divider {
+  margin: 8px 0;
+}
+
+.profile-fund {
+  padding: 8px 16px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.profile-fund:hover {
+  background-color: #e3e8f4;
+}
+
+.wallet-info {
+  display: inline-block;
+  max-width: calc(100% - 48px);
+}
+
+.wallet-address {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.profile-fund > i {
+  margin-top: 10px;
+  margin-right: 8px;
+}
+
+.wallet {
+  display: flex;
+}
+
+.wallet > i {
+  margin-left: -4px;
+}
+
+.show {
+  display: block;
 }

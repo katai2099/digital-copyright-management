@@ -1,0 +1,85 @@
+.setting-wrapper {
+  padding: 0 100px;
+  font-weight: 300;
+}
+
+.setting-header {
+  font-size: 30px;
+  font-weight: 500;
+  margin-bottom: 24px;
+}
+
+.left {
+  margin-bottom: 16px;
+}
+
+.setting-options {
+  margin-top: 16px;
+  padding: 0px 4px;
+}
+
+.username-note {
+  margin-bottom: 16px;
+  font-size: 13px;
+  font-weight: 300;
+}
+
+.personal-info {
+  margin-bottom: 8px;
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.setting-option {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background-color: #888;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+
+.setting-option i {
+  margin-right: 8px;
+  font-size: 16px;
+}
+
+.setting-option:hover {
+  background-color: #fff;
+  font-weight: 500;
+}
+
+.profile-box {
+  min-height: 80vh;
+  padding: 16px 32px;
+  border-radius: 10px;
+  background-color: #fcfcfc;
+  border: 1px solid #bbc0c5;
+  box-shadow: 0 0 10px #0000001a;
+}
+
+.setting-input-label {
+  margin-bottom: 2px;
+}
+
+.input-wrapper {
+  margin-bottom: 8px;
+  border-radius: 16px;
+  border: 1px solid #101010;
+}
+
+.input-wrapper input {
+  width: 100%;
+  padding: 4px 8px;
+  border-radius: 16px;
+  border: none;
+}
+
+.btn-save-changes {
+  margin-top: 16px;
+  /* margin-bottom: px; */
+  width: 100%;
+  border-radius: 16px;
+}

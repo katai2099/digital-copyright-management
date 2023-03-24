@@ -1,18 +1,18 @@
 import "./App.css";
 import { Footer } from "./components/footer/Footer";
 import { Navbar } from "./components/navbar/Navbar";
-import { EthProvider } from "./contexts/EthProvider";
+import { DcmProvider } from "./contexts/DcmProvider";
 import { Main } from "./pages/main/Main";
 
 function App() {
   return (
-    // <EthProvider>
-    <div className="App">
-      <Navbar />
-      <Main />
-      <Footer />
-    </div>
-    // </EthProvider>
+    <DcmProvider>
+      <div className="App">
+        <Navbar />
+        <Main />
+        <Footer />
+      </div>
+    </DcmProvider>
   );
 }
 

@@ -1,0 +1,120 @@
+.digital-content-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  color: #757575;
+}
+
+.left-block {
+  width: 42%;
+  padding: 0 16px;
+}
+
+.right-block {
+  width: 58%;
+  padding: 0 16px 0 12px;
+}
+
+.full-block {
+  width: 100%;
+  padding: 0 16px;
+}
+
+.digital-content-image-wrapper {
+  max-width: 560px;
+  height: auto;
+}
+
+.digital-content-image {
+  width: 100%;
+  height: 100%;
+  object-fit: scale-down;
+}
+
+.item-info-block {
+  padding: 10% 0;
+}
+
+.item-detail-title {
+  font-size: 48px;
+  line-height: 1;
+  color: #212121;
+  font-weight: 500;
+}
+
+.item-detail-owner {
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.item-detail-owner a {
+  font-weight: 500;
+}
+
+.item-detail-price {
+  font-weight: 500;
+}
+
+.item-detail-price-wrapper {
+  display: flex;
+  /* gap: 2px; */
+  align-items: flex-end;
+}
+
+.item-detail-price-wrapper i {
+  margin-left: -8px;
+}
+
+.item-detail-price-wrapper .price-ether-icon {
+  width: 36px;
+  height: 36px;
+}
+
+.item-detail-price-ether {
+  margin-right: 4px;
+  font-size: 48px;
+  line-height: 1;
+  color: #212121;
+  font-weight: 400;
+}
+
+.item-detail-price-fiat {
+  font-weight: 300;
+}
+
+.item-detail-button {
+  margin-top: 24px;
+  border: none;
+  padding: 8px 24px;
+  border-radius: 16px;
+  color: #fff;
+  background-color: #0e68fa;
+}
+
+.item-detail-button:hover {
+  color: #fff;
+  background-color: #002c9b;
+}
+
+.digital-content-summary {
+  width: 58%;
+  height: 100px;
+  background-color: red;
+}
+
+.digital-content-detail {
+  width: 42%;
+  height: 400px;
+  background-color: green;
+}
+
+.digital-content-price-history {
+  width: 58%;
+  height: 100px;
+  background-color: teal;
+}
+
+.digital-content-activity {
+  width: 100%;
+  height: 100px;
+  background-color: blueviolet;
+}

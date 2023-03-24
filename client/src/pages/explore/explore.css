@@ -13,27 +13,6 @@
   align-items: center;
 }
 
-.explore-content-tab-wrapper {
-  border-bottom: 0.5px solid #888;
-  margin-bottom: 24px;
-  background-color: black;
-}
-
-.explore-content-tab {
-  display: flex;
-  margin-bottom: 24px;
-  border-bottom: 0.5px solid #888;
-}
-
-.content-tab-item {
-  margin-right: 16px;
-  font-size: 16px;
-  font-weight: 900;
-  color: #666;
-  cursor: pointer;
-  transition: 0.2s all;
-}
-
 .content-area {
 }
 
@@ -68,34 +47,40 @@
 
 .explore-input-wrapper {
   position: relative;
-  /* width: 100%; */
+  display: inline-block;
+  width: 100%;
   margin-bottom: 16px;
-  border-radius: 16px;
-  background-color: #888;
 }
 
 .input-icon {
   position: absolute;
-  top: 8px;
+  top: 6px;
   left: 10px;
+  color: #fff;
 }
 
 .explore-input {
   width: 100%;
   padding: 8px 8px 8px 36px;
-  /* border: none; */
+  border: none;
   border-radius: 8px;
   font-size: 14px;
+  background-color: #666;
+  margin-bottom: 0px;
+}
+
+.explore-input:focus,
+.explore-input:hover {
+  outline: none;
   background-color: #888;
+}
+
+.explore-input::placeholder {
+  color: #fff;
 }
 
 .contents-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minMax(30%, 1fr));
   gap: 6px;
-}
-
-.selected1 {
-  border-bottom: 2px solid #ccc;
-  color: #ccc;
 }

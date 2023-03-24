@@ -1,0 +1,38 @@
+.filter-wrapper {
+  margin-bottom: 24px;
+  border-bottom: 0.5px solid #888;
+}
+
+.filters {
+  display: flex;
+  border-bottom: 0.5px solid #888;
+  margin-bottom: 24px;
+}
+
+.filter-option {
+  margin-right: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.filter-option:hover {
+  color: #0e68fa;
+  font-weight: 600;
+}
+
+.filter-option label {
+  margin-left: 2px;
+  cursor: pointer;
+}
+
+.filters input {
+  display: none;
+}
+
+.filters input:checked + div {
+  color: #0e68fa;
+  border-bottom: 1px solid #0e68fa;
+  font-weight: 600;
+}
+
+/* 	#E3E8F4 */

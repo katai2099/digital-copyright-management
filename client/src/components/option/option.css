@@ -1,0 +1,28 @@
+.radio-options {
+  display: inline-flex;
+  overflow: hidden;
+  border: 2px solid #888;
+  border-radius: 8px;
+  background-color: #444;
+}
+
+.radio-option {
+  display: none;
+}
+
+.radio-option:checked + .radio-option-label {
+  background-color: #ccc;
+  color: #000;
+  border-radius: 6px;
+  padding: 3px 12px;
+}
+
+.radio-option-label {
+  margin: 2px;
+  padding: 3px 8px;
+  font-size: 14px;
+  cursor: pointer;
+  color: #fff;
+  width: 60px;
+  text-align: center;
+}

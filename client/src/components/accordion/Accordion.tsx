@@ -22,7 +22,7 @@ export const Accordion = ({ children, title }: IAccordionProps) => {
       >
         {title}
       </button>
-      <div id={`accordion-body${title}`} className="accordion-body">
+      <div id={`accordion-body${title}`} className="dcm-accordion-item-body">
         {children}
       </div>
     </div>

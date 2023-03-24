@@ -5,20 +5,24 @@
   margin-bottom: 20px;
   width: calc(33.33% - 20px);
   border-radius: 8px;
+  border: 0.8px solid #e3e8f4;
   padding: 8px;
-  background-color: #888;
+  box-shadow: 0 0 20px #e3e8f4;
+}
+
+.latest-content-column:hover {
+  box-shadow: 0 0 20px #cfcfcf;
 }
 
 .column-header {
   display: flex;
-  border-bottom: 0.5px solid #000;
+  border-bottom: 0.5px solid #222;
   margin-bottom: 12px;
   padding-bottom: 6px;
 }
 
 .header-index {
   padding: 8px 0px 8px 12px;
-  color: #000;
   font-size: 15px;
   font-weight: 900;
   width: 24px;
@@ -26,7 +30,6 @@
 
 .header-name {
   padding: 8px 0px 8px 12px;
-  color: #000;
   font-size: 15px;
   font-weight: 900;
   flex-grow: 1;
@@ -34,9 +37,97 @@
 
 .header-price {
   padding: 8px 0px;
-  color: #000;
   font-size: 15px;
   font-weight: 900;
   width: 100px;
   text-align: center;
+}
+
+/* contentItem */
+
+.content-item {
+  display: flex;
+  align-items: center;
+  padding: 4px 0;
+  border-radius: 8px;
+  color: #757575;
+}
+
+.content-item:hover {
+  background-color: #e3e8f4;
+}
+
+.item-index {
+  margin-left: 12px;
+  width: 16px;
+}
+
+.item-img-wrapper {
+  padding: 0 12px;
+}
+
+.item-img {
+  max-width: 56px;
+  max-height: 56px;
+  width: 100%;
+  height: 100%;
+  border: 1px solid #888;
+  border-radius: 8px;
+  object-fit: contain;
+  background-color: transparent;
+}
+
+.item-info {
+  flex-grow: 1;
+}
+
+.item-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #212121;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.item-owner {
+  font-weight: 500;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.item-usage {
+  text-align: right;
+  width: 150px;
+  font-size: 15px;
+  font-weight: 700;
+  margin-right: 12px;
+}
+
+.price-ether-icon {
+  display: inline-block;
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  margin-bottom: 5px;
+  padding-left: 2px;
+}
+
+.item-price-ether {
+  display: inline-block;
+  vertical-align: bottom;
+  color: #212121;
+}
+
+.item-price-fiat {
+  font-size: 12px;
+  font-weight: 500;
+  padding-top: -2px;
+  padding-bottom: 4px;
+}
+
+@media (max-width: 490px) {
+  .latest-content-column {
+    width: 100%;
+  }
 }

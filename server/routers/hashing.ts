@@ -1,24 +1,54 @@
 import { Response, Request, Router } from "express";
-import { getImageHash, getTextHash } from "../controllers/hashing";
+import {
+  getAudioHash,
+  getImageHash,
+  getTextHash,
+} from "../controllers/hashing";
+import { HttpStatusCode } from "axios";
 import multer from "multer";
-
+import { getAllImages } from "../database/image";
+import { convert } from "../utils/utils";
+import { Content } from "../models/content";
 const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
-
+export const upload = multer({ storage: storage });
 export const hashingRouter = Router();
 
-hashingRouter.post("/imageHash", upload.single("image"), async (req, res) => {
-  let tmp = await getImageHash(req.file!.buffer);
-  console.log(tmp);
-  res.send(tmp);
-});
+hashingRouter.post(
+  "/image",
+  upload.single("image"),
+  async (req: Request, res: Response) => {
+    try {
+      let hash = await getImageHash(req.file?.buffer!);
+      console.log(hash);
+      res.send(hash);
+    } catch (error) {
+      res
+        .status(HttpStatusCode.InternalServerError)
+        .send("Internal server error");
+    }
+  }
+);
 
-hashingRouter.post("/textHash", upload.single("txt"), async (req, res) => {
-  const tmp = Buffer.from(req.file!.buffer).toString();
-  console.log(tmp);
+hashingRouter.post(
+  "/text",
+  upload.single("text"),
+  async (req: Request, res: Response) => {
+    const text = Buffer.from(req.file!.buffer).toString();
+    let hash = await getTextHash(text);
+    console.log(hash);
+    res.status(200).send(hash);
+  }
+);
 
-  let hash = await getTextHash(tmp);
-  console.log(hash);
-
-  res.status(200).send(tmp);
-});
+hashingRouter.post(
+  "/audio",
+  upload.single("audio"),
+  async (req: Request, res: Response) => {
+    try {
+      const tmp = await getAudioHash(req.file!.buffer, req.file!.originalname);
+      res.send(tmp);
+    } catch (error) {
+      res.status(500).send(error);
+    }
+  }
+);

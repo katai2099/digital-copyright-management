@@ -1,17 +1,44 @@
-.launch-wrapper {
-  width: 1280px;
-  max-width: 100%;
-  margin: 0 auto;
+header {
+  margin-top: 16px;
+}
+
+.launch-content-header {
+  text-align: left;
+}
+
+.launch-content-header h4 {
+  color: #9e9e9e;
 }
 
 .launch-form-area {
   display: flex;
   margin-top: 48px;
   align-items: center;
+  color: #000;
 }
 
 .content-upload-area {
   width: 40%;
+  text-align: left;
+  border-radius: 0.25rem;
+  border: 1px solid #ced4da;
+  /* padding: 16px; */
+}
+
+.content-preview-header {
+  /* text-align: left; */
+  border-bottom: 1px solid #ced4da;
+  background-color: #ced4da;
+  padding: 16px;
+}
+
+.file-upload-area {
+  padding: 16px;
+}
+
+.file-type-wrapper {
+  /* text-align: left; */
+  margin-bottom: 16px;
 }
 
 .content-display-container {
@@ -36,8 +63,10 @@
 
 .information-area {
   /* width: 60%; */
-  margin-left: 48px;
+  /* margin-left: 48px; */
   flex: 1;
+  align-self: start;
+  margin-top: 10%;
 }
 
 .information-form {
@@ -46,35 +75,25 @@
   padding: 12px 24px;
 }
 
-.input-label {
-  text-align: left;
-}
-
-.pricing-option-wrapper {
+.price-wrapper {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 2px solid #888;
-  border-radius: 8px;
-  background-color: #444;
-  width: 70%;
-}
-
-.pricing-option {
-  font-size: 12px;
-  padding: 3px 8px;
-  cursor: pointer;
-  margin: 2px;
-  color: #fff;
-  flex: 1;
+  flex-direction: column;
 }
 
 .price {
+  display: flex;
+  justify-content: space-between;
 }
 
-.selected {
-  background-color: #ccc;
-  color: #000;
-  border-radius: 6px;
-  padding: 3px 12px;
+.input-label {
+  text-align: left;
+  margin-bottom: 4px;
+}
+
+.input-price {
+}
+
+.submit-button {
+  width: 100%;
+  margin-top: 16px;
 }
