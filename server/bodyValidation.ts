@@ -5,10 +5,12 @@ export function isValidRequestBody(
   comparable: Record<string, any>
 ): boolean {
   const jsonComparable = clone(comparable);
+  // TODO: case field is empty
   for (const field in jsonComparable) {
     if (
-      !body.hasOwnProperty(field) ||
-      typeof body[field] !== typeof comparable[field]
+      comparable[field] &&
+      (!body.hasOwnProperty(field) ||
+        typeof body[field] !== typeof comparable[field])
     ) {
       console.log(
         "Fail request body " +

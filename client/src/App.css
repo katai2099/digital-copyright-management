@@ -19,6 +19,11 @@
   margin: 0 auto;
 }
 
+.register-area {
+  display: flex;
+  justify-content: center;
+}
+
 .blocklist-container {
   display: grid;
   grid-template-columns: repeat(3, 33%);

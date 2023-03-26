@@ -1,22 +1,19 @@
 export interface IUser {
+  username: string;
   firstname: string;
   lastname: string;
   email: string;
-  password: string;
-  address: string;
+  walletAddress: string;
+  id: number;
 }
 
 export class User implements IUser {
   constructor(
-    public firstname: string = "",
-    public lastname: string = "",
-    public email: string = "",
-    public password: string = "",
-    public address: string = ""
+    public username = "",
+    public firstname = "",
+    public lastname = "",
+    public email = "",
+    public walletAddress = "",
+    public id = 0
   ) {}
-}
-
-export class LoginData {
-  email: string = "";
-  password: string = "";
 }

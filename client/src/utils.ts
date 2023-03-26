@@ -1,3 +1,27 @@
+export function clone<T = any>(whatToClone: T): T {
+  return JSON.parse(JSON.stringify(whatToClone));
+}
+
+export function shallowCompare(
+  body: Record<string, any>,
+  comparable: Record<string, any>
+): boolean {
+  for (const field in comparable) {
+    if (body[field] && comparable[field] !== body[field]) {
+      console.log(
+        "Fail request body " +
+          field +
+          " validation : 1." +
+          body[field] +
+          " 2." +
+          comparable[field]
+      );
+      return false;
+    }
+  }
+  return true;
+}
+
 export function hexToBin(hexString: string): string {
   // const hexBinLookup = {
   //      0:   "0000" ,
@@ -74,3 +98,7 @@ export function hexToBin(hexString: string): string {
   }
   return result;
 }
+
+export const toJSON = (data: any) => {
+  return JSON.parse(data);
+};

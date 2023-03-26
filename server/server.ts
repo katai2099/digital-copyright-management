@@ -8,8 +8,9 @@ import cors from "cors";
 import { nodeRouter } from "./routers/blockchain";
 import { initWeb3 } from "./controllers/web3";
 import { submitRouter } from "./routers/submit";
+import { userRouter } from "./routers/users";
 export const client = create();
-initWeb3();
+// initWeb3();
 
 const app: Express = ExpressApp();
 const port = 8082;
@@ -20,10 +21,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
   cors({
     origin: "*",
-    methods: ["POST", "GET"],
+    methods: ["POST", "GET", "PUT"],
     allowedHeaders: ["Content-Type"],
   })
 );
+app.use("/auth", authRouter);
+app.use("/users", userRouter);
 app.use("/hash", hashingRouter);
 app.use("/ipfs", ipfsRouter);
 app.use("/auth", authRouter);

@@ -11,19 +11,16 @@ datasource db {
 }
 
 model users {
-  id            Int    @id @default(autoincrement())
-  email         String @unique
+  id            Int    @id @unique @default(autoincrement())
   username      String @unique
   firstname     String
   lastname      String
-  password      String
-  address       String
-  walletAddress String
-  imageUrl      String @default("")
+  email         String @unique
+  walletAddress String @unique
 }
 
 model Image {
-  id           Int    @id @default(autoincrement())
+  id           Int    @id @unique @default(autoincrement())
   contentId    Int    @unique
   ownerAddress String
   pHash        String @unique
@@ -37,7 +34,7 @@ model Image {
 }
 
 model Audio {
-  id           Int    @id @default(autoincrement())
+  id           Int    @id @unique @default(autoincrement())
   contentId    Int    @unique
   ownerAddress String
   pHash        String @unique
@@ -51,7 +48,7 @@ model Audio {
 }
 
 model Text {
-  id           Int    @id @default(autoincrement())
+  id           Int    @id @unique @default(autoincrement())
   contentId    Int    @unique
   ownerAddress String
   pHash        String @unique

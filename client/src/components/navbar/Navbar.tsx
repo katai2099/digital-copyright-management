@@ -1,25 +1,42 @@
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { AxiosError } from "axios";
 import { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, redirect, useNavigate } from "react-router-dom";
+import { userActions } from "../../contexts/state";
 import { UseDcm } from "../../contexts/UseDcm";
-import { connectMetamask, disconnectMetamask } from "../../controllers/web3";
+import {
+  connectMetamask,
+  disconnectMetamask,
+  startLogin,
+} from "../../controllers/web3";
 import "./navbar.css";
 
 export const Navbar = () => {
   const { state, dispatch } = UseDcm();
   const navigate = useNavigate();
-  const handleConnectButtonClick = () => {
-    connectMetamask(dispatch);
+  const handleConnectButtonClick = async () => {
+    // connectMetamask(dispatch);
+    try {
+      const user = await startLogin(dispatch);
+      dispatch({ type: userActions.create, data: user });
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        if (error.response?.status === 410) {
+          navigate("/register");
+        }
+      }
+    }
   };
 
   const handlerLogoutClick = () => {
     disconnectMetamask(dispatch);
   };
 
-  const profileClickHandler = () => {
+  const profileClickHandler = (event: React.MouseEvent<HTMLElement>) => {
     const profileMenu = document.getElementById("profile-menu");
     profileMenu?.classList.toggle("show");
+    event.stopPropagation();
   };
 
   return (
@@ -50,6 +67,9 @@ export const Navbar = () => {
             type="search"
             placeholder="Search for titles or usernames"
             aria-label="Search"
+            onBlur={() => {
+              console.log(state.web3State);
+            }}
           />
         </div>
       </div>
@@ -63,22 +83,23 @@ export const Navbar = () => {
             <div className="menu-item">Launch</div>
           </Link>
         </div>
-        {/* <div className="menu-items-mobile"></div> */}
-        {/* {state.accounts.length === 0 && (
+        {state.web3State.account === "" ? (
           <button className="btn-connect" onClick={handleConnectButtonClick}>
             Connect
           </button>
-        )} */}
-        {
+        ) : (
           <div id="profile-area" className="profile-area">
-            <div onClick={profileClickHandler}>
+            <div
+              id="profile-nav"
+              onClick={(event) => profileClickHandler(event)}
+            >
               <img src="../../img/cookie.jpg" className="profile-img"></img>
             </div>
             <div id="profile-menu" className="profile-menu">
               <div
                 className="profile-area-button"
                 onClick={() => {
-                  profileClickHandler();
+                  // profileClickHandler();
                   navigate("/profile");
                 }}
               >
@@ -88,8 +109,8 @@ export const Navbar = () => {
               <div
                 className="profile-area-button"
                 onClick={() => {
-                  profileClickHandler();
-                  navigate("/setting");
+                  // profileClickHandler();
+                  navigate("/settings");
                 }}
               >
                 <i className="las la-cog profile-logo"></i>
@@ -103,14 +124,14 @@ export const Navbar = () => {
               <div
                 className="profile-fund"
                 onClick={() => {
-                  profileClickHandler();
+                  // profileClickHandler();
                   navigate("/profile");
                 }}
               >
                 <i className="las la-wallet"></i>
                 <div className="wallet-info">
                   <div className="wallet-address">
-                    1231fasdxasdfasdfasdfasdfasdfasdfasdfasdfassadfasdf
+                    {state.user.walletAddress}
                   </div>
                   <div className="wallet">
                     <i>
@@ -128,7 +149,7 @@ export const Navbar = () => {
               </div>
             </div>
           </div>
-        }
+        )}
       </div>
     </nav>
   );

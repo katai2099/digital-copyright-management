@@ -2,7 +2,7 @@ import { MouseEvent, useState } from "react";
 import { RadioOption } from "../../components/option/RadioOption";
 import { ContentTypes } from "../../constant";
 import { UseDcm } from "../../contexts/UseDcm";
-import { submitDigitalContent } from "../../controllers/hashing";
+// import { submitDigitalContent } from "../../controllers/hashing";
 import { Content, ContentType } from "../../model/Content";
 import "./launch.css";
 
@@ -23,7 +23,7 @@ export const Launch = () => {
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
     event.preventDefault();
-    submitDigitalContent(selectedFile!, content, state.web3State, fileType);
+    // submitDigitalContent(selectedFile!, content, state.web3State, fileType);
     console.log(fileType);
   };
 

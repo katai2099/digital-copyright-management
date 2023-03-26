@@ -3,17 +3,22 @@ export interface IUser {
   firstname: string;
   lastname: string;
   email: string;
-  address: string;
   walletAddress: string;
+  id?: number;
 }
 
 export class User implements IUser {
+  id?: number | undefined;
   constructor(
+    public walletAddress = "",
     public username = "",
     public firstname = "",
     public lastname = "",
     public email = "",
-    public address = "",
-    public walletAddress = ""
-  ) {}
+    id?: number
+  ) {
+    if (id) {
+      this.id = id;
+    }
+  }
 }

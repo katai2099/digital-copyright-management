@@ -3,107 +3,80 @@ import { SERVER_URL } from "../constant";
 
 function fillAxiosConfig(
   url: string,
-  requestType: string,
-  queryString?: string,
-  postData?: any,
-  formData?: any
+  requestType: "GET" | "PUT" | "POST",
+  formData: boolean,
+  paramsData: null | Record<any, any>,
+  postData?: Record<string, any> | FormData
 ): AxiosRequestConfig {
   const config: AxiosRequestConfig = {
     baseURL: SERVER_URL,
     url: url,
-    params: queryString,
+    params: paramsData,
     method: requestType,
     headers: {
-      "Content-Type": postData ? "application/json" : "multipart/form-data",
+      "Content-Type": formData ? "multipart/form-data" : "application/json",
     },
-    data: postData ? postData : formData,
+    data: postData,
   };
   return config;
 }
 
-// export function postRequest<T>(
-//   requestAddress: string,
-//   postData: any,
-//   formDataKey?: string
-// ): Promise<T> {
-//   const bodyFormData = new FormData();
-//   if (formDataKey) bodyFormData.append(formDataKey, postData);
-//   return new Promise<T>((resolve, reject) => {
-//     const config: AxiosRequestConfig = {
-//       url: requestAddress,
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "multipart/form-data",
-//       },
-//       data: bodyFormData,
-//     };
-//     axios(config)
-//       .then((response) => {
-//         resolve(response.data);
-//       })
-//       .catch((error) => {
-//         reject(error.message);
-//       });
-//   });
-// }
-
-export function postRequest<T>(
-  requestAddress: string,
-  postData: any,
-  formData: any
+export function getRequest<T>(
+  url: string,
+  paramsData: Record<any, any> | null = null
 ): Promise<T> {
-  return axiosRequest(requestAddress, "POST", undefined, postData, formData)
-    .then((res) => {
-      return Promise.resolve(res);
+  return axiosRequest(url, "GET", paramsData)
+    .then((response) => {
+      return Promise.resolve(response);
     })
-    .catch((err) => {
+    .catch((err: AxiosError) => {
+      console.log(err);
       return Promise.reject(err);
     });
 }
 
-export function getRequest<T>(
-  requestAddress: string,
-  queryString?: string
+export function postRequest<T>(
+  url: string,
+  postData: Record<string, any>,
+  paramsData: Record<any, any> | null = null,
+  formData: boolean = false
 ): Promise<T> {
-  return axiosRequest(requestAddress, "GET", queryString)
+  return axiosRequest(url, "POST", paramsData, postData, formData)
+    .then((res) => {
+      return Promise.resolve(res);
+    })
+    .catch((err: AxiosError) => {
+      console.log(err);
+      return Promise.reject(err);
+    });
+}
+
+export function putRequest<T>(
+  url: string,
+  postData: Record<string, any>,
+  paramsData: Record<any, any> | null = null,
+  formData: boolean = false
+): Promise<T> {
+  return axiosRequest(url, "PUT", paramsData, postData, formData)
     .then((response) => {
       return Promise.resolve(response);
     })
-    .catch((err) => {
+    .catch((err: AxiosError) => {
       console.log(err);
       return Promise.reject(err);
     });
 }
 
 function axiosRequest(
-  address: string,
+  url: string,
   requestType: "GET" | "PUT" | "POST",
-  queryString?: string,
-  data?: Record<string, any>,
-  formData?: FormData
+  paramsData: null | Record<any, any> = null,
+  data?: Record<string, any> | FormData,
+  formData = false
 ): Promise<any> {
-  const requestAddress = `${SERVER_URL}${address}`;
-  return Promise.resolve()
-    .then(() => {
-      switch (requestType) {
-        case "GET":
-          const config = fillAxiosConfig(address, "GET", queryString);
-          return axios(config);
-        case "POST": {
-          const config = fillAxiosConfig(
-            address,
-            "POST",
-            undefined,
-            data,
-            formData
-          );
-          return axios(config);
-        }
-        case "PUT":
-          return axios.put(requestAddress);
-      }
-    })
-    .then((response) => Promise.resolve(response))
+  const config = fillAxiosConfig(url, requestType, formData, paramsData, data);
+  return axios(config)
+    .then((response) => Promise.resolve(response.data))
     .catch((err: AxiosError) => {
       console.log(err);
       return Promise.reject(err);

@@ -1,6 +1,20 @@
+import { useEffect, useState } from "react";
+import { userActions } from "../../contexts/state";
+import { UseDcm } from "../../contexts/UseDcm";
+import { IUser } from "../../model/User";
+import { shallowCompare } from "../../utils";
 import "./setting.css";
 
 export const Setting = () => {
+  const { state, dispatch } = UseDcm();
+  const [user, setUser] = useState<IUser>(state.user);
+  useEffect(() => {
+    setUser(state.user);
+  }, [state.user]);
+  const saveChangeButtonHandler = () => {
+    //TODO: enable button only if there is change in data
+    dispatch({ type: userActions.update, data: user });
+  };
   return (
     <div className="home-wrapper">
       <div className="setting-wrapper row">
@@ -24,13 +38,27 @@ export const Setting = () => {
             <div className="wallet-info-wrapper">
               <label className="setting-input-label">Wallet Address</label>
               <div className="input-wrapper">
-                <input type="text" disabled />
+                <input
+                  type="text"
+                  defaultValue={state.user.walletAddress}
+                  disabled
+                />
               </div>
             </div>
             <div className="username-wrapper">
               <label className="setting-input-label">Username</label>
               <div className="input-wrapper">
-                <input type="text" />
+                <input
+                  type="text"
+                  defaultValue={
+                    state.user.username === ""
+                      ? state.user.walletAddress
+                      : state.user.username
+                  }
+                  onBlur={(event) => {
+                    setUser({ ...user, username: event?.currentTarget.value });
+                  }}
+                />
               </div>
             </div>
             <div className="username-note">
@@ -42,28 +70,46 @@ export const Setting = () => {
             <div className="firstname-wrapper">
               <label className="setting-input-label">Firstname</label>
               <div className="input-wrapper">
-                <input type="text" />
+                <input
+                  type="text"
+                  defaultValue={state.user.firstname}
+                  onBlur={(event) => {
+                    setUser({ ...user, firstname: event?.currentTarget.value });
+                  }}
+                />
               </div>
             </div>
             <div className="lastname-wrapper">
               <label className="setting-input-label">Lastname</label>
               <div className="input-wrapper">
-                <input type="text" />
+                <input
+                  type="text"
+                  defaultValue={state.user.lastname}
+                  onBlur={(event) => {
+                    setUser({ ...user, lastname: event?.currentTarget.value });
+                  }}
+                />
               </div>
             </div>
             <div className="lastname-wrapper">
               <label className="setting-input-label">Email</label>
               <div className="input-wrapper">
-                <input type="text" />
+                <input
+                  type="text"
+                  defaultValue={state.user.email}
+                  onBlur={(event) => {
+                    setUser({ ...user, email: event?.currentTarget.value });
+                  }}
+                />
               </div>
             </div>
-            <div className="address-wrapper">
-              <label className="setting-input-label">Address</label>
-              <div className="input-wrapper">
-                <input type="text" />
-              </div>
-            </div>
-            <button className="btn-save-changes">Save Changes</button>
+            <button
+              className="btn-save-changes"
+              onClick={saveChangeButtonHandler}
+              disabled={shallowCompare(state.user, user)}
+            >
+              Save Changes
+            </button>
           </div>
         </div>
       </div>
