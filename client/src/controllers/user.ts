@@ -1,27 +1,15 @@
+import { USER_ROUTE } from "../constant";
 import { IUser } from "../model/User";
+import { putRequest } from "./clientRequest";
 
-// export async function login(walletAddress: ILoginPostData) {
-//     try {
-//       const res = await loginWorker(walletAddress);
-//       console.log(res);
-//       return res;
-//     } catch (error) {
-//       throw error;
-//     }
-//   }
-
-export async function updateUser(user: IUser): Promise<any> {}
-
-async function updateUserWorker(user: IUser): Promise<any> {
-  try {
-  } catch (error) {}
+export function updateUser(user: IUser): Promise<IUser> {
+  return updateUserWorker(user)
+    .then((user) => Promise.resolve(user))
+    .catch((error) => Promise.reject(error));
 }
 
-//   async function loginWorker(walletAddress: ILoginPostData): Promise<any> {
-//     try {
-//       const res = await postRequest<string>(`${AUTH_ROUTE}/login`, walletAddress);
-//       return res;
-//     } catch (error) {
-//       throw error;
-//     }
-//   }
+function updateUserWorker(user: IUser): Promise<IUser> {
+  return putRequest<IUser>(`${USER_ROUTE}/12`, user)
+    .then((user) => Promise.resolve(user))
+    .catch((error) => Promise.reject(error));
+}

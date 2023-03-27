@@ -6,9 +6,6 @@ import {
 } from "../controllers/hashing";
 import { HttpStatusCode } from "axios";
 import multer from "multer";
-import { getAllImages } from "../database/image";
-import { convert } from "../utils/utils";
-import { Content } from "../models/content";
 const storage = multer.memoryStorage();
 export const upload = multer({ storage: storage });
 export const hashingRouter = Router();

@@ -1,11 +1,8 @@
 import { writeFile } from "fs";
 import Web3 from "web3";
 import { Contract, EventData } from "web3-eth-contract";
-import { createNewAudio } from "../database/Audio";
-import { createNewImage } from "../database/image";
-import { createNewText } from "../database/Text";
-import { Content, ContentType } from "../models/content";
-import { keyValuePair, logToContent } from "../utils/utils";
+import { createContent } from "../database/content";
+import { logToContent } from "../utils/utils";
 
 const copyrightManagementArtifact = require("../../client/src/contracts/CopyrightManagement.json");
 
@@ -17,9 +14,7 @@ export async function initWeb3() {
   const address = copyrightManagementArtifact.networks[networkID].address;
   contract = new web3.eth.Contract(copyrightManagementAbi, address);
   contract.events
-    .addContentEvent({}, function (err: any, event: EventData) {
-      // console.log(event);
-    })
+    .addContentEvent()
     .on("connected", function (subscriptionId: any) {
       console.log(subscriptionId);
     })
@@ -34,14 +29,7 @@ export async function initWeb3() {
 
 function handleCreateEvent(eventReturnValues: any) {
   const content = logToContent(eventReturnValues._content);
-  console.log(eventReturnValues._contentType);
-  if (eventReturnValues._contentType == ContentType.IMAGE) {
-    createNewImage(content);
-  } else if (eventReturnValues._contentType == ContentType.AUDIO) {
-    createNewAudio(content);
-  } else if (eventReturnValues._contentType == ContentType.TEXT) {
-    createNewText(content);
-  }
+  createContent(content);
 }
 
 const web3 = new Web3(Web3.givenProvider || "ws://localhost:7545");

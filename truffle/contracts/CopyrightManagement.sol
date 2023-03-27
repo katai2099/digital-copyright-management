@@ -22,8 +22,9 @@ contract CopyrightManagement {
         string desc;
         uint256 price;
         uint256 publishDate;
+        ContentType contentType;
     }
-    event addContentEvent(Content _content, ContentType _contentType);
+    event addContentEvent(Content _content, ContentAction _content_action);
 
     event updateContentPriceEvent(
         address indexed _caller,
@@ -33,138 +34,51 @@ contract CopyrightManagement {
         ContentAction _content_action
     );
 
-    uint256 public imageCount;
-    uint256 public textCount;
-    uint256 public audioCount;
+    uint256 public contentCount;
 
-    mapping(address => uint256) public balances;
+    mapping(uint256 => Content) public contents;
 
-    mapping(uint256 => Content) public images;
-    mapping(uint256 => Content) public audio;
-    mapping(uint256 => Content) public texts;
-
-    function addImageContent(
+    function addContent(
         string memory _pHash,
         string memory _IPFSAddress,
-        string memory _imageTitle,
+        string memory _title,
         string memory _ownerName,
         string memory _ownerEmail,
         string memory _desc,
-        uint256 _price
+        uint256 _price,
+        ContentType _contentType
     ) public {
-        Content memory image = Content(
+        Content memory content = Content(
             msg.sender,
-            imageCount,
+            contentCount,
             _pHash,
             _IPFSAddress,
-            _imageTitle,
+            _title,
             _ownerName,
             _ownerEmail,
             _desc,
             _price,
-            block.timestamp
+            block.timestamp,
+            _contentType
         );
-        images[imageCount] = image;
-        imageCount++;
-        emit addContentEvent(image, ContentType.IMAGE);
+        contents[contentCount] = content;
+        contentCount++;
+        emit addContentEvent(content, ContentAction.CREATE);
     }
 
-    function updateImageData(
+    function updateContentData(
         uint256 _id,
         string memory _desc,
-        uint256 _price
+        uint256 _price,
+        ContentType _contentType
     ) public {
-        images[_id].desc = _desc;
-        images[_id].price = _price;
+        contents[_id].desc = _desc;
+        contents[_id].price = _price;
         emit updateContentPriceEvent(
             msg.sender,
             _id,
             _price,
-            ContentType.IMAGE,
-            ContentAction.UPDATE
-        );
-    }
-
-    function addAudioContent(
-        string memory _pHash,
-        string memory _IPFSAddress,
-        string memory _audioTitle,
-        string memory _ownerName,
-        string memory _ownerEmail,
-        string memory _desc,
-        uint256 _price
-    ) public {
-        Content memory tmpAudio = Content(
-            msg.sender,
-            audioCount,
-            _pHash,
-            _IPFSAddress,
-            _audioTitle,
-            _ownerName,
-            _ownerEmail,
-            _desc,
-            _price,
-            block.timestamp
-        );
-        audio[audioCount] = tmpAudio;
-        audioCount++;
-        emit addContentEvent(tmpAudio, ContentType.AUDIO);
-    }
-
-    function updateAudioData(
-        uint256 _id,
-        string memory _desc,
-        uint256 _price
-    ) public {
-        audio[_id].desc = _desc;
-        audio[_id].price = _price;
-        emit updateContentPriceEvent(
-            msg.sender,
-            _id,
-            _price,
-            ContentType.AUDIO,
-            ContentAction.UPDATE
-        );
-    }
-
-    function addTextContent(
-        string memory _pHash,
-        string memory _IPFSAddress,
-        string memory _textTitle,
-        string memory _ownerName,
-        string memory _ownerEmail,
-        string memory _desc,
-        uint256 _price
-    ) public {
-        Content memory text = Content(
-            msg.sender,
-            textCount,
-            _pHash,
-            _IPFSAddress,
-            _textTitle,
-            _ownerName,
-            _ownerEmail,
-            _desc,
-            _price,
-            block.timestamp
-        );
-        texts[textCount] = text;
-        textCount++;
-        emit addContentEvent(text, ContentType.TEXT);
-    }
-
-    function updateTextData(
-        uint256 _id,
-        string memory _desc,
-        uint256 _price
-    ) public {
-        texts[_id].desc = _desc;
-        texts[_id].price = _price;
-        emit updateContentPriceEvent(
-            msg.sender,
-            _id,
-            _price,
-            ContentType.TEXT,
+            _contentType,
             ContentAction.UPDATE
         );
     }

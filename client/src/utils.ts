@@ -1,5 +1,19 @@
+import { ContentType, SolidityContentType } from "./model/Content";
+
 export function clone<T = any>(whatToClone: T): T {
   return JSON.parse(JSON.stringify(whatToClone));
+}
+
+export function getSolidityContentType(
+  contentType: ContentType
+): SolidityContentType {
+  if (contentType === ContentType.IMAGE) {
+    return SolidityContentType.IMAGE;
+  } else if (contentType === ContentType.AUDIO) {
+    return SolidityContentType.AUDIO;
+  } else {
+    return SolidityContentType.TEXT;
+  }
 }
 
 export function shallowCompare(

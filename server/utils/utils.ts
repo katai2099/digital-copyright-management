@@ -1,4 +1,4 @@
-import { Content } from "../models/content";
+import { Content, ContentType } from "../models/content";
 
 export function clone<T = any>(whatToClone: T): T {
   return JSON.parse(JSON.stringify(whatToClone));
@@ -102,7 +102,20 @@ export function logToContent(_content: keyValuePair): Content {
   content.desc = _content.desc;
   content.price = parseInt(_content.price);
   content.publishDate = _content.publishDate;
+  content.contentType = solidityContentTypeToContentType(_content.contentType);
   return content;
+}
+
+export function solidityContentTypeToContentType(
+  contentType: string
+): ContentType {
+  if (contentType === "0") {
+    return ContentType.IMAGE;
+  } else if (contentType === "1") {
+    return ContentType.AUDIO;
+  } else {
+    return ContentType.TEXT;
+  }
 }
 
 export function prismaModelToObject() {}

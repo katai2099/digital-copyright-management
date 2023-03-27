@@ -1,26 +1,27 @@
 import { Link } from "react-router-dom";
-import { CopyrightImage } from "../../model/CopyrightImage";
+import { Content } from "../../model/Content";
 import "./contentItems.css";
 
-interface IContentShortInfoProps {
+interface IContentItemProps {
   idx: number;
-  content: CopyrightImage;
+  content: Content;
 }
 
-export const ContentItem = () => {
+export const ContentItem = ({ idx, content }: IContentItemProps) => {
   return (
     <Link to="/content">
       <div className="content-item">
-        <div className="item-index">1</div>
+        <div className="item-index">{idx}</div>
         <div className="item-img-wrapper">
           <img
             className="item-img"
-            src="../../img/eth-diamond-purple-purple.png"
-          ></img>
+            src={`https://ipfs.io/ipfs/${content.IPFSAddress}`}
+            alt=""
+          />
         </div>
         <div className="item-info">
-          <div className="item-title">Title</div>
-          <div className="item-owner">Owner</div>
+          <div className="item-title">{content.title}</div>
+          <div className="item-owner">{content.ownerName}</div>
         </div>
         <div className="item-usage">
           <div>
@@ -35,7 +36,7 @@ export const ContentItem = () => {
             </i>{" "}
             <div className="item-price-ether">0.03</div>
           </div>
-          <div className="item-price-fiat">(123$)</div>
+          <div className="item-price-fiat">{`(${content.price})$`}</div>
         </div>
       </div>
     </Link>

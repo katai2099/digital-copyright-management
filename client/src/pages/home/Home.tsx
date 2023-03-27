@@ -1,10 +1,38 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ContentItems } from "../../components/latest-content/ContentItems";
 import { RadioOption } from "../../components/option/RadioOption";
-import { contentFilters } from "../../constant";
+import { ContentFilter, contentFilters } from "../../constant";
+import { getLatestContents } from "../../controllers/content";
+import { ILatestContents } from "../../model/Common";
+import { Content } from "../../model/Content";
 import "./home.css";
 
 export const Home = () => {
+  const [latestContents, setLatestContents] = useState<ILatestContents>({
+    all: [],
+    images: [],
+    audio: [],
+    texts: [],
+  });
+  const [filter, setFilter] = useState<ContentFilter>(ContentFilter.ALL);
+  useEffect(() => {
+    getLatestContents()
+      .then((latestContents) => {
+        setLatestContents(latestContents);
+        console.log(latestContents);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+  const setSelectFilter = (filter: string) => {
+    setFilter(filter as ContentFilter);
+  };
+
+  const contents = getFilteredContents(filter, latestContents);
+
   return (
     <div className="home-wrapper">
       <div className="hero-box">
@@ -26,16 +54,40 @@ export const Home = () => {
         <RadioOption
           options={contentFilters}
           optionName="content-filter"
-          onSelected={function (type: string): void {
-            throw new Error("Function not implemented.");
-          }}
+          onSelected={setSelectFilter}
         />
       </div>
       <div className="latest-contents">
-        <ContentItems />
-        <ContentItems />
-        <ContentItems />
+        <ContentItems
+          title={filter === ContentFilter.ALL ? ContentFilter.IMG : filter}
+          contents={contents.slice(0, 5)}
+          columnNumber={0}
+        />
+        <ContentItems
+          title={filter === ContentFilter.ALL ? ContentFilter.AUDIO : filter}
+          contents={contents.slice(5, 10)}
+          columnNumber={1}
+        />
+        <ContentItems
+          title={filter === ContentFilter.ALL ? ContentFilter.TEXT : filter}
+          contents={contents.slice(10, 15)}
+          columnNumber={2}
+        />
       </div>
     </div>
   );
+
+  function getFilteredContents(
+    filter: ContentFilter,
+    contents: ILatestContents
+  ): Content[] {
+    if (filter === ContentFilter.ALL) {
+      return contents.all;
+    } else if (filter === ContentFilter.IMG) {
+      return contents.images;
+    } else if (filter === ContentFilter.AUDIO) {
+      return contents.audio;
+    }
+    return contents.texts;
+  }
 };

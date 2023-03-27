@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import { Blocklist } from "../../components/blocklist/Blocklist";
 import { UseDcm } from "../../contexts/UseDcm";

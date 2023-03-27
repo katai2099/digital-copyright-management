@@ -19,37 +19,10 @@ model users {
   walletAddress String @unique
 }
 
-model Image {
+model Content {
   id           Int    @id @unique @default(autoincrement())
   contentId    Int    @unique
-  ownerAddress String
-  pHash        String @unique
-  IPFSAddress  String
-  title        String
-  ownerName    String
-  ownerEmail   String
-  desc         String
-  price        Int
-  publishDate  String
-}
-
-model Audio {
-  id           Int    @id @unique @default(autoincrement())
-  contentId    Int    @unique
-  ownerAddress String
-  pHash        String @unique
-  IPFSAddress  String
-  title        String
-  ownerName    String
-  ownerEmail   String
-  desc         String
-  price        Int
-  publishDate  String
-}
-
-model Text {
-  id           Int    @id @unique @default(autoincrement())
-  contentId    Int    @unique
+  contentType  String
   ownerAddress String
   pHash        String @unique
   IPFSAddress  String

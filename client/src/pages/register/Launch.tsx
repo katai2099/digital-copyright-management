@@ -1,12 +1,18 @@
-import { MouseEvent, useState } from "react";
+import { useState } from "react";
 import { RadioOption } from "../../components/option/RadioOption";
 import { ContentTypes } from "../../constant";
 import { UseDcm } from "../../contexts/UseDcm";
-// import { submitDigitalContent } from "../../controllers/hashing";
+import { submitDigitalContent } from "../../controllers/content";
 import { Content, ContentType } from "../../model/Content";
 import "./launch.css";
 
 export const Launch = () => {
+  //TODO: Add loading modal when upload
+  // handle when error
+
+  //TODO: automatically convert usd to ether
+
+  //TODO: cache pending content so that user wont be able to submit new content
   const { state } = UseDcm();
   const [selectedFile, setSelectedFile] = useState<File>();
   const [content, setContent] = useState<Content>(new Content());
@@ -23,8 +29,7 @@ export const Launch = () => {
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
     event.preventDefault();
-    // submitDigitalContent(selectedFile!, content, state.web3State, fileType);
-    console.log(fileType);
+    submitDigitalContent(selectedFile!, content, state, fileType);
   };
 
   const fileTypeChangeHandler = (type: string) => {
@@ -58,23 +63,11 @@ export const Launch = () => {
             <label className="input-label">Owner</label>
             <input
               type="text"
-              onBlur={(event) => {
-                setContent({
-                  ...content,
-                  ownerName: event.currentTarget.value,
-                });
-              }}
+              defaultValue={`${state.user.firstname} ${state.user.lastname}`}
+              disabled
             />
             <label className="input-label">Email</label>
-            <input
-              type="email"
-              onBlur={(event) => {
-                setContent({
-                  ...content,
-                  ownerEmail: event.currentTarget.value,
-                });
-              }}
-            />
+            <input type="email" defaultValue={state.user.email} disabled />
             <label className="input-label">Description</label>
             <textarea
               onBlur={(event) => {
@@ -132,7 +125,7 @@ export const Launch = () => {
                 id="displayContent"
                 alt="content"
               />
-              <div>Select file</div>
+              <div>{selectedFile ? selectedFile.name : "Select file"}</div>
             </div>
             <input
               hidden={true}

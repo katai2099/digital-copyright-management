@@ -17,16 +17,17 @@ export const Navbar = () => {
   const navigate = useNavigate();
   const handleConnectButtonClick = async () => {
     // connectMetamask(dispatch);
-    try {
-      const user = await startLogin(dispatch);
-      dispatch({ type: userActions.create, data: user });
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        if (error.response?.status === 410) {
-          navigate("/register");
+    startLogin(dispatch)
+      .then((user) => {
+        dispatch({ type: userActions.create, data: user });
+      })
+      .catch((error) => {
+        if (error instanceof AxiosError) {
+          if (error.response?.status === 410) {
+            navigate("/register");
+          }
         }
-      }
-    }
+      });
   };
 
   const handlerLogoutClick = () => {

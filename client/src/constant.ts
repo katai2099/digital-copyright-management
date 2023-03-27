@@ -2,7 +2,10 @@ import { ContentType } from "./model/Content";
 
 export const SERVER_URL = "http://127.0.0.1:8082";
 export const AUTH_ROUTE = "/auth";
+export const USER_ROUTE = "/users";
 export const HASH_ROUTE = "/hash";
+export const SUBMIT_ROUTE = "/submit";
+export const CONTENT_ROUTE = "/contents";
 export const APP_STATE_KEY = "APP_STATE";
 export const WEB3_CONNECT_CACHED = "WEB3_CONNECT_CACHED_PROVIDER";
 
@@ -17,9 +20,25 @@ export enum ProfileTab {
   EVENTS = "Events",
 }
 
-export const contentFilters = ["All", "Img", "Audio", "Text"];
+export enum ContentFilter {
+  ALL = "All",
+  IMG = "Img",
+  AUDIO = "Audio",
+  TEXT = "Text",
+}
 
-export const contentFilter = ["Img", "Audio", "Text"];
+export const contentFilters = [
+  ContentFilter.ALL,
+  ContentFilter.IMG,
+  ContentFilter.AUDIO,
+  ContentFilter.TEXT,
+];
+
+export const contentFilter = [
+  ContentFilter.IMG,
+  ContentFilter.AUDIO,
+  ContentFilter.TEXT,
+];
 
 export interface ContentWithIcon {
   value: string;

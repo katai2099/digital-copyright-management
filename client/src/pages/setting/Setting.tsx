@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { userActions } from "../../contexts/state";
 import { UseDcm } from "../../contexts/UseDcm";
+import { updateUser } from "../../controllers/user";
 import { IUser } from "../../model/User";
 import { shallowCompare } from "../../utils";
 import "./setting.css";
@@ -13,7 +14,13 @@ export const Setting = () => {
   }, [state.user]);
   const saveChangeButtonHandler = () => {
     //TODO: enable button only if there is change in data
-    dispatch({ type: userActions.update, data: user });
+    updateUser(user)
+      .then(() => {
+        dispatch({ type: userActions.update, data: user });
+      })
+      .catch((error) => {
+        console.log("TRY NA CATCH ERROR ");
+      });
   };
   return (
     <div className="home-wrapper">
@@ -94,13 +101,7 @@ export const Setting = () => {
             <div className="lastname-wrapper">
               <label className="setting-input-label">Email</label>
               <div className="input-wrapper">
-                <input
-                  type="text"
-                  defaultValue={state.user.email}
-                  onBlur={(event) => {
-                    setUser({ ...user, email: event?.currentTarget.value });
-                  }}
-                />
+                <input type="text" defaultValue={state.user.email} disabled />
               </div>
             </div>
             <button

@@ -1,9 +1,10 @@
 import { AxiosError } from "axios";
-import { getAudioByHash } from "../database/Audio";
-import { getAllImages } from "../database/image";
-import { getAllTexts } from "../database/Text";
+import {
+  getAllContentByContentType,
+  getAudioByHash,
+} from "../database/content";
 import { ISubmitResponse, SubmitResponse } from "../models/common";
-import { Content } from "../models/content";
+import { Content, ContentType } from "../models/content";
 import { HashingError } from "../utils/Error";
 import {
   isSimilarHammingDistance,
@@ -18,7 +19,7 @@ const Hash = require("pure-ipfs-only-hash");
 export const submitImage = async (image: Buffer): Promise<SubmitResponse> => {
   try {
     const hash = await getImageHash(image);
-    const images = await getAllImages();
+    const images = await getAllContentByContentType(ContentType.IMAGE);
     console.log(images);
     for (const image of images) {
       if (
@@ -28,8 +29,8 @@ export const submitImage = async (image: Buffer): Promise<SubmitResponse> => {
         throw new Error("Image already existed");
       }
     }
-    // const cid = await uploadFileToIPFS(image);
-    const cid = await Hash.of(image);
+    const cid = await uploadFileToIPFS(image);
+    // const cid = await Hash.of(image);
     return { hash: hash, cid: cid } as ISubmitResponse;
   } catch (err) {
     console.log(err);
@@ -42,7 +43,7 @@ export const submitText = async (textFile: Buffer): Promise<SubmitResponse> => {
     const text = Buffer.from(textFile).toString();
     const hash = await getTextHash(text);
     console.log(hash);
-    const texts = await getAllTexts();
+    const texts = await getAllContentByContentType(ContentType.TEXT);
     console.log(hash);
     for (const text of texts) {
       if (
@@ -52,8 +53,8 @@ export const submitText = async (textFile: Buffer): Promise<SubmitResponse> => {
         throw new Error("Text file with similar content already existed");
       }
     }
-    // const cid = await uploadFileToIPFS(textFile);
-    const cid = await Hash.of(textFile);
+    const cid = await uploadFileToIPFS(textFile);
+    //const cid = await Hash.of(textFile);
     return { hash: hash, cid: cid } as ISubmitResponse;
   } catch (error) {
     console.log(error);
@@ -64,8 +65,8 @@ export const submitText = async (textFile: Buffer): Promise<SubmitResponse> => {
 export const submitAudio = async (audio: Buffer, filename: string) => {
   try {
     const hash = await getAudioHash(audio, filename);
-    // const cid = await uploadFileToIPFS(audio);
-    const cid = await Hash.of(audio);
+    const cid = await uploadFileToIPFS(audio);
+    //const cid = await Hash.of(audio);
     return { hash: hash, cid: cid } as ISubmitResponse;
   } catch (error) {
     if (error instanceof AxiosError) {

@@ -46,7 +46,6 @@ export function postRequest<T>(
       return Promise.resolve(res);
     })
     .catch((err: AxiosError) => {
-      console.log(err);
       return Promise.reject(err);
     });
 }
@@ -62,7 +61,6 @@ export function putRequest<T>(
       return Promise.resolve(response);
     })
     .catch((err: AxiosError) => {
-      console.log(err);
       return Promise.reject(err);
     });
 }
@@ -75,10 +73,10 @@ function axiosRequest(
   formData = false
 ): Promise<any> {
   const config = fillAxiosConfig(url, requestType, formData, paramsData, data);
+  console.log(config);
   return axios(config)
     .then((response) => Promise.resolve(response.data))
     .catch((err: AxiosError) => {
-      console.log(err);
       return Promise.reject(err);
     });
 }

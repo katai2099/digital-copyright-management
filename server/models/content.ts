@@ -1,7 +1,13 @@
-export enum ContentType {
+export enum SolidityContentType {
   IMAGE = 0,
   AUDIO = 1,
   TEXT = 2,
+}
+
+export enum ContentType {
+  IMAGE = "Image",
+  AUDIO = "Audio",
+  TEXT = "Text",
 }
 
 export interface IContent {
@@ -15,6 +21,7 @@ export interface IContent {
   desc: string;
   price: number;
   publishDate: string;
+  contentType: ContentType;
 }
 
 export class Content implements IContent {
@@ -28,6 +35,7 @@ export class Content implements IContent {
     public ownerEmail = "",
     public desc = "",
     public price = 0,
-    public publishDate = ""
+    public publishDate = "",
+    public contentType = ContentType.IMAGE
   ) {}
 }
