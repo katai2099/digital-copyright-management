@@ -1,12 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { SERVER_URL } from "../utils/common";
-
-// const fillDataOptions = (
-//   data?: Record<string, any>
-//   //   formData?: boolean
-// ): Record<any, any> => {
-
-// };
+import { SERVER_URL } from "../models/common";
 
 export function axiosRequest(
   address: string,

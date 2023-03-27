@@ -1,17 +1,16 @@
 import axios from "axios";
-import { Router } from "express";
-import { getLatestContents } from "../database/content";
+import { Request, Response, Router } from "express";
+import {
+  getContentByhash,
+  getContents,
+  getLatestContents,
+} from "../database/content";
+import { IContentFilter, ILatestContents } from "../models/common";
 import { Content, ContentType } from "../models/content";
-import { ILatestContents } from "../utils/common";
 import { convert } from "../utils/utils";
 export const contentRouter = Router();
 
-contentRouter.get("/latestContents", async (req, res) => {
-  const { content } = req.query;
-  console.log(content);
-  if (!content) {
-    console.log("all");
-  }
+contentRouter.get("/latestContents", async (req: Request, res: Response) => {
   try {
     const imagesRaw = await getLatestContents(ContentType.IMAGE);
     const audioRaw = await getLatestContents(ContentType.AUDIO);
@@ -32,9 +31,30 @@ contentRouter.get("/latestContents", async (req, res) => {
   }
 });
 
-contentRouter.get("/coin", async (req, res) => {
-  const price = await axios.get(
-    "https://api.etherscan.io/api?module=stats&action=ethprice&apikey=9ZRCY23TJ6WFRBKDI9VFTHST4J7H89NFBY"
-  );
-  res.send(price.data);
+contentRouter.get("/:hash", async (req: Request, res: Response) => {
+  const { hash } = req.params;
+  if (!hash) {
+    return res.status(400).send("Missing content hash");
+  }
+  try {
+    const content = await getContentByhash(hash);
+    return res.status(200).send(content);
+  } catch (error) {
+    //TODO: handle case where database row is not found
+    console.log(error);
+    return res.status(500).send("Internal Server Error");
+  }
+});
+
+contentRouter.get("/", async (req: Request, res: Response) => {
+  const query = req.query;
+  const filter = query as unknown as IContentFilter;
+  try {
+    const contents = await getContents(filter);
+    return res.status(200).send(contents);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send("Internal Server Error");
+  }
+  res.send(filter);
 });

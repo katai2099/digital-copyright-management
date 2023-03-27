@@ -7,6 +7,13 @@ import { Contract } from "web3-eth-contract";
 import detectEthereumProvider from "@metamask/detect-provider";
 import { login } from "./auth";
 import { APP_STATE_KEY, WEB3_CONNECT_CACHED } from "../constant";
+import { getRequest } from "./clientRequest";
+
+export function getEtherPrice(): Promise<string> {
+  return getRequest<string>("/etherPrice")
+    .then((price) => Promise.resolve(price))
+    .catch((error) => Promise.reject(error));
+}
 
 export async function startLogin(dispatch: React.Dispatch<AnyAction>) {
   try {
@@ -38,6 +45,8 @@ export const connectMetamask = async (
 
   //TODO: after enter user credential, login does not update state
   //TODO: handle case when spamming login button HINT: check error throw
+
+  //TODO: handle case when user is on another network and try to login
 
   // console.log(accounts);
   const account = accounts[0];

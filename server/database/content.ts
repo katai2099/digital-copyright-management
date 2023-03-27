@@ -1,4 +1,5 @@
 import { Content, Prisma } from "@prisma/client";
+import { FilterType, IContentFilter } from "../models/common";
 import { ContentType, IContent } from "../models/content";
 import { prisma } from "./prisma";
 
@@ -25,7 +26,7 @@ export async function createContent(content: IContent): Promise<Content> {
   }
 }
 
-export async function getAllContentByContentType(
+export async function getContentsByContentType(
   contentType: ContentType
 ): Promise<Content[]> {
   try {
@@ -86,6 +87,65 @@ export async function getLatestContents(
     });
     return contents;
   } catch (error) {
+    throw new Error();
+  }
+}
+
+export async function getContentByhash(hash: string): Promise<Content> {
+  try {
+    const content = await prisma.content.findFirstOrThrow({
+      where: {
+        pHash: hash,
+      },
+    });
+    return content;
+  } catch (error) {
+    throw new Error();
+  }
+}
+
+function getFilterName(filter: FilterType): string {
+  if (filter === FilterType.HIGHEST || filter === FilterType.LOWEST) {
+    return "price";
+  }
+  return "publishDate";
+}
+
+export async function getContents(filter: IContentFilter): Promise<Content[]> {
+  try {
+    let contents: Content[] | PromiseLike<Content[]> = [];
+    if (
+      filter.sort === FilterType.LATEST ||
+      filter.sort === FilterType.OLDEST
+    ) {
+      const publishDateContents = await prisma.content.findMany({
+        where: {
+          contentType: filter.content,
+        },
+        orderBy: {
+          publishDate: filter.sort === FilterType.LATEST ? "desc" : "asc",
+        },
+        skip: filter.page * 20,
+        take: 20,
+      });
+      contents = publishDateContents;
+      console.log(publishDateContents);
+    } else {
+      const priceContents = await prisma.content.findMany({
+        where: {
+          contentType: filter.content,
+        },
+        orderBy: {
+          price: filter.sort === FilterType.HIGHEST ? "desc" : "asc",
+        },
+        skip: filter.page * 20,
+        take: 20,
+      });
+      contents = priceContents;
+    }
+    return contents;
+  } catch (error) {
+    console.log(error);
     throw new Error();
   }
 }

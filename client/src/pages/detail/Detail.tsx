@@ -1,8 +1,33 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import { Accordion } from "../../components/accordion/Accordion";
+import { IPFS_URL } from "../../constant";
+import { etherPriceActions } from "../../contexts/state";
+import { UseDcm } from "../../contexts/UseDcm";
+import { getContentByHash } from "../../controllers/content";
+import { getEtherPrice } from "../../controllers/web3";
+import { Content } from "../../model/Content";
 import "./detail.css";
 
 export const Detail = () => {
+  const { state, dispatch } = UseDcm();
+  const [content, setContent] = useState<Content>(new Content());
+  const { hash } = useParams();
+  console.log(hash);
+  useEffect(() => {
+    getEtherPrice()
+      .then((price) => {
+        dispatch({ type: etherPriceActions.create, data: price });
+      })
+      .then(() => getContentByHash(hash!))
+      .then((ct: Content) => {
+        setContent(ct);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [dispatch, hash]);
+
   return (
     <div className="home-wrapper">
       <div className="digital-content-wrapper">
@@ -10,15 +35,17 @@ export const Detail = () => {
           <div className="digital-content-image-wrapper">
             <img
               className="digital-content-image"
-              src="../../img/eth-diamond-purple-purple.png"
+              src={`${IPFS_URL}${content.IPFSAddress}`}
+              alt=""
             />
           </div>
         </div>
         <div className="right-block">
           <div className="item-info-block">
-            <div className="item-detail-title">TEST TEST TITLE</div>
+            <div className="item-detail-title">{content.title}</div>
             <div className="item-detail-owner">
-              Owned by <Link to="#">katai</Link>
+              Owned by{" "}
+              <Link to={`/profile/${content.ownerAddress}`}>katai</Link>
             </div>
             <div className="item-detail-price">Price</div>
             <div className="item-detail-price-wrapper">
@@ -32,12 +59,19 @@ export const Detail = () => {
                 </svg>
               </i>{" "}
               <div className="item-detail-price-ether">0.03</div>
-              <div className="item-detail-price-fiat">($12231)</div>
+              <div className="item-detail-price-fiat">{`($${content.price})`}</div>
             </div>
-            <button className="item-detail-button">Subscibe</button>
+            <button
+              className="item-detail-button"
+              onClick={() => {
+                console.log(content);
+              }}
+            >
+              Licensing
+            </button>
           </div>
         </div>
-        <hr style={{ width: "100%", margin: "10px 16px" }} />
+        <hr style={{ width: "100%", margin: "16px 16px" }} />
         <div className="left-block">
           <Accordion title="Description">
             <div></div>

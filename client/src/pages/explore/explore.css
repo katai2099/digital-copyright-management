@@ -14,6 +14,8 @@
 }
 
 .content-area {
+  height: 100%;
+  margin-bottom: 32px;
 }
 
 .filter-area {
@@ -41,7 +43,7 @@
 .content-lists-area {
   display: inline-block;
   width: calc(100% - 320px);
-  height: 20vh;
+  height: 100%;
   /* background-color: blue; */
 }
 

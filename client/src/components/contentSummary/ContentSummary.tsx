@@ -1,26 +1,28 @@
 import { Link } from "react-router-dom";
+import { IPFS_URL } from "../../constant";
+import { Content } from "../../model/Content";
 import { Card } from "../common/Card";
 import "./contentSummary.css";
 
-export const ContentSummary = () => {
+interface IContentSummaryProps {
+  content: Content;
+}
+
+export const ContentSummary = ({ content }: IContentSummaryProps) => {
   return (
     <Card>
-      <Link className="content-summary-item" to="/content">
+      <Link className="content-summary-item" to={`/content/${content.pHash}`}>
         <div className="content-image-wrapper">
           <img
             className="content-image"
-            src="../../img/eth-diamond-purple-purple.png"
-            // icons8-upload-100.png
-            // eth-diamond-purple.png
-            alt="content"
+            src={`${IPFS_URL}${content.IPFSAddress}`}
+            alt=""
           />
         </div>
         <div className="content-info-wrapper">
           <div className="content-info">
-            <Link to="/content" className="content-title">
-              Title
-            </Link>
-            <div className="content-hash">213123x87ads</div>
+            <div className="content-title">{content.title}</div>
+            <div className="content-hash">{content.pHash}</div>
           </div>
           <div className="content-price-wrapper">
             <i>
@@ -33,13 +35,13 @@ export const ContentSummary = () => {
               </svg>
             </i>{" "}
             <div className="ether">0.03</div>
-            <div className="fiat">(199$)</div>
+            <div className="fiat">{`($${content.price})`}</div>
           </div>
           <div className="content-owner">
             <p>
               Owned by{" "}
               <Link to="/profile" className="link">
-                katai
+                {content.ownerName}
               </Link>
             </p>
           </div>

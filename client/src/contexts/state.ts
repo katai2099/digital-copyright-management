@@ -7,6 +7,7 @@ import { IUser, User } from "../model/User";
 export interface DcmState {
   web3State: Web3State;
   user: IUser;
+  etherPrice: string;
 }
 
 export interface Web3State {
@@ -28,6 +29,7 @@ const initialWeb3State: Web3State = {
 export const initialState: DcmState = {
   web3State: initialWeb3State,
   user: new User(),
+  etherPrice: "",
 };
 
 const web3Actions = {
@@ -76,9 +78,25 @@ const userReducer = (state: IUser, action: AnyAction) => {
   }
 };
 
+export const etherPriceActions = {
+  create: "CREATE",
+};
+
+const etherPriceReducer = (state: string, action: AnyAction) => {
+  const { type, data } = action;
+  switch (type) {
+    case etherPriceActions.create: {
+      return data;
+    }
+    default:
+      return state;
+  }
+};
+
 const reducer = (state: DcmState, action: AnyAction) => ({
   web3State: web3Reducer(state.web3State, action),
   user: userReducer(state.user, action),
+  etherPrice: etherPriceReducer(state.etherPrice, action),
 });
 
 export { userActions, reducer, web3Actions };

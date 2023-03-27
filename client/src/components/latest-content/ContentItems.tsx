@@ -22,6 +22,7 @@ export const ContentItems = ({
       </div>
       {contents.map((content, idx) => (
         <ContentItem
+          key={columnNumber * 5 + idx + 1}
           idx={columnNumber * 5 + idx + 1}
           content={content}
         ></ContentItem>

@@ -24,6 +24,16 @@
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 36px;
+  line-height: 1;
+}
+
+.wallet-email {
+  margin-bottom: 12px;
+  padding: 0px 3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 16px;
+  color: #757575;
 }
 
 .wallet-detail-box {

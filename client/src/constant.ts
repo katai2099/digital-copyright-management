@@ -1,6 +1,8 @@
 import { ContentType } from "./model/Content";
 
 export const SERVER_URL = "http://127.0.0.1:8082";
+export const IPFS_URL = "https://ipfs.io/ipfs/";
+export const GOERLI_TEST_NET_URL = "https://goerli.etherscan.io/address/";
 export const AUTH_ROUTE = "/auth";
 export const USER_ROUTE = "/users";
 export const HASH_ROUTE = "/hash";

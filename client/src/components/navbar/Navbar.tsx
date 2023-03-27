@@ -101,7 +101,7 @@ export const Navbar = () => {
                 className="profile-area-button"
                 onClick={() => {
                   // profileClickHandler();
-                  navigate("/profile");
+                  navigate(`/profile/${state.user.walletAddress}`);
                 }}
               >
                 <i className="las la-photo-video profile-logo"></i>

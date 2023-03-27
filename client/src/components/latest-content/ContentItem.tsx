@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { IPFS_URL } from "../../constant";
 import { Content } from "../../model/Content";
 import "./contentItems.css";
 
@@ -9,13 +10,13 @@ interface IContentItemProps {
 
 export const ContentItem = ({ idx, content }: IContentItemProps) => {
   return (
-    <Link to="/content">
+    <Link to={`/content/${content.pHash}`}>
       <div className="content-item">
         <div className="item-index">{idx}</div>
         <div className="item-img-wrapper">
           <img
             className="item-img"
-            src={`https://ipfs.io/ipfs/${content.IPFSAddress}`}
+            src={`${IPFS_URL}${content.IPFSAddress}`}
             alt=""
           />
         </div>

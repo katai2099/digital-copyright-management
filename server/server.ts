@@ -65,7 +65,7 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Express typescript server");
 });
 
-app.get("/coin", (req: Request, res: Response) => {
+app.get("/etherPrice", (req: Request, res: Response) => {
   res.send(etherPrice);
 });
 

@@ -1,9 +1,42 @@
 import { CONTENT_ROUTE, SUBMIT_ROUTE } from "../constant";
 import { DcmState, Web3State } from "../contexts/state";
-import { ILatestContents, ISubmitResponse } from "../model/Common";
+import {
+  IContentFilter,
+  ILatestContents,
+  ISubmitResponse,
+  SortType,
+} from "../model/Common";
 import { Content, ContentType } from "../model/Content";
 import { getSolidityContentType } from "../utils";
 import { getRequest, postRequest } from "./clientRequest";
+
+export function getContents(
+  contentType: ContentType,
+  sort: SortType,
+  page: Number
+): Promise<Content[]> {
+  const filter = {
+    page: page,
+    content: contentType,
+    sort: sort,
+  } as IContentFilter;
+  console.log(filter);
+  return getContentsWorker(filter)
+    .then((contents) => Promise.resolve(contents))
+    .catch((error) => Promise.reject(error));
+}
+
+function getContentsWorker(filter: IContentFilter): Promise<Content[]> {
+  return getRequest<Content[]>(`${CONTENT_ROUTE}/`, filter)
+    .then((contents) => Promise.resolve(contents))
+    .catch((error) => Promise.reject(error));
+}
+
+export function getContentByHash(hash: string) {
+  return getRequest<Content>(`${CONTENT_ROUTE}/${hash}`)
+    .then((content) => Promise.resolve(content))
+    .catch((error) => Promise.reject(error));
+}
 
 export function getLatestContents() {
   return getRequest<ILatestContents>(`${CONTENT_ROUTE}/latestContents`)

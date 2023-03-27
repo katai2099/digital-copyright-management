@@ -1,8 +1,5 @@
 import { AxiosError } from "axios";
-import {
-  getAllContentByContentType,
-  getAudioByHash,
-} from "../database/content";
+import { getContentsByContentType, getAudioByHash } from "../database/content";
 import { ISubmitResponse, SubmitResponse } from "../models/common";
 import { Content, ContentType } from "../models/content";
 import { HashingError } from "../utils/Error";
@@ -19,7 +16,7 @@ const Hash = require("pure-ipfs-only-hash");
 export const submitImage = async (image: Buffer): Promise<SubmitResponse> => {
   try {
     const hash = await getImageHash(image);
-    const images = await getAllContentByContentType(ContentType.IMAGE);
+    const images = await getContentsByContentType(ContentType.IMAGE);
     console.log(images);
     for (const image of images) {
       if (
@@ -43,7 +40,7 @@ export const submitText = async (textFile: Buffer): Promise<SubmitResponse> => {
     const text = Buffer.from(textFile).toString();
     const hash = await getTextHash(text);
     console.log(hash);
-    const texts = await getAllContentByContentType(ContentType.TEXT);
+    const texts = await getContentsByContentType(ContentType.TEXT);
     console.log(hash);
     for (const text of texts) {
       if (

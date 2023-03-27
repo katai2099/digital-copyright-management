@@ -1,13 +1,50 @@
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect, useState } from "react";
 import { ContentSummary } from "../../components/contentSummary/ContentSummary";
 import { FilterArea } from "../../components/filterArea/filterArea";
 import { FilterBar } from "../../components/filterBar/FilterBar";
 import { contentFiltersWithIcon } from "../../constant";
-import { ContentType } from "../../model/Content";
+import { getContents } from "../../controllers/content";
+import { SortType } from "../../model/Common";
+import { Content, ContentType } from "../../model/Content";
 import "./explore.css";
 
 export const Explore = () => {
+  const [contents, setContents] = useState<Content[]>([]);
+  const [sort, setSort] = useState<SortType>(SortType.LATEST);
+  const [contentType, setContentType] = useState<ContentType>(
+    ContentType.IMAGE
+  );
+  const [page, setPage] = useState<number>(0);
+
+  const sortSelected = (sort: SortType) => {
+    console.log(sort);
+    setSort(sort);
+  };
+
+  const contentTypeSelected = (contentType: string) => {
+    console.log(contentType);
+    setContentType(contentType as ContentType);
+  };
+
+  useEffect(() => {
+    getContents(contentType, sort, page)
+      .then((newContents) => {
+        setContents(newContents);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [contentType, page, sort]);
+
+  document.addEventListener("scroll", () => {
+    if (window.innerHeight + window.pageYOffset >= document.body.offsetHeight) {
+      console.log("end of page");
+      setPage((prev) => prev + 1);
+    }
+  });
+
   return (
     <div className="home-wrapper">
       <div className="explore-header">
@@ -16,13 +53,11 @@ export const Explore = () => {
       <FilterBar
         options={contentFiltersWithIcon}
         inputName="content-filter"
-        onClicked={(value) => {
-          console.log(value as ContentType);
-        }}
+        onClicked={contentTypeSelected}
       />
       <div className="content-area">
         <div className="filter-area">
-          <FilterArea />
+          <FilterArea onSelected={sortSelected} />
           <div className="filter-separator" />
         </div>
         <div className="content-lists-area">
@@ -35,12 +70,9 @@ export const Explore = () => {
             <input className="explore-input" />
           </div>
           <div className="contents-grid">
-            <ContentSummary />
-            <ContentSummary />
-            <ContentSummary />
-            <ContentSummary />
-            <ContentSummary />
-            <ContentSummary />
+            {contents.map((content) => (
+              <ContentSummary key={content.Id} content={content} />
+            ))}
           </div>
         </div>
       </div>

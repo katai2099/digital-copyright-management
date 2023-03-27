@@ -1,6 +1,7 @@
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { ContentType } from "../../model/Content";
+import { SortType } from "../../model/Common";
+import { Content, ContentType } from "../../model/Content";
 import { ContentSummary } from "../contentSummary/ContentSummary";
 import { FilterArea } from "../filterArea/filterArea";
 
@@ -13,7 +14,11 @@ export const Contents = ({ contentType }: IContentTypeProps) => {
   return (
     <div className="row">
       <div className="col-sm-3">
-        <FilterArea />
+        <FilterArea
+          onSelected={function (sort: SortType): void {
+            throw new Error("Function not implemented.");
+          }}
+        />
         <div className="filter-separator" />
       </div>
       <div className="col-sm-9">
@@ -26,9 +31,9 @@ export const Contents = ({ contentType }: IContentTypeProps) => {
           <input className="explore-input" />
         </div>
         <div className="contents-grid">
-          <ContentSummary />
-          <ContentSummary />
-          <ContentSummary />
+          <ContentSummary content={new Content()} />
+          <ContentSummary content={new Content()} />
+          <ContentSummary content={new Content()} />
         </div>
       </div>
     </div>
