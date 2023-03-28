@@ -7,9 +7,10 @@ contract CopyrightManagement {
         AUDIO,
         TEXT
     }
-    enum ContentAction {
+    enum Action {
         CREATE,
-        UPDATE
+        UPDATE,
+        Licensing
     }
     struct Content {
         address ownerAddress;
@@ -24,19 +25,35 @@ contract CopyrightManagement {
         uint256 publishDate;
         ContentType contentType;
     }
-    event addContentEvent(Content _content, ContentAction _content_action);
-
+    struct Agreement {
+        uint256 id;
+        address licensee;
+        address licenser;
+        uint256 contentId;
+        string purposeOfUse;
+        uint256 timestamp;
+    }
+    event addContentEvent(Content _content, Action _action);
     event updateContentPriceEvent(
         address indexed _caller,
-        uint256 indexed _id,
-        uint256 _price,
-        ContentType _content_type,
-        ContentAction _content_action
+        uint256 indexed _contentId,
+        uint256 _lastPrice,
+        uint256 _currentPrice,
+        Action _action
+    );
+    event licensingEvent(
+        address _lisensee,
+        address _lisenser,
+        uint256 indexed _contentId,
+        Action _action
     );
 
     uint256 public contentCount;
+    uint256 public agreementCount;
 
     mapping(uint256 => Content) public contents;
+    mapping(uint256 => Agreement) public agreements;
+    mapping(address => uint256) public balances;
 
     function addContent(
         string memory _pHash,
@@ -63,23 +80,69 @@ contract CopyrightManagement {
         );
         contents[contentCount] = content;
         contentCount++;
-        emit addContentEvent(content, ContentAction.CREATE);
+        emit addContentEvent(content, Action.CREATE);
     }
 
     function updateContentData(
         uint256 _id,
         string memory _desc,
-        uint256 _price,
-        ContentType _contentType
+        uint256 _price
     ) public {
+        require(
+            msg.sender == contents[_id].ownerAddress,
+            "You are not the owner of the content"
+        );
+        uint256 lastPrice = contents[_id].price;
         contents[_id].desc = _desc;
         contents[_id].price = _price;
         emit updateContentPriceEvent(
             msg.sender,
             _id,
+            lastPrice,
             _price,
-            _contentType,
-            ContentAction.UPDATE
+            Action.UPDATE
         );
+    }
+
+    function licensingContent(
+        uint256 _id,
+        string memory _purposeOfUse
+    ) public payable {
+        Content memory content = contents[_id];
+        require(
+            msg.sender != content.ownerAddress,
+            "You are the owner.You are free to use your own content"
+        );
+        require(
+            msg.value >= content.price,
+            "Amount of Ether provided is less than content price"
+        );
+        balances[content.ownerAddress] += content.price;
+        if (msg.value > content.price) {
+            uint256 excess = msg.value - content.price;
+            payable(msg.sender).transfer(excess);
+        }
+        Agreement memory agreement = Agreement(
+            agreementCount,
+            msg.sender,
+            content.ownerAddress,
+            content.Id,
+            _purposeOfUse,
+            block.timestamp
+        );
+        agreements[agreementCount] = agreement;
+        agreementCount++;
+        emit licensingEvent(
+            msg.sender,
+            content.ownerAddress,
+            content.Id,
+            Action.Licensing
+        );
+    }
+
+    function withdraw() public payable {
+        uint refund = balances[msg.sender];
+        balances[msg.sender] = 0;
+        payable(msg.sender).transfer(refund);
     }
 }

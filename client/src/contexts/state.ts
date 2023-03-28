@@ -2,12 +2,13 @@ import { AnyAction } from "redux";
 import Web3 from "web3";
 import { Contract } from "web3-eth-contract";
 import { APP_STATE_KEY } from "../constant";
+import { IConversionRate } from "../model/Common";
 import { IUser, User } from "../model/User";
 
 export interface DcmState {
   web3State: Web3State;
   user: IUser;
-  etherPrice: string;
+  coinRate: IConversionRate;
 }
 
 export interface Web3State {
@@ -26,10 +27,15 @@ const initialWeb3State: Web3State = {
   contract: null,
 };
 
+export const initialConversionRate: IConversionRate = {
+  ETHToUSD: 0,
+  USDToETH: 0,
+};
+
 export const initialState: DcmState = {
   web3State: initialWeb3State,
   user: new User(),
-  etherPrice: "",
+  coinRate: initialConversionRate,
 };
 
 const web3Actions = {
@@ -78,14 +84,14 @@ const userReducer = (state: IUser, action: AnyAction) => {
   }
 };
 
-export const etherPriceActions = {
-  create: "CREATE",
+export const coinRateActions = {
+  set: "SET",
 };
 
-const etherPriceReducer = (state: string, action: AnyAction) => {
+const coinConversionReducer = (state: IConversionRate, action: AnyAction) => {
   const { type, data } = action;
   switch (type) {
-    case etherPriceActions.create: {
+    case coinRateActions.set: {
       return data;
     }
     default:
@@ -96,7 +102,7 @@ const etherPriceReducer = (state: string, action: AnyAction) => {
 const reducer = (state: DcmState, action: AnyAction) => ({
   web3State: web3Reducer(state.web3State, action),
   user: userReducer(state.user, action),
-  etherPrice: etherPriceReducer(state.etherPrice, action),
+  coinRate: coinConversionReducer(state.coinRate, action),
 });
 
 export { userActions, reducer, web3Actions };

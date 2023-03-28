@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { IPFS_URL } from "../../constant";
+import { UseDcm } from "../../contexts/UseDcm";
 import { Content } from "../../model/Content";
 import "./contentItems.css";
 
@@ -9,6 +10,7 @@ interface IContentItemProps {
 }
 
 export const ContentItem = ({ idx, content }: IContentItemProps) => {
+  const { state } = UseDcm();
   return (
     <Link to={`/content/${content.pHash}`}>
       <div className="content-item">
@@ -35,9 +37,11 @@ export const ContentItem = ({ idx, content }: IContentItemProps) => {
                 <path d="M311.9 260.8L160 353.6 8 260.8 160 0l151.9 260.8zM160 383.4L8 290.6 160 512l152-221.4-152 92.8z" />
               </svg>
             </i>{" "}
-            <div className="item-price-ether">0.03</div>
+            <div className="item-price-ether">{content.price}</div>
           </div>
-          <div className="item-price-fiat">{`(${content.price})$`}</div>
+          <div className="item-price-fiat">{`(${
+            content.price * state.coinRate.ETHToUSD
+          }$)`}</div>
         </div>
       </div>
     </Link>

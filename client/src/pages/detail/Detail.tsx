@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Accordion } from "../../components/accordion/Accordion";
 import { IPFS_URL } from "../../constant";
-import { etherPriceActions } from "../../contexts/state";
+import { coinRateActions } from "../../contexts/state";
 import { UseDcm } from "../../contexts/UseDcm";
 import { getContentByHash } from "../../controllers/content";
-import { getEtherPrice } from "../../controllers/web3";
+import { getCoinRate } from "../../controllers/web3";
 import { Content } from "../../model/Content";
 import "./detail.css";
 
@@ -15,9 +15,9 @@ export const Detail = () => {
   const { hash } = useParams();
   console.log(hash);
   useEffect(() => {
-    getEtherPrice()
-      .then((price) => {
-        dispatch({ type: etherPriceActions.create, data: price });
+    getCoinRate()
+      .then((rate) => {
+        dispatch({ type: coinRateActions.set, data: rate });
       })
       .then(() => getContentByHash(hash!))
       .then((ct: Content) => {

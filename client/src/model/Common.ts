@@ -1,5 +1,10 @@
 import { Content, ContentType } from "./Content";
 
+export interface IConversionRate {
+  USDToETH: number;
+  ETHToUSD: number;
+}
+
 export interface ILoginPostData {
   walletAddress: string;
 }

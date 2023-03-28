@@ -11,6 +11,11 @@ import { submitRouter } from "./routers/submit";
 import { userRouter } from "./routers/users";
 import { contentRouter } from "./routers/content";
 import axios from "axios";
+import {
+  CRYPTO_COMPARE_API_KEY,
+  CRYPTO_COMPARE_API_URL,
+  IConversionRate,
+} from "./models/common";
 export const client = create();
 var CronJob = require("cron").CronJob;
 
@@ -19,26 +24,42 @@ initWeb3();
 const app: Express = ExpressApp();
 const port = 8082;
 
-let etherPrice = 0;
+let ethToUsd = 0;
+let usdToEth = 0;
 
 async function getFirstEtherPrice() {
   const res = await axios.get(
-    "https://api.etherscan.io/api?module=stats&action=ethprice&apikey=9ZRCY23TJ6WFRBKDI9VFTHST4J7H89NFBY"
+    `${CRYPTO_COMPARE_API_URL}/data/price?fsym=ETH&tsyms=USD&apikey=${CRYPTO_COMPARE_API_KEY}`
   );
-  etherPrice = res.data.result.ethusd;
+  ethToUsd = res.data.USD;
   console.log("first ether price call");
-  console.log(etherPrice);
+  console.log(ethToUsd);
+}
+
+async function getFirstUsdtoEth() {
+  const res = await axios.get(
+    `${CRYPTO_COMPARE_API_URL}/data/price?fsym=USD&tsyms=ETH&apikey=${CRYPTO_COMPARE_API_KEY}`
+  );
+  usdToEth = res.data.ETH;
+  console.log("first usd price call");
+  console.log(usdToEth);
 }
 
 getFirstEtherPrice();
+getFirstUsdtoEth();
 
 var job = new CronJob("0 */5 * * * *", async function () {
   const date = new Date();
-  const res = await axios.get(
-    "https://api.etherscan.io/api?module=stats&action=ethprice&apikey=9ZRCY23TJ6WFRBKDI9VFTHST4J7H89NFBY"
+  const eth = await axios.get(
+    `${CRYPTO_COMPARE_API_URL}/data/price?fsym=ETH&tsyms=USD&apikey=${CRYPTO_COMPARE_API_KEY}`
   );
-  etherPrice = res.data.result.ethusd;
-  console.log(`${date.toString()} price: ${etherPrice}`);
+  const usd = await axios.get(
+    `${CRYPTO_COMPARE_API_URL}/data/price?fsym=USD&tsyms=ETH&apikey=${CRYPTO_COMPARE_API_KEY}`
+  );
+  ethToUsd = eth.data.USD;
+  usdToEth = usd.data.ETH;
+  console.log(`${date.toString()} 1eth : ${ethToUsd}$`);
+  console.log(`${date.toString()} 1$ : ${usdToEth}eth`);
 });
 
 job.start();
@@ -65,8 +86,9 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Express typescript server");
 });
 
-app.get("/etherPrice", (req: Request, res: Response) => {
-  res.send(etherPrice);
+app.get("/coinPrice", (req: Request, res: Response) => {
+  const rate = { ETHToUSD: ethToUsd, USDToETH: usdToEth } as IConversionRate;
+  res.send(rate);
 });
 
 app.listen(port, () => {

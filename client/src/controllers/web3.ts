@@ -8,9 +8,10 @@ import detectEthereumProvider from "@metamask/detect-provider";
 import { login } from "./auth";
 import { APP_STATE_KEY, WEB3_CONNECT_CACHED } from "../constant";
 import { getRequest } from "./clientRequest";
+import { IConversionRate } from "../model/Common";
 
-export function getEtherPrice(): Promise<string> {
-  return getRequest<string>("/etherPrice")
+export function getCoinRate(): Promise<IConversionRate> {
+  return getRequest<IConversionRate>("/coinPrice")
     .then((price) => Promise.resolve(price))
     .catch((error) => Promise.reject(error));
 }

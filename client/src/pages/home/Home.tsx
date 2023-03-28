@@ -3,8 +3,11 @@ import { Link } from "react-router-dom";
 import { ContentItems } from "../../components/latest-content/ContentItems";
 import { RadioOption } from "../../components/option/RadioOption";
 import { ContentFilter, contentFilters } from "../../constant";
+import { coinRateActions, initialConversionRate } from "../../contexts/state";
+import { UseDcm } from "../../contexts/UseDcm";
 import { getLatestContents } from "../../controllers/content";
-import { ILatestContents } from "../../model/Common";
+import { getCoinRate } from "../../controllers/web3";
+import { IConversionRate, ILatestContents } from "../../model/Common";
 import { Content } from "../../model/Content";
 import "./home.css";
 
@@ -15,9 +18,16 @@ export const Home = () => {
     audio: [],
     texts: [],
   });
+  const { dispatch } = UseDcm();
   const [filter, setFilter] = useState<ContentFilter>(ContentFilter.ALL);
   useEffect(() => {
-    getLatestContents()
+    getCoinRate()
+      .then((rate) => {
+        dispatch({ type: coinRateActions.set, data: rate });
+      })
+      .then(() => {
+        return getLatestContents();
+      })
       .then((latestContents) => {
         setLatestContents(latestContents);
         console.log(latestContents);
