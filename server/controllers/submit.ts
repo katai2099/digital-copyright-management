@@ -1,7 +1,7 @@
 import { AxiosError } from "axios";
 import { getContentsByContentType, getAudioByHash } from "../database/content";
 import { ISubmitResponse, SubmitResponse } from "../models/common";
-import { Content, ContentType } from "../models/content";
+import { Content, ContentType } from "../models/Content";
 import { HashingError } from "../utils/Error";
 import {
   isSimilarHammingDistance,
@@ -19,15 +19,15 @@ export const submitImage = async (image: Buffer): Promise<SubmitResponse> => {
     const images = await getContentsByContentType(ContentType.IMAGE);
     console.log(images);
     for (const image of images) {
-      if (
-        image.pHash == hash ||
-        isSimilarHammingDistance(hexToBin(image.pHash), hexToBin(hash))
-      ) {
-        throw new Error("Image already existed");
-      }
+      // if (
+      //   image.pHash == hash ||
+      //   isSimilarHammingDistance(hexToBin(image.pHash), hexToBin(hash))
+      // ) {
+      //   throw new Error("Image already existed");
+      // }
     }
-    const cid = await uploadFileToIPFS(image);
-    // const cid = await Hash.of(image);
+    // const cid = await uploadFileToIPFS(image);
+    const cid = await Hash.of(image);
     return { hash: hash, cid: cid } as ISubmitResponse;
   } catch (err) {
     console.log(err);

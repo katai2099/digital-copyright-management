@@ -86,8 +86,8 @@ header {
 }
 
 .input-label {
-  text-align: left;
-  margin-bottom: 4px;
+  /* text-align: left; */
+  /* margin-bottom: px; */
 }
 
 .input-price {

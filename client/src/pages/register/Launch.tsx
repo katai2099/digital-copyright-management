@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RadioOption } from "../../components/option/RadioOption";
 import { ContentTypes } from "../../constant";
+import { coinRateActions } from "../../contexts/state";
 import { UseDcm } from "../../contexts/UseDcm";
 import { submitDigitalContent } from "../../controllers/content";
+import { getCoinRate } from "../../controllers/web3";
 import { Content, ContentType } from "../../model/Content";
 import "./launch.css";
 
@@ -13,10 +15,18 @@ export const Launch = () => {
   //TODO: automatically convert usd to ether
 
   //TODO: cache pending content so that user wont be able to submit new content
-  const { state } = UseDcm();
+
+  const { state, dispatch } = UseDcm();
   const [selectedFile, setSelectedFile] = useState<File>();
   const [content, setContent] = useState<Content>(new Content());
   const [fileType, setFileType] = useState<ContentType>(ContentType.IMAGE);
+
+  useEffect(() => {
+    getCoinRate().then((rate) => {
+      dispatch({ type: coinRateActions.set, data: rate });
+    });
+  }, [dispatch]);
+
   const fileChangeHandler = () => {
     document.getElementById("uploadFile")!.click();
   };
@@ -29,11 +39,28 @@ export const Launch = () => {
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
     event.preventDefault();
-    submitDigitalContent(selectedFile!, content, state, fileType);
+    submitDigitalContent(selectedFile!, content, state, fileType)
+      .then((res) => {
+        alert("Content Register Successfully");
+        console.log(res);
+      })
+      .catch((error) => {
+        alert("Content Register Failed");
+        console.log(error);
+      });
+    // state.web3State.contract?.methods
+    //   .updateContentData(1, "test", 343)
+    //   .send({ from: state.web3State.account });
+    console.log("click");
+    console.log(state.web3State.account);
+
+    // state.web3State.contract?.methods
+    //   .licensingContent(1, "purpose rich")
+    //   .send({ from: state.web3State.account, value: 1000 });
   };
 
   const fileTypeChangeHandler = (type: string) => {
-    console.log(type);
+    console.log(state.user);
     const contentType = type as ContentType;
     if (contentType !== fileType) {
       setFileType(contentType);
@@ -42,6 +69,8 @@ export const Launch = () => {
   };
 
   const acceptFileType = getAcceptFileType(fileType);
+
+  const priceInEther = content.price * state.coinRate.USDToETH;
 
   return (
     <div className="home-wrapper">
@@ -63,11 +92,11 @@ export const Launch = () => {
             <label className="input-label">Owner</label>
             <input
               type="text"
-              defaultValue={`${state.user.firstname} ${state.user.lastname}`}
+              value={`${state.user.firstname} ${state.user.lastname}`}
               disabled
             />
             <label className="input-label">Email</label>
-            <input type="email" defaultValue={state.user.email} disabled />
+            <input type="email" value={state.user.email} disabled />
             <label className="input-label">Description</label>
             <textarea
               onBlur={(event) => {
@@ -77,7 +106,7 @@ export const Launch = () => {
             <div className="price-wrapper">
               <div className="price col-sm-4">
                 <label className="input-label">Price</label>
-                <div>1 $ = 0.0.32 eth </div>
+                <div>1$ &asymp; {` ${state.coinRate.USDToETH}`}</div>
               </div>
               <input
                 className="col-sm-4"
@@ -85,12 +114,15 @@ export const Launch = () => {
                   console.log("test");
                   setContent({
                     ...content,
-                    price: parseInt(event.currentTarget.value),
+                    price: Number(event.currentTarget.value),
                   });
                 }}
               />
             </div>
-
+            <div>
+              <div>Price in Ether</div>
+              <input value={priceInEther} />
+            </div>
             <button
               className="submit-button"
               onClick={submitButtonClickHandler}
@@ -120,6 +152,10 @@ export const Launch = () => {
                 src={
                   selectedFile == null
                     ? "./img/icons8-upload-100.png"
+                    : fileType === ContentType.AUDIO
+                    ? "./img/mp3.png"
+                    : fileType === ContentType.TEXT
+                    ? "./img/txt.png"
                     : URL.createObjectURL(selectedFile)
                 }
                 id="displayContent"

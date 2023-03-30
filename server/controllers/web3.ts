@@ -1,8 +1,9 @@
-import { writeFile } from "fs";
 import Web3 from "web3";
 import { Contract, EventData } from "web3-eth-contract";
 import { createContent } from "../database/content";
-import { logToContent } from "../utils/utils";
+import { createEvent } from "../database/event";
+import { Event, EventType } from "../models/Event";
+import { createEventLogToContent } from "../utils/utils";
 
 const copyrightManagementArtifact = require("../../client/src/contracts/CopyrightManagement.json");
 
@@ -19,7 +20,43 @@ export async function initWeb3() {
       console.log(subscriptionId);
     })
     .on("data", function (event: EventData) {
-      handleCreateEvent(event.returnValues);
+      //transactionHash
+      //from => _caller
+      //content => _content
+      //eventType => _action
+      handleCreateEvent(event.returnValues).then(() => {
+        addContentEventHandler(event.transactionHash, event.returnValues);
+      });
+      console.log(event);
+    })
+    .on("error", function (error: any, receipt: any) {
+      console.log(error);
+      console.log(receipt);
+    });
+  contract.events
+    .updateContentEvent()
+    .on("data", function (event: EventData) {
+      //transactionHash
+      //from => _caller
+      //contentId => _contentId
+      //lastPrice => _lastPrice
+      //eventType => _action
+      updateContentEventHandler(event.transactionHash, event.returnValues);
+      console.log(event);
+    })
+    .on("error", function (error: any, receipt: any) {
+      console.log(error);
+      console.log(receipt);
+    });
+  contract.events
+    .licensingEvent()
+    .on("data", function (event: EventData) {
+      //transactionHash
+      //from => _licensee
+      //to => _licenser
+      //contentId => _contentId
+      licensingEventHandler(event.transactionHash, event.returnValues);
+      console.log(event);
     })
     .on("error", function (error: any, receipt: any) {
       console.log(error);
@@ -28,8 +65,68 @@ export async function initWeb3() {
 }
 
 function handleCreateEvent(eventReturnValues: any) {
-  const content = logToContent(eventReturnValues._content);
-  createContent(content);
+  const content = createEventLogToContent(eventReturnValues._content);
+  return createContent(content);
+}
+
+function addContentEventHandler(
+  transactionHash: string,
+  eventReturnValues: any
+) {
+  const content = createEventLogToContent(eventReturnValues._content);
+  //transactionHash
+  //from => _caller
+  //content => _content
+  //eventType => _action
+  console.log(eventReturnValues._caller);
+  const event = new Event(
+    transactionHash,
+    content.id,
+    EventType.CREATE,
+    eventReturnValues._caller
+  );
+  createEvent(event);
+}
+
+function updateContentEventHandler(
+  transactionHash: string,
+  eventReturnValues: any
+) {
+  //transactionHash
+  //from => _caller
+  //contentId => _contentId
+  //lastPrice => _lastPrice
+  //price => _currentPrice
+  //eventType => _action
+  const event = new Event(
+    transactionHash,
+    parseInt(eventReturnValues._contentId),
+    EventType.UPDATED,
+    eventReturnValues._caller,
+    parseInt(eventReturnValues._currentPrice),
+    parseInt(eventReturnValues._lastPrice)
+  );
+  createEvent(event);
+}
+
+function licensingEventHandler(
+  transactionHash: string,
+  eventReturnValues: any
+) {
+  //transactionHash
+  //from => _licensee
+  //to => _licenser
+  //contentId => _contentId
+  const event = new Event(
+    transactionHash,
+    parseInt(eventReturnValues._contentId),
+    EventType.LICENSING,
+    eventReturnValues._licensee,
+    0,
+    0,
+    eventReturnValues._licenser
+  );
+  createEvent(event);
 }
 
 const web3 = new Web3(Web3.givenProvider || "ws://localhost:7545");

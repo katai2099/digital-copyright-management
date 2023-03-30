@@ -17,33 +17,50 @@ export const Explore = () => {
     ContentType.IMAGE
   );
   const [page, setPage] = useState<number>(0);
+  const [endOfPage, setEndOfPage] = useState<boolean>(false);
+  const [noContent, setNoContent] = useState<boolean>(false);
 
   const sortSelected = (sort: SortType) => {
     console.log(sort);
+    setEndOfPage(false);
+    setPage(0);
+    setNoContent(false);
     setSort(sort);
   };
 
   const contentTypeSelected = (contentType: string) => {
     console.log(contentType);
+    setEndOfPage(false);
+    setPage(0);
+    setNoContent(false);
     setContentType(contentType as ContentType);
+  };
+
+  const pageChangeHandler = () => {
+    setPage((oldValue) => oldValue + 1);
+    console.log(contents);
   };
 
   useEffect(() => {
     getContents(contentType, sort, page)
       .then((newContents) => {
-        setContents(newContents);
+        // newContents = [];
+        if (page === 0 && newContents.length === 0) {
+          setNoContent(true);
+        }
+        if (page !== 0) {
+          setContents((prevContents) => [...prevContents, ...newContents]);
+        } else {
+          setContents(newContents);
+        }
+        if (page !== 0 && newContents.length === 0) {
+          setEndOfPage(true);
+        }
       })
       .catch((error) => {
         console.log(error);
       });
   }, [contentType, page, sort]);
-
-  document.addEventListener("scroll", () => {
-    if (window.innerHeight + window.pageYOffset >= document.body.offsetHeight) {
-      console.log("end of page");
-      setPage((prev) => prev + 1);
-    }
-  });
 
   return (
     <div className="home-wrapper">
@@ -67,13 +84,34 @@ export const Explore = () => {
                 <FontAwesomeIcon icon={faSearch} />
               </i>
             </div>
-            <input className="explore-input" />
+            <input className="explore-input" disabled={noContent} />
           </div>
           <div className="contents-grid">
             {contents.map((content) => (
-              <ContentSummary key={content.Id} content={content} />
+              <ContentSummary key={content.id} content={content} />
             ))}
           </div>
+          {noContent ? (
+            <div className="no-contents">No contents</div>
+          ) : (
+            <div>
+              <div className="btn-load-more-wrapper">
+                {!endOfPage && (
+                  <button
+                    className="btn-explore btn-load-more"
+                    onClick={pageChangeHandler}
+                  >
+                    Load more contents
+                  </button>
+                )}
+              </div>
+              {endOfPage && (
+                <div className="end-of-contents-text">
+                  Looks like you reach the end of contents
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

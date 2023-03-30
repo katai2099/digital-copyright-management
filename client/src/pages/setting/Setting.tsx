@@ -10,6 +10,7 @@ export const Setting = () => {
   const { state, dispatch } = UseDcm();
   const [user, setUser] = useState<IUser>(state.user);
   useEffect(() => {
+    console.log(state.user);
     setUser(state.user);
   }, [state.user]);
   const saveChangeButtonHandler = () => {
@@ -22,6 +23,7 @@ export const Setting = () => {
         console.log("TRY NA CATCH ERROR ");
       });
   };
+
   return (
     <div className="home-wrapper">
       <div className="setting-wrapper row">
@@ -34,7 +36,14 @@ export const Setting = () => {
             </div>
             <div className="setting-option">
               <i className="lar la-eye"></i>
-              <div className="setting-option-title">View Profile</div>
+              <div
+                className="setting-option-title"
+                onClick={() => {
+                  console.log(state.user);
+                }}
+              >
+                View Profile
+              </div>
             </div>
           </div>
         </div>

@@ -1,12 +1,3 @@
-.dcm-card a:hover {
-  /* color: #222; */
-  color: #757575;
-}
-
-.dcm-card a {
-  color: #757575;
-}
-
 .content-summary-item {
   max-width: 100%;
   display: inline-block;
@@ -14,6 +5,13 @@
   /* border-radius: 16px; */
   /* padding: 8px; */
   overflow: hidden;
+  color: #757575;
+}
+
+.content-summary-item:link,
+.content-summary-item:visited,
+.content-summary-item:hover {
+  color: #757575 !important;
 }
 
 .content-image-wrapper {
@@ -42,6 +40,7 @@
 }
 
 .content-title {
+  color: #222;
   font-weight: 500;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -80,6 +79,7 @@
 
 .content-owner {
   border-top: 0.5px solid #666;
+  z-index: 999;
 }
 
 .content-owner p {
@@ -97,8 +97,7 @@
   color: #222;
 }
 
-.content-owner a:hover,
-.content-info a:hover {
+.content-owner a:hover {
   color: #0e68fa;
   text-decoration: none;
   transition: 0.4s all;

@@ -15,7 +15,7 @@ export function updateUser(user: IUser): Promise<IUser> {
 }
 
 function updateUserWorker(user: IUser): Promise<IUser> {
-  return putRequest<IUser>(`${USER_ROUTE}/${user.id}`, user)
+  return putRequest<IUser>(`${USER_ROUTE}/${user.walletAddress}`, user)
     .then((user) => Promise.resolve(user))
     .catch((error) => Promise.reject(error));
 }

@@ -1,13 +1,14 @@
 import axios from "axios";
-import { Request, Response, Router } from "express";
+import { NextFunction, Request, Response, Router } from "express";
 import {
   getContentByhash,
   getContents,
+  getContentsByWalletAddress,
   getLatestContents,
 } from "../database/content";
-import { IContentFilter, ILatestContents } from "../models/common";
-import { Content, ContentType } from "../models/content";
-import { convert } from "../utils/utils";
+import { ILatestContents } from "../models/common";
+import { Content, ContentType, IContentFilter } from "../models/Content";
+import { convert, toJSON } from "../utils/utils";
 export const contentRouter = Router();
 
 contentRouter.get("/latestContents", async (req: Request, res: Response) => {
@@ -31,6 +32,33 @@ contentRouter.get("/latestContents", async (req: Request, res: Response) => {
   }
 });
 
+contentRouter.get(
+  "/user/:walletAddress/",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const params = req.params;
+    const query = req.query;
+    const filter = query as unknown as IContentFilter;
+
+    if (!params || params.walletAddress.length === 0) {
+      return res.status(400).send("BAD REQUEST");
+    }
+    if (JSON.stringify(query) === "{}") {
+      return next();
+    }
+    console.log(query);
+    try {
+      const contents = await getContentsByWalletAddress(
+        params.walletAddress,
+        filter
+      );
+      return res.status(200).send(contents);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send("Internal Server Error");
+    }
+  }
+);
+
 contentRouter.get("/:hash", async (req: Request, res: Response) => {
   const { hash } = req.params;
   if (!hash) {
@@ -38,23 +66,21 @@ contentRouter.get("/:hash", async (req: Request, res: Response) => {
   }
   try {
     const content = await getContentByhash(hash);
-    return res.status(200).send(content);
+    return res.status(200).send(toJSON(content));
   } catch (error) {
     //TODO: handle case where database row is not found
     console.log(error);
     return res.status(500).send("Internal Server Error");
   }
 });
-
 contentRouter.get("/", async (req: Request, res: Response) => {
   const query = req.query;
   const filter = query as unknown as IContentFilter;
   try {
     const contents = await getContents(filter);
-    return res.status(200).send(contents);
+    return res.status(200).send(toJSON(contents));
   } catch (error) {
     console.log(error);
     return res.status(500).send("Internal Server Error");
   }
-  res.send(filter);
 });

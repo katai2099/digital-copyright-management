@@ -86,3 +86,22 @@
   grid-template-columns: repeat(auto-fill, minMax(30%, 1fr));
   gap: 6px;
 }
+
+.no-contents {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 36px;
+}
+
+.btn-load-more-wrapper {
+  width: 100%;
+  margin: 16px auto;
+  text-align: center;
+}
+
+.end-of-contents-text {
+  margin-top: 16px;
+  font-size: 20px;
+  font-weight: 300;
+  text-align: center;
+}

@@ -44,6 +44,12 @@ export function getLatestContents() {
     .catch((err) => Promise.reject(err));
 }
 
+export function updateContentPrice(
+  content: Content,
+  newPrice: number,
+  state: DcmState
+) {}
+
 export function submitDigitalContent(
   file: File,
   content: Content,
@@ -54,9 +60,7 @@ export function submitDigitalContent(
   // upload to blockchain
   const web3 = state.web3State;
   content.contentType = contentType;
-  content.ownerName = `${state.user.firstname} ${state.user.lastname}`;
-  content.ownerEmail = state.user.email;
-  Promise.resolve()
+  return Promise.resolve()
     .then(() => {
       if (contentType === ContentType.IMAGE) {
         return submitImage(file, content, web3);
@@ -73,19 +77,24 @@ export function submitDigitalContent(
           content.pHash,
           content.IPFSAddress,
           content.title,
-          content.ownerName,
-          content.ownerEmail,
+          `${state.user.firstname} ${state.user.lastname}`,
+          state.user.email,
           content.desc,
-          content.price,
+          state.web3State.web3?.utils.toWei(
+            (content.price * state.coinRate.USDToETH).toString()
+          ),
           getSolidityContentType(content.contentType)
         )
         .send({ from: web3.account });
     })
     .then((res) => {
       console.log(res);
+      return Promise.resolve(res);
     })
     .catch((error) => {
       console.log(error);
+
+      return Promise.reject(error);
     });
 }
 

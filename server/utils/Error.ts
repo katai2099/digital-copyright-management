@@ -4,7 +4,7 @@ import {
   PrismaClientUnknownRequestError,
   PrismaClientValidationError,
 } from "@prisma/client/runtime/library";
-import { Content } from "../models/content";
+import { Content } from "../models/Content";
 
 export class HashingError extends Error {
   content: Content;

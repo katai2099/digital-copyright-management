@@ -1,3 +1,6 @@
+import { BaseEvent } from "./Event";
+import { User } from "./User";
+
 export enum ContentType {
   IMAGE = "Image",
   AUDIO = "Audio",
@@ -10,32 +13,56 @@ export enum SolidityContentType {
   TEXT = 2,
 }
 
-interface IContent {
+interface IBaseContent {
+  id: number;
   ownerAddress: string;
-  Id: number;
   pHash: string;
   IPFSAddress: string;
   title: string;
-  ownerName: string;
-  ownerEmail: string;
   desc: string;
   price: number;
   publishDate: string;
   contentType: ContentType;
 }
 
-export class Content implements IContent {
+export class BaseContent implements IBaseContent {
   constructor(
+    public id = 0,
     public ownerAddress = "",
-    public Id = 0,
     public pHash = "",
     public IPFSAddress = "",
     public title = "",
-    public ownerName = "",
-    public ownerEmail = "",
     public desc = "",
     public price = 0,
     public publishDate = "",
     public contentType = ContentType.IMAGE
+  ) {}
+}
+
+interface IContent {
+  id: number;
+  owner: User;
+  pHash: string;
+  IPFSAddress: string;
+  title: string;
+  desc: string;
+  price: number;
+  publishDate: string;
+  contentType: ContentType;
+  event: BaseEvent;
+}
+
+export class Content implements IContent {
+  constructor(
+    public id = 0,
+    public owner = new User(),
+    public pHash = "",
+    public IPFSAddress = "",
+    public title = "",
+    public desc = "",
+    public price = 0,
+    public publishDate = "",
+    public contentType = ContentType.IMAGE,
+    public event = new BaseEvent()
   ) {}
 }

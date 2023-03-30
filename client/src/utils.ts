@@ -1,4 +1,5 @@
-import { ContentType, SolidityContentType } from "./model/Content";
+import { IPFS_URL } from "./constant";
+import { Content, ContentType, SolidityContentType } from "./model/Content";
 
 export function clone<T = any>(whatToClone: T): T {
   return JSON.parse(JSON.stringify(whatToClone));
@@ -115,4 +116,13 @@ export function hexToBin(hexString: string): string {
 
 export const toJSON = (data: any) => {
   return JSON.parse(data);
+};
+
+export const getImageSrc = (content: Content): string => {
+  if (content.contentType === ContentType.IMAGE) {
+    return `${IPFS_URL}${content.IPFSAddress}`;
+  } else if (content.contentType === ContentType.AUDIO) {
+    return "../../img/mp3.png";
+  }
+  return "../../img/txt.png";
 };

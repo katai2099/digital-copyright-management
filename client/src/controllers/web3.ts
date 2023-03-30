@@ -19,6 +19,7 @@ export function getCoinRate(): Promise<IConversionRate> {
 export async function startLogin(dispatch: React.Dispatch<AnyAction>) {
   try {
     const walletAddress = await connectMetamask(dispatch);
+    console.log("start login wallet " + walletAddress);
     const user = await login({ walletAddress });
     console.log(user);
     return user;
@@ -61,6 +62,8 @@ export const connectMetamask = async (
   try {
     address = artifact.networks[networkId].address;
     contract = new web3.eth.Contract(contractAbi, address);
+    //TODO:check why state does not update
+    console.log(account);
     dispatch({
       type: web3Actions.init,
       data: { artifact, web3, account, networkId, contract },

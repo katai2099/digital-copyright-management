@@ -1,6 +1,8 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { IPFS_URL } from "../../constant";
+import { UseDcm } from "../../contexts/UseDcm";
 import { Content } from "../../model/Content";
+import { getImageSrc } from "../../utils";
 import { Card } from "../common/Card";
 import "./contentSummary.css";
 
@@ -9,15 +11,24 @@ interface IContentSummaryProps {
 }
 
 export const ContentSummary = ({ content }: IContentSummaryProps) => {
+  const { state } = UseDcm();
+
+  const price = state.web3State.web3?.utils.fromWei(
+    content.price.toString(),
+    "ether"
+  );
+
+  const navigate = useNavigate();
+
+  const summaryClickHandler = () => {
+    navigate(`/content/${content.pHash}`);
+  };
+
   return (
     <Card>
       <Link className="content-summary-item" to={`/content/${content.pHash}`}>
         <div className="content-image-wrapper">
-          <img
-            className="content-image"
-            src={`${IPFS_URL}${content.IPFSAddress}`}
-            alt=""
-          />
+          <img className="content-image" src={getImageSrc(content)} alt="" />
         </div>
         <div className="content-info-wrapper">
           <div className="content-info">
@@ -34,14 +45,16 @@ export const ContentSummary = ({ content }: IContentSummaryProps) => {
                 <path d="M311.9 260.8L160 353.6 8 260.8 160 0l151.9 260.8zM160 383.4L8 290.6 160 512l152-221.4-152 92.8z" />
               </svg>
             </i>{" "}
-            <div className="ether">0.03</div>
-            <div className="fiat">{`($${content.price})`}</div>
+            <div className="ether">{price}</div>
+            <div className="fiat">{`(${(
+              Number(price) * state.coinRate.ETHToUSD
+            ).toFixed(2)}$)`}</div>
           </div>
           <div className="content-owner">
             <p>
               Owned by{" "}
               <Link to="/profile" className="link">
-                {content.ownerName}
+                {content.owner.firstname + " " + content.owner.lastname}
               </Link>
             </p>
           </div>

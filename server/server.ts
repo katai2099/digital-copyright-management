@@ -16,6 +16,7 @@ import {
   CRYPTO_COMPARE_API_URL,
   IConversionRate,
 } from "./models/common";
+import { eventRouter } from "./routers/event";
 export const client = create();
 var CronJob = require("cron").CronJob;
 
@@ -24,8 +25,8 @@ initWeb3();
 const app: Express = ExpressApp();
 const port = 8082;
 
-let ethToUsd = 0;
-let usdToEth = 0;
+let ethToUsd = 1749;
+let usdToEth = 0.0054;
 
 async function getFirstEtherPrice() {
   const res = await axios.get(
@@ -82,6 +83,7 @@ app.use("/auth", authRouter);
 app.use("/web3", nodeRouter);
 app.use("/contents", contentRouter);
 app.use("/submit", submitRouter);
+app.use("/events", eventRouter);
 app.get("/", (req: Request, res: Response) => {
   res.send("Express typescript server");
 });

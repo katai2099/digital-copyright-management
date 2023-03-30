@@ -36,12 +36,21 @@
   padding: 10% 0;
 }
 
+.content-control-area {
+  display: flex;
+  justify-content: space-between;
+}
+
 .item-detail-title {
   font-size: 48px;
   line-height: 1;
   color: #212121;
   font-weight: 500;
   margin-bottom: 8px;
+}
+
+.btn-edit {
+  margin-right: 8px;
 }
 
 .item-detail-owner {
@@ -120,4 +129,8 @@
   width: 100%;
   height: 100px;
   background-color: blueviolet;
+}
+
+.activity-wrapper {
+  padding: 32px 16px;
 }

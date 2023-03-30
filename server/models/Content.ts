@@ -1,3 +1,5 @@
+import { FilterType } from "./common";
+
 export enum SolidityContentType {
   IMAGE = 0,
   AUDIO = 1,
@@ -11,28 +13,31 @@ export enum ContentType {
 }
 
 export interface IContent {
+  id: number;
   ownerAddress: string;
-  Id: number;
   pHash: string;
   IPFSAddress: string;
   title: string;
-  ownerName: string;
-  ownerEmail: string;
   desc: string;
   price: number;
   publishDate: string;
   contentType: ContentType;
 }
 
+export interface IContentFilter {
+  page: number;
+  content: ContentType;
+  sort: FilterType;
+  q: string;
+}
+
 export class Content implements IContent {
   constructor(
+    public id = 0,
     public ownerAddress = "",
-    public Id = 0,
     public pHash = "",
     public IPFSAddress = "",
     public title = "",
-    public ownerName = "",
-    public ownerEmail = "",
     public desc = "",
     public price = 0,
     public publishDate = "",

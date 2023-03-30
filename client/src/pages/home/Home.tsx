@@ -8,7 +8,7 @@ import { UseDcm } from "../../contexts/UseDcm";
 import { getLatestContents } from "../../controllers/content";
 import { getCoinRate } from "../../controllers/web3";
 import { IConversionRate, ILatestContents } from "../../model/Common";
-import { Content } from "../../model/Content";
+import { Content, ContentType } from "../../model/Content";
 import "./home.css";
 
 export const Home = () => {
@@ -35,14 +35,22 @@ export const Home = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [dispatch]);
 
   const setSelectFilter = (filter: string) => {
     setFilter(filter as ContentFilter);
   };
 
   const contents = getFilteredContents(filter, latestContents);
-
+  const images = latestContents.all.filter(
+    (entry) => entry.contentType === ContentType.IMAGE
+  );
+  const audio = latestContents.all.filter(
+    (entry) => entry.contentType === ContentType.AUDIO
+  );
+  const texts = latestContents.all.filter(
+    (entry) => entry.contentType === ContentType.TEXT
+  );
   return (
     <div className="home-wrapper">
       <div className="hero-box">
@@ -70,17 +78,23 @@ export const Home = () => {
       <div className="latest-contents">
         <ContentItems
           title={filter === ContentFilter.ALL ? ContentFilter.IMG : filter}
-          contents={contents.slice(0, 5)}
+          contents={
+            filter === ContentFilter.ALL ? images : contents.slice(0, 5)
+          }
           columnNumber={0}
         />
         <ContentItems
           title={filter === ContentFilter.ALL ? ContentFilter.AUDIO : filter}
-          contents={contents.slice(5, 10)}
+          contents={
+            filter === ContentFilter.ALL ? audio : contents.slice(5, 10)
+          }
           columnNumber={1}
         />
         <ContentItems
           title={filter === ContentFilter.ALL ? ContentFilter.TEXT : filter}
-          contents={contents.slice(10, 15)}
+          contents={
+            filter === ContentFilter.ALL ? texts : contents.slice(10, 15)
+          }
           columnNumber={2}
         />
       </div>

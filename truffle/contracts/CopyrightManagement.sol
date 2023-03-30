@@ -7,11 +7,6 @@ contract CopyrightManagement {
         AUDIO,
         TEXT
     }
-    enum Action {
-        CREATE,
-        UPDATE,
-        Licensing
-    }
     struct Content {
         address ownerAddress;
         uint256 Id;
@@ -33,19 +28,23 @@ contract CopyrightManagement {
         string purposeOfUse;
         uint256 timestamp;
     }
-    event addContentEvent(Content _content, Action _action);
-    event updateContentPriceEvent(
+    event addContentEvent(
+        address indexed _caller,
+        Content _content,
+        uint256 timestamp
+    );
+    event updateContentEvent(
         address indexed _caller,
         uint256 indexed _contentId,
         uint256 _lastPrice,
         uint256 _currentPrice,
-        Action _action
+        uint256 timestamp
     );
     event licensingEvent(
-        address _lisensee,
-        address _lisenser,
+        address _licensee,
+        address _licenser,
         uint256 indexed _contentId,
-        Action _action
+        uint256 timestamp
     );
 
     uint256 public contentCount;
@@ -80,27 +79,22 @@ contract CopyrightManagement {
         );
         contents[contentCount] = content;
         contentCount++;
-        emit addContentEvent(content, Action.CREATE);
+        emit addContentEvent(msg.sender, content, block.timestamp);
     }
 
-    function updateContentData(
-        uint256 _id,
-        string memory _desc,
-        uint256 _price
-    ) public {
+    function updateContentData(uint256 _id, uint256 _price) public {
         require(
             msg.sender == contents[_id].ownerAddress,
             "You are not the owner of the content"
         );
         uint256 lastPrice = contents[_id].price;
-        contents[_id].desc = _desc;
         contents[_id].price = _price;
-        emit updateContentPriceEvent(
+        emit updateContentEvent(
             msg.sender,
             _id,
             lastPrice,
             _price,
-            Action.UPDATE
+            block.timestamp
         );
     }
 
@@ -136,7 +130,7 @@ contract CopyrightManagement {
             msg.sender,
             content.ownerAddress,
             content.Id,
-            Action.Licensing
+            block.timestamp
         );
     }
 

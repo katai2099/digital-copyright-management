@@ -7,15 +7,19 @@ import { IUser, User } from "../../model/User";
 
 export const Register = () => {
   const { state, dispatch } = UseDcm();
-  const [user, setUser] = useState<IUser>(new User(state.web3State.account));
+  const [user, setUser] = useState<IUser>(new User());
   const navigate = useNavigate();
+
   const submitButtonClickHandler = () => {
     //TODO: validation logic
+    user.walletAddress = state.web3State.account;
     register(user)
       .then((res) => {
         // console.log(res);
-        dispatch({ type: userActions.create, data: { user } });
-        navigate("/");
+        dispatch({ type: userActions.create, data: user });
+        navigate("/", {
+          replace: true,
+        });
       })
       .catch((err) => {
         //TODO: handle error response

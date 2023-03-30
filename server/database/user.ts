@@ -25,9 +25,9 @@ export async function getUserByWalletAddress(
   walletAddress: string
 ): Promise<users> {
   try {
-    const user = await prisma.users.findFirstOrThrow({
+    const user = await prisma.users.findUniqueOrThrow({
       where: {
-        walletAddress: { equals: walletAddress },
+        walletAddress: walletAddress,
       },
     });
     return user;
@@ -41,12 +41,10 @@ export async function updateUser(user: IUser): Promise<users> {
   try {
     const updateUser = await prisma.users.update({
       where: {
-        id: user.id,
+        walletAddress: user.walletAddress,
       },
       data: {
         username: user.username === "" ? user.walletAddress : user.username,
-        firstname: user.firstname,
-        lastname: user.lastname,
         email: user.email,
       },
     });

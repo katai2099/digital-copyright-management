@@ -11,25 +11,50 @@ datasource db {
 }
 
 model users {
-  id            Int    @id @unique @default(autoincrement())
-  username      String @unique
-  firstname     String
-  lastname      String
-  email         String @unique
-  walletAddress String @unique
+  walletAddress     String       @id @unique
+  username          String       @unique
+  firstname         String
+  lastname          String
+  email             String       @unique
+  licenserAgreement agreements[] @relation("licenser")
+  licenseeAgreement agreements[] @relation("licensee")
+  contents          contents[]
 }
 
-model Content {
-  id           Int    @id @unique @default(autoincrement())
-  contentId    Int    @unique
+model contents {
+  id           Int      @id @unique
   contentType  String
   ownerAddress String
-  pHash        String @unique
+  pHash        String   @unique
   IPFSAddress  String
   title        String
-  ownerName    String
-  ownerEmail   String
   desc         String
-  price        Int
+  price        BigInt
   publishDate  String
+  event        events[]
+  owner        users?   @relation(fields: [ownerAddress], references: [walletAddress])
+}
+
+model events {
+  id              Int      @id @unique @default(autoincrement())
+  transactionHash String
+  contentId       Int
+  eventType       String
+  from            String
+  to              String   @default("")
+  price           Int      @default(0)
+  lastPrice       Int      @default(0)
+  timestamp       String
+  content         contents @relation(fields: [contentId], references: [id])
+}
+
+model agreements {
+  id           Int    @id @unique @default(autoincrement())
+  licensee     String
+  licenser     String
+  contentId    Int
+  purposeOfUse String
+  timestamp    String
+  licensers    users? @relation("licenser", fields: [licenser], references: [walletAddress])
+  licensees    users? @relation("licensee", fields: [licensee], references: [walletAddress])
 }

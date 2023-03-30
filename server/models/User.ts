@@ -4,7 +4,6 @@ export interface IUser {
   lastname: string;
   email: string;
   walletAddress: string;
-  id: number;
 }
 
 export class User implements IUser {
@@ -13,7 +12,6 @@ export class User implements IUser {
     public firstname = "",
     public lastname = "",
     public email = "",
-    public walletAddress = "",
-    public id = 0
+    public walletAddress = ""
   ) {}
 }

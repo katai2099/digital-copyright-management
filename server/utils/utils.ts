@@ -1,11 +1,20 @@
-import { Content, ContentType } from "../models/content";
+import { Content, ContentType } from "../models/Content";
 
 export function clone<T = any>(whatToClone: T): T {
   return JSON.parse(JSON.stringify(whatToClone));
 }
 
+export function toJSON(something: any) {
+  return JSON.parse(
+    JSON.stringify(
+      something,
+      (key, value) => (typeof value === "bigint" ? value.toString() : value) // return everything else unchanged
+    )
+  );
+}
+
 export function convert<T = any>(whatToConvert: any): T {
-  return JSON.parse(JSON.stringify(whatToConvert));
+  return toJSON(whatToConvert);
 }
 
 export function hexToBin(hexString: string): string {
@@ -90,15 +99,13 @@ export interface keyValuePair {
   [key: string]: string;
 }
 
-export function logToContent(_content: keyValuePair): Content {
+export function createEventLogToContent(_content: keyValuePair): Content {
   const content = new Content();
   content.ownerAddress = _content.ownerAddress;
-  content.Id = parseInt(_content.Id);
+  content.id = parseInt(_content.Id);
   content.pHash = _content.pHash;
   content.IPFSAddress = _content.IPFSAddress;
   content.title = _content.title;
-  content.ownerName = _content.ownerName;
-  content.ownerEmail = _content.ownerEmail;
   content.desc = _content.desc;
   content.price = parseInt(_content.price);
   content.publishDate = _content.publishDate;

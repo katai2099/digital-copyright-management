@@ -8,6 +8,7 @@ export const USER_ROUTE = "/users";
 export const HASH_ROUTE = "/hash";
 export const SUBMIT_ROUTE = "/submit";
 export const CONTENT_ROUTE = "/contents";
+export const EVENT_ROUTE = "/events";
 export const APP_STATE_KEY = "APP_STATE";
 export const WEB3_CONNECT_CACHED = "WEB3_CONNECT_CACHED_PROVIDER";
 

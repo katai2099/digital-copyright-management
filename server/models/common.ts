@@ -1,4 +1,4 @@
-import { Content, ContentType } from "../models/content";
+import { Content, ContentType } from "./Content";
 
 export const SERVER_URL = "http://127.0.0.1:5000/";
 export const CRYPTO_COMPARE_API_URL = "https://min-api.cryptocompare.com";
@@ -24,12 +24,6 @@ export interface ILatestContents {
   images: Content[];
   audio: Content[];
   texts: Content[];
-}
-
-export interface IContentFilter {
-  page: number;
-  content: ContentType;
-  sort: FilterType;
 }
 
 export enum FilterType {

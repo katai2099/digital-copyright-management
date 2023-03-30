@@ -27,6 +27,7 @@ export const ContentItems = ({
           content={content}
         ></ContentItem>
       ))}
+      {contents.length === 0 && <div className="no-contents">No Contents</div>}
     </div>
   );
 };
