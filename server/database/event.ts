@@ -10,6 +10,7 @@ export async function createEvent(event: IEvent) {
         transactionHash: event.transactionHash,
         eventType: event.eventType,
         from: event.from,
+        timestamp: event.timestamp,
         to: event.to,
         price: event.price,
         lastPrice: event.lastPrice,
@@ -55,18 +56,24 @@ export async function getEvents(filter: IEventFilter): Promise<events[]> {
   }
 }
 
-export async function getEventsByContentId(id: number): Promise<events[]> {
+export async function getEventsByContentId(
+  id: number,
+  page: number
+): Promise<events[]> {
   try {
     const events = await prisma.events.findMany({
       where: {
         contentId: id,
       },
       include: {
-        content: true,
+        To: true,
+        From: true,
       },
-      // orderBy : {
-
-      // }
+      orderBy: {
+        timestamp: "desc",
+      },
+      skip: (page - 1) * 15,
+      take: 15,
     });
     return events;
   } catch (error) {

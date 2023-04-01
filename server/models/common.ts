@@ -32,3 +32,13 @@ export enum FilterType {
   HIGHEST = "Highest",
   LOWEST = "Lowest",
 }
+
+export interface Filter {
+  sortBy: SortValue;
+  page: number;
+}
+
+export enum SortValue {
+  ASC = "asc",
+  DESC = "desc",
+}

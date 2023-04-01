@@ -25,8 +25,9 @@ eventRouter.get("/", async (req: Request, res: Response) => {
   }
 });
 
-eventRouter.get("/:id", async (req: Request, res: Response) => {
-  const { id } = req.params;
+eventRouter.get("/content/", async (req: Request, res: Response) => {
+  //TODO: check if page query is less than 1 if throw cause prisma cant skip negative values
+  const { id, page } = req.query;
   if (!id) {
     return res.status(400).send("ID is missing");
   }
@@ -34,7 +35,7 @@ eventRouter.get("/:id", async (req: Request, res: Response) => {
     return res.status(400).send("Bad format");
   }
   try {
-    const events = await getEventsByContentId(Number(id));
+    const events = await getEventsByContentId(Number(id), Number(page));
     return res.status(200).send(toJSON(events));
   } catch (error) {
     console.log(error);

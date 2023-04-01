@@ -40,12 +40,7 @@ contract CopyrightManagement {
         uint256 _currentPrice,
         uint256 timestamp
     );
-    event licensingEvent(
-        address _licensee,
-        address _licenser,
-        uint256 indexed _contentId,
-        uint256 timestamp
-    );
+    event licensingEvent(Agreement _agreement, uint256 _price);
 
     uint256 public contentCount;
     uint256 public agreementCount;
@@ -126,12 +121,7 @@ contract CopyrightManagement {
         );
         agreements[agreementCount] = agreement;
         agreementCount++;
-        emit licensingEvent(
-            msg.sender,
-            content.ownerAddress,
-            content.Id,
-            block.timestamp
-        );
+        emit licensingEvent(agreement, content.price);
     }
 
     function withdraw() public payable {

@@ -3,22 +3,19 @@ interface IAgreement {
   licenser: string;
   contentId: number;
   purposeOfUse: string;
+  transactionHash: string;
   timestamp: string;
-  id?: number;
+  id: number;
 }
 
 export class Agreement implements IAgreement {
-  id?: number;
   constructor(
-    public licensee: "",
-    public licenser: "",
+    public licensee = "",
+    public licenser = "",
     public contentId = 0,
     public purposeOfUse = "",
+    public transactionHash = "",
     public timestamp = "",
-    id?: number
-  ) {
-    if (id) {
-      this.id = id;
-    }
-  }
+    public id = 0
+  ) {}
 }

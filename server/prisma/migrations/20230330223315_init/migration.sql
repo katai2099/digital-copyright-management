@@ -37,8 +37,8 @@ CREATE TABLE `events` (
     `eventType` VARCHAR(191) NOT NULL,
     `from` VARCHAR(191) NOT NULL,
     `to` VARCHAR(191) NOT NULL DEFAULT '',
-    `price` INTEGER NOT NULL DEFAULT 0,
-    `lastPrice` INTEGER NOT NULL DEFAULT 0,
+    `price` BIGINT NOT NULL DEFAULT 0,
+    `lastPrice` BIGINT NOT NULL DEFAULT 0,
     `timestamp` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `events_id_key`(`id`),

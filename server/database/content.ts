@@ -1,6 +1,11 @@
 import { contents } from "@prisma/client";
 import { FilterType } from "../models/common";
-import { ContentType, IContent, IContentFilter } from "../models/Content";
+import {
+  Content,
+  ContentType,
+  IContent,
+  IContentFilter,
+} from "../models/Content";
 import { prisma } from "./prisma";
 
 export async function createContent(content: IContent): Promise<contents> {
@@ -93,6 +98,23 @@ export async function getLatestContents(
   }
 }
 
+export async function getContentById(id: number) {
+  try {
+    const content = await prisma.contents.findUnique({
+      where: {
+        id: id,
+      },
+      include: {
+        owner: true,
+      },
+    });
+    return content;
+  } catch (error) {
+    console.log(error);
+    throw new Error();
+  }
+}
+
 export async function getContentByhash(hash: string): Promise<contents> {
   try {
     const content = await prisma.contents.findFirstOrThrow({
@@ -101,7 +123,6 @@ export async function getContentByhash(hash: string): Promise<contents> {
       },
       include: {
         owner: true,
-        event: true,
       },
     });
     return content;
@@ -180,6 +201,22 @@ export async function getContentsByWalletAddress(
       take: 15,
     });
     return contents;
+  } catch (error) {
+    console.log(error);
+    throw new Error();
+  }
+}
+
+export async function updateContentPrice(id: number, newPrice: number) {
+  try {
+    const updateContent = await prisma.contents.update({
+      data: {
+        price: newPrice,
+      },
+      where: {
+        id: id,
+      },
+    });
   } catch (error) {
     console.log(error);
     throw new Error();

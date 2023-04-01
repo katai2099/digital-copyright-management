@@ -19,20 +19,23 @@ model users {
   licenserAgreement agreements[] @relation("licenser")
   licenseeAgreement agreements[] @relation("licensee")
   contents          contents[]
+  eventsFrom        events[]     @relation("from")
+  eventsTo          events[]     @relation("to")
 }
 
 model contents {
-  id           Int      @id @unique
+  id           Int          @id @unique
   contentType  String
   ownerAddress String
-  pHash        String   @unique
+  pHash        String       @unique
   IPFSAddress  String
   title        String
   desc         String
   price        BigInt
   publishDate  String
   event        events[]
-  owner        users?   @relation(fields: [ownerAddress], references: [walletAddress])
+  owner        users?       @relation(fields: [ownerAddress], references: [walletAddress])
+  agreements   agreements[]
 }
 
 model events {
@@ -42,19 +45,23 @@ model events {
   eventType       String
   from            String
   to              String   @default("")
-  price           Int      @default(0)
-  lastPrice       Int      @default(0)
+  price           BigInt   @default(0)
+  lastPrice       BigInt   @default(0)
   timestamp       String
   content         contents @relation(fields: [contentId], references: [id])
+  From            users    @relation("from", fields: [from], references: [walletAddress])
+  To              users    @relation("to", fields: [to], references: [walletAddress])
 }
 
 model agreements {
-  id           Int    @id @unique @default(autoincrement())
-  licensee     String
-  licenser     String
-  contentId    Int
-  purposeOfUse String
-  timestamp    String
-  licensers    users? @relation("licenser", fields: [licenser], references: [walletAddress])
-  licensees    users? @relation("licensee", fields: [licensee], references: [walletAddress])
+  id              Int      @id @unique
+  licensee        String
+  licenser        String
+  contentId       Int
+  purposeOfUse    String
+  transactionHash String
+  timestamp       String
+  licensers       users?   @relation("licenser", fields: [licenser], references: [walletAddress])
+  licensees       users?   @relation("licensee", fields: [licensee], references: [walletAddress])
+  content         contents @relation(fields: [contentId], references: [id])
 }

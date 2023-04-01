@@ -32,9 +32,9 @@ export interface IEvent {
   eventType: EventType;
   from: string;
   to: string;
+  timestamp: string;
   price: number;
   lastPrice: number;
-  id?: number;
 }
 
 export class Event implements IEvent {
@@ -44,13 +44,9 @@ export class Event implements IEvent {
     public contentId = 0,
     public eventType = EventType.CREATE,
     public from = "",
-    public price = 0,
-    public lastPrice = 0,
     public to = "",
-    id?: number
-  ) {
-    if (id) {
-      this.id = id;
-    }
-  }
+    public timestamp = "",
+    public price = 0,
+    public lastPrice = 0
+  ) {}
 }

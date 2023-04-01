@@ -1,11 +1,9 @@
 import ExpressApp, { Express, Request, Response } from "express";
 import { hashingRouter } from "./routers/hashing";
-import { ipfsRouter } from "./routers/ipfs";
 import { authRouter } from "./routers/auth";
 import bodyParser from "body-parser";
 import { create } from "ipfs-http-client";
 import cors from "cors";
-import { nodeRouter } from "./routers/blockchain";
 import { initWeb3 } from "./controllers/web3";
 import { submitRouter } from "./routers/submit";
 import { userRouter } from "./routers/users";
@@ -17,6 +15,7 @@ import {
   IConversionRate,
 } from "./models/common";
 import { eventRouter } from "./routers/event";
+import { agreementRouter } from "./routers/agreement";
 export const client = create();
 var CronJob = require("cron").CronJob;
 
@@ -78,12 +77,11 @@ app.use(
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
 app.use("/hash", hashingRouter);
-app.use("/ipfs", ipfsRouter);
 app.use("/auth", authRouter);
-app.use("/web3", nodeRouter);
 app.use("/contents", contentRouter);
 app.use("/submit", submitRouter);
 app.use("/events", eventRouter);
+app.use("/agreements", agreementRouter);
 app.get("/", (req: Request, res: Response) => {
   res.send("Express typescript server");
 });

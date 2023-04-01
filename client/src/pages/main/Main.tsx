@@ -13,7 +13,7 @@ export const Main = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/launch" element={<Launch />} />
-        <Route path="/content/:hash" element={<Detail />} />
+        <Route path="/content/:id" element={<Detail />} />
         <Route path="/explore" element={<Explore />} />
         <Route path="/profile/:walletAddress" element={<Profile />} />
         <Route path="/settings" element={<Setting />} />

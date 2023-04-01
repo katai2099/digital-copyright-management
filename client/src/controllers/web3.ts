@@ -39,6 +39,7 @@ export const connectMetamask = async (
     window.alert("No meta mask");
   }
   const web3 = new Web3(Web3.givenProvider || "ws://localhost:7545");
+  (window as any).web3 = web3;
   const accounts = await web3.eth.requestAccounts();
   //TODO: handle case where first connecting node is Ethereum
   //it will return eth network id and our contract is not deployed on eth
@@ -62,6 +63,8 @@ export const connectMetamask = async (
   try {
     address = artifact.networks[networkId].address;
     contract = new web3.eth.Contract(contractAbi, address);
+    (window as any).contract = contract;
+
     //TODO:check why state does not update
     console.log(account);
     dispatch({

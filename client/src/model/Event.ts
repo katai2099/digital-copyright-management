@@ -1,4 +1,5 @@
 import { BaseContent } from "./Content";
+import { User } from "./User";
 
 export enum EventType {
   CREATE = "CREATED",
@@ -12,6 +13,7 @@ interface IBaseEvent {
   contentId: number;
   eventType: EventType;
   from: string;
+  timestamp: string;
   to: string;
   price: number;
   lastPrice: number;
@@ -24,6 +26,7 @@ export class BaseEvent implements IBaseEvent {
     public contentId = 0,
     public eventType = EventType.CREATE,
     public from = "",
+    public timestamp = "",
     public to = "",
     public price = 0,
     public lastPrice = 0
@@ -32,17 +35,24 @@ export class BaseEvent implements IBaseEvent {
 
 export class Event implements IBaseEvent {
   content: BaseContent;
+  From: User;
+  To: User;
   constructor(
     public id = 0,
     public transactionHash = "",
     public contentId = 0,
     public eventType = EventType.CREATE,
     public from = "",
+    public timestamp = "",
     public to = "",
     public price = 0,
     public lastPrice = 0,
-    content: BaseContent
+    content: BaseContent,
+    From: User,
+    To: User
   ) {
     this.content = content;
+    this.From = From;
+    this.To = To;
   }
 }

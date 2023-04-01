@@ -26,7 +26,7 @@ export const ContentSummary = ({ content }: IContentSummaryProps) => {
 
   return (
     <Card>
-      <Link className="content-summary-item" to={`/content/${content.pHash}`}>
+      <Link className="content-summary-item" to={`/content/${content.id}`}>
         <div className="content-image-wrapper">
           <img className="content-image" src={getImageSrc(content)} alt="" />
         </div>

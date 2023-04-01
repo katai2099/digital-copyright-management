@@ -17,7 +17,7 @@ export const ContentItem = ({ idx, content }: IContentItemProps) => {
     "ether"
   );
   return (
-    <Link to={`/content/${content.pHash}`}>
+    <Link to={`/content/${content.id}`}>
       <div className="content-item">
         <div className="item-index">{idx}</div>
         <div className="item-img-wrapper">

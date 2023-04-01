@@ -1,4 +1,3 @@
-import { useState } from "react";
 import "./contentPriceInput.css";
 
 interface IContentPriceInputProps {

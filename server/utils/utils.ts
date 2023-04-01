@@ -1,3 +1,4 @@
+import { Agreement } from "../models/Agreement";
 import { Content, ContentType } from "../models/Content";
 
 export function clone<T = any>(whatToClone: T): T {
@@ -107,10 +108,25 @@ export function createEventLogToContent(_content: keyValuePair): Content {
   content.IPFSAddress = _content.IPFSAddress;
   content.title = _content.title;
   content.desc = _content.desc;
-  content.price = parseInt(_content.price);
+  content.price = Number(_content.price);
   content.publishDate = _content.publishDate;
   content.contentType = solidityContentTypeToContentType(_content.contentType);
   return content;
+}
+
+export function licensingEventLogToAgreement(
+  transactionHash: string,
+  _agreement: keyValuePair
+): Agreement {
+  const agreement = new Agreement();
+  agreement.licensee = _agreement.licensee;
+  agreement.licenser = _agreement.licenser;
+  agreement.contentId = parseInt(_agreement.contentId);
+  agreement.purposeOfUse = _agreement.purposeOfUse;
+  agreement.timestamp = _agreement.timestamp;
+  agreement.id = parseInt(_agreement.id);
+  agreement.transactionHash = transactionHash;
+  return agreement;
 }
 
 export function solidityContentTypeToContentType(

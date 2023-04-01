@@ -1,6 +1,7 @@
 import axios from "axios";
 import { NextFunction, Request, Response, Router } from "express";
 import {
+  getContentById,
   getContentByhash,
   getContents,
   getContentsByWalletAddress,
@@ -59,13 +60,16 @@ contentRouter.get(
   }
 );
 
-contentRouter.get("/:hash", async (req: Request, res: Response) => {
-  const { hash } = req.params;
-  if (!hash) {
-    return res.status(400).send("Missing content hash");
+contentRouter.get("/:id", async (req: Request, res: Response) => {
+  const { id } = req.params;
+  if (!id) {
+    return res.status(400).send("Missing ID");
+  }
+  if (isNaN(Number(id))) {
+    return res.status(400).send("Bad format");
   }
   try {
-    const content = await getContentByhash(hash);
+    const content = await getContentById(Number(id));
     return res.status(200).send(toJSON(content));
   } catch (error) {
     //TODO: handle case where database row is not found
