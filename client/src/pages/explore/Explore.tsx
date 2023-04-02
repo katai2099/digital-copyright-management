@@ -9,6 +9,7 @@ import { getContents } from "../../controllers/content";
 import { SortType } from "../../model/Common";
 import { Content, ContentType } from "../../model/Content";
 import "./explore.css";
+import { debounce } from "../../utils";
 
 export const Explore = () => {
   const [contents, setContents] = useState<Content[]>([]);
@@ -19,6 +20,7 @@ export const Explore = () => {
   const [page, setPage] = useState<number>(0);
   const [endOfPage, setEndOfPage] = useState<boolean>(false);
   const [noContent, setNoContent] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const sortSelected = (sort: SortType) => {
     console.log(sort);
@@ -27,6 +29,11 @@ export const Explore = () => {
     setNoContent(false);
     setSort(sort);
   };
+
+  const onSeachChangeHandler = debounce((event: string) => {
+    console.log(event);
+    setSearchQuery(event);
+  }, 200);
 
   const contentTypeSelected = (contentType: string) => {
     console.log(contentType);
@@ -42,7 +49,7 @@ export const Explore = () => {
   };
 
   useEffect(() => {
-    getContents(contentType, sort, page)
+    getContents(contentType, sort, page, searchQuery)
       .then((newContents) => {
         // newContents = [];
         if (page === 0 && newContents.length === 0) {
@@ -60,7 +67,7 @@ export const Explore = () => {
       .catch((error) => {
         console.log(error);
       });
-  }, [contentType, page, sort]);
+  }, [contentType, page, searchQuery, sort]);
 
   return (
     <div className="home-wrapper">
@@ -84,7 +91,12 @@ export const Explore = () => {
                 <FontAwesomeIcon icon={faSearch} />
               </i>
             </div>
-            <input className="explore-input" disabled={noContent} />
+            <input
+              className="explore-input"
+              onChange={(event) =>
+                onSeachChangeHandler(event.currentTarget.value)
+              }
+            />
           </div>
           <div className="contents-grid">
             {contents.map((content) => (

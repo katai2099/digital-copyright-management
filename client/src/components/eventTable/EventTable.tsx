@@ -2,6 +2,9 @@ import "./eventTable.css";
 import { Event } from "../../model/Event";
 import { EtherIcon, SparkleIcon } from "../common/Icon";
 import { EventType } from "../../model/Event";
+import { getImageSrc } from "../../utils";
+import { Content } from "../../model/Content";
+import moment from "moment";
 
 interface IEventTableProps {
   events: Event[];
@@ -18,6 +21,7 @@ export const EventTable = ({
         <thead>
           <tr>
             <th>Event</th>
+            {hasContent && <th>Content</th>}
             <th>Price</th>
             <th>From</th>
             <th>To</th>
@@ -44,12 +48,13 @@ export const EventTable = ({
                   <div className="content-img-wrapper">
                     <img
                       className="content-img"
-                      src="./img/blockchain.png"
+                      src={getImageSrc(event.content)}
                       width="56px"
                       height="56px"
+                      alt=""
                     />
                   </div>
-                  <div className="content-name">this is my pic</div>
+                  <div className="content-name">{event.content.desc}</div>
                 </td>
               )}
               <td>
@@ -68,12 +73,15 @@ export const EventTable = ({
               </td>
               <td className="no-wrap">
                 <a href={`/profile/${event.to}`}>
-                  {event.To.firstname + " " + event.To.lastname}
+                  {event.eventType === EventType.LICENSING
+                    ? event.To.firstname + " " + event.To.lastname
+                    : "-"}
                 </a>
               </td>
               <td className="no-wrap">
                 <a href="#">
-                  {event.timestamp} <i className="las la-external-link-alt"></i>
+                  {moment(new Date(Number(event.timestamp) * 1000)).fromNow()}
+                  <i className="las la-external-link-alt"></i>
                 </a>
               </td>
             </tr>

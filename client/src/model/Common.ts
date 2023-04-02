@@ -1,4 +1,5 @@
 import { Content, ContentType } from "./Content";
+import { User } from "./User";
 
 export interface IConversionRate {
   USDToETH: number;
@@ -29,6 +30,7 @@ export interface IContentFilter {
   page: number;
   content: ContentType;
   sort: SortType;
+  q: string;
 }
 
 export enum SortType {
@@ -43,4 +45,9 @@ export enum FilterValue {
   OLDEST = "Created: Oldest",
   HIGHEST = "Price: Highest",
   LOWEST = "Price: Lowest",
+}
+
+export interface ISearchResult {
+  users: User[];
+  contents: Content[];
 }

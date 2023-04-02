@@ -197,6 +197,9 @@ export async function getContentsByWalletAddress(
             }
           : { price: filter.sort === FilterType.HIGHEST ? "desc" : "asc" }),
       },
+      include: {
+        owner: true,
+      },
       skip: filter.page * 15,
       take: 15,
     });
@@ -217,6 +220,24 @@ export async function updateContentPrice(id: number, newPrice: number) {
         id: id,
       },
     });
+  } catch (error) {
+    console.log(error);
+    throw new Error();
+  }
+}
+
+export async function getContentBySearchTerm(
+  search: string
+): Promise<contents[]> {
+  try {
+    const contents = prisma.contents.findMany({
+      where: {
+        title: {
+          contains: search,
+        },
+      },
+    });
+    return contents;
   } catch (error) {
     console.log(error);
     throw new Error();

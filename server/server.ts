@@ -16,6 +16,7 @@ import {
 } from "./models/common";
 import { eventRouter } from "./routers/event";
 import { agreementRouter } from "./routers/agreement";
+import { searchRouter } from "./routers/search";
 export const client = create();
 var CronJob = require("cron").CronJob;
 
@@ -82,6 +83,7 @@ app.use("/contents", contentRouter);
 app.use("/submit", submitRouter);
 app.use("/events", eventRouter);
 app.use("/agreements", agreementRouter);
+app.use("/search", searchRouter);
 app.get("/", (req: Request, res: Response) => {
   res.send("Express typescript server");
 });

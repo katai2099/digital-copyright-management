@@ -11,7 +11,11 @@ interface IModal {
 
 export const Modal = (props: IModal & BackdropProp) => {
   return (
-    <Backdrop open={props.open} onClose={props.onClose}>
+    <Backdrop
+      open={props.open}
+      onClose={props.onClose}
+      extraZ={props.extraZ ? props.extraZ : false}
+    >
       <div
         className="dcm-modal-box"
         tabIndex={1}

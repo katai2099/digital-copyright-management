@@ -1,4 +1,4 @@
-import { BaseContent } from "./Content";
+import { BaseContent, Content } from "./Content";
 import { User } from "./User";
 
 export enum EventType {
@@ -34,7 +34,7 @@ export class BaseEvent implements IBaseEvent {
 }
 
 export class Event implements IBaseEvent {
-  content: BaseContent;
+  content: Content;
   From: User;
   To: User;
   constructor(
@@ -47,7 +47,7 @@ export class Event implements IBaseEvent {
     public to = "",
     public price = 0,
     public lastPrice = 0,
-    content: BaseContent,
+    content: Content,
     From: User,
     To: User
   ) {

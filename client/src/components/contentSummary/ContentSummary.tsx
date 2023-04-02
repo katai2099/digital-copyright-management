@@ -18,12 +18,6 @@ export const ContentSummary = ({ content }: IContentSummaryProps) => {
     "ether"
   );
 
-  const navigate = useNavigate();
-
-  const summaryClickHandler = () => {
-    navigate(`/content/${content.pHash}`);
-  };
-
   return (
     <Card>
       <Link className="content-summary-item" to={`/content/${content.id}`}>

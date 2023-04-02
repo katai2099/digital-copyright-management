@@ -52,7 +52,7 @@ contentRouter.get(
         params.walletAddress,
         filter
       );
-      return res.status(200).send(contents);
+      return res.status(200).send(toJSON(contents));
     } catch (error) {
       console.log(error);
       return res.status(500).send("Internal Server Error");

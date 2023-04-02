@@ -7,6 +7,7 @@ import { Events } from "../../components/events/Events";
 import { FilterBar } from "../../components/filterBar/FilterBar";
 import { RadioOption } from "../../components/option/RadioOption";
 import {
+  ContentFilter,
   contentFilter,
   GOERLI_TEST_NET_URL,
   profileFiltersWithIcon,
@@ -44,7 +45,10 @@ export const Profile = () => {
   };
 
   const contentTypeChangeHandler = (selectedContentType: string) => {
-    const type = selectedContentType as ContentType;
+    let type = selectedContentType as ContentType;
+    if (selectedContentType === ContentFilter.IMG) {
+      type = ContentType.IMAGE;
+    }
     if (type !== contentType) {
       setContentType(type);
     }
@@ -57,20 +61,30 @@ export const Profile = () => {
         <div className="profile-image"></div>
         <br />
         <div className="wallet-name">
-          {/* {user.firstname + " " + user.lastname}
-           */}
-          Cookies
+          {user.firstname + " " + user.lastname}
+
+          {/* Cookies */}
         </div>
         <div className="wallet-email">{user.email}</div>
         <div className="wallet-info-bar">
-          <div className="wallet-detail-box">
+          <div
+            className="wallet-detail-box"
+            onClick={() => {
+              navigator.clipboard.writeText(user.walletAddress);
+            }}
+          >
             {user.walletAddress.substring(0, 6)}{" "}
             <i>
               <FontAwesomeIcon icon={faCopy} />
             </i>
           </div>
           {user.username !== "" && (
-            <div className="wallet-detail-box">
+            <div
+              className="wallet-detail-box"
+              onClick={() => {
+                navigator.clipboard.writeText(user.username);
+              }}
+            >
               {user.username}{" "}
               <i>
                 <FontAwesomeIcon icon={faCopy} />
@@ -105,14 +119,13 @@ export const Profile = () => {
           style={{ marginBottom: "24px" }}
         />
         <div>
-          {/* Content tab */}
-          {/* <Contents/> */}
-          {/* History tab */}
-          {/* <Events /> */}
           {profileTab === ProfileTab.CONTENTS ? (
-            <Contents contentType={contentType} />
+            <Contents
+              contentType={contentType}
+              walletAddress={walletAddress!}
+            />
           ) : (
-            <Events contentType={contentType} />
+            <Events contentType={contentType} walletAddress={walletAddress!} />
           )}
         </div>
       </div>

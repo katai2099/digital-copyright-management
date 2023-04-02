@@ -4,21 +4,49 @@ import { SortType } from "../../model/Common";
 import { Content, ContentType } from "../../model/Content";
 import { ContentSummary } from "../contentSummary/ContentSummary";
 import { FilterArea } from "../filterArea/filterArea";
+import { ChangeEvent, useEffect, useState } from "react";
+import { IEventProps } from "../events/Events";
+import { getUserContents } from "../../controllers/content";
+import { debounce } from "../../utils";
 
-export interface IContentTypeProps {
-  contentType: ContentType;
-}
+// export interface IContentTypeProps {
+//   contentType: ContentType;
+// }
 
-export const Contents = ({ contentType }: IContentTypeProps) => {
+export const Contents = ({ contentType, walletAddress }: IEventProps) => {
   const type = contentType;
+  const [sort, setSort] = useState<SortType>(SortType.LATEST);
+  const [page, setPage] = useState<number>(0);
+  const [contents, setContents] = useState<Content[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  useEffect(() => {
+    getUserContents(walletAddress, contentType, sort, page, searchQuery)
+      .then((contents) => {
+        setContents(contents);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [contentType, page, sort, walletAddress, searchQuery]);
+
+  const sortSelected = (sort: SortType) => {
+    console.log(sort);
+    console.log(type);
+    // setEndOfPage(false);
+    // setPage(0);
+    // setNoContent(false);
+    setSort(sort);
+  };
+
+  const onSeachChangeHandler = debounce((event: string) => {
+    console.log(event);
+    setSearchQuery(event);
+  }, 200);
+
   return (
     <div className="row">
       <div className="col-sm-3">
-        <FilterArea
-          onSelected={function (sort: SortType): void {
-            throw new Error("Function not implemented.");
-          }}
-        />
+        <FilterArea onSelected={sortSelected} />
         <div className="filter-separator" />
       </div>
       <div className="col-sm-9">
@@ -28,12 +56,17 @@ export const Contents = ({ contentType }: IContentTypeProps) => {
               <FontAwesomeIcon icon={faSearch} />
             </i>
           </div>
-          <input className="explore-input" />
+          <input
+            onChange={(event) =>
+              onSeachChangeHandler(event.currentTarget.value)
+            }
+            className="explore-input"
+          />
         </div>
         <div className="contents-grid">
-          <ContentSummary content={new Content()} />
-          <ContentSummary content={new Content()} />
-          <ContentSummary content={new Content()} />
+          {contents.map((content) => (
+            <ContentSummary content={content} />
+          ))}
         </div>
       </div>
     </div>

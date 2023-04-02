@@ -25,9 +25,16 @@ export async function getUserByWalletAddress(
   walletAddress: string
 ): Promise<users> {
   try {
-    const user = await prisma.users.findUniqueOrThrow({
+    const user = await prisma.users.findFirstOrThrow({
       where: {
-        walletAddress: walletAddress,
+        OR: [
+          {
+            walletAddress: walletAddress,
+          },
+          {
+            username: walletAddress,
+          },
+        ],
       },
     });
     return user;
@@ -51,5 +58,33 @@ export async function updateUser(user: IUser): Promise<users> {
     return updateUser;
   } catch (err) {
     return handlePrismaError(err);
+  }
+}
+
+export async function getUsersBySearchTerm(
+  searchQuery: string
+): Promise<users[]> {
+  try {
+    const users = await prisma.users.findMany({
+      where: {
+        OR: [
+          {
+            firstname: {
+              contains: searchQuery,
+            },
+          },
+          {
+            lastname: { contains: searchQuery },
+          },
+          {
+            username: { contains: searchQuery },
+          },
+        ],
+      },
+    });
+    return users;
+  } catch (error) {
+    console.log(error);
+    throw new Error();
   }
 }

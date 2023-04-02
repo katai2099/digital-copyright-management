@@ -169,6 +169,7 @@ export const Detail = () => {
           confirmTitle={"Update"}
           onClose={() => setIsModalOpen(false)}
           onConfirm={updateButtonClickHandler}
+          extraZ={true}
         >
           <ContentPriceInput
             onBlur={priceChangeHandler}

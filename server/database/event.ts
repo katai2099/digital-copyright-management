@@ -1,6 +1,7 @@
 import { contents, events } from "@prisma/client";
 import { EventType, IEvent, IEventFilter } from "../models/Event";
 import { prisma } from "./prisma";
+import { ContentType } from "../models/Content";
 
 export async function createEvent(event: IEvent) {
   try {
@@ -23,31 +24,67 @@ export async function createEvent(event: IEvent) {
   }
 }
 
-export async function getEvents(filter: IEventFilter): Promise<events[]> {
+//profile page
+export async function getEventsByWalletAddress(
+  walletAddress: string,
+  filter: IEventFilter,
+  contentType: ContentType
+): Promise<events[]> {
   const containFilter = filter.CREATED || filter.UPDATED || filter.LICENSING;
   try {
     const events = await prisma.events.findMany({
-      ...(containFilter
-        ? {
-            where: {
-              OR: [
-                {
-                  ...(filter.CREATED ? { eventType: EventType.CREATE } : {}),
-                },
-                {
-                  ...(filter.UPDATED ? { eventType: EventType.UPDATED } : {}),
-                },
-                {
-                  ...(filter.LICENSING
-                    ? { eventType: EventType.LICENSING }
-                    : {}),
-                },
-              ],
+      where: {
+        AND: [
+          {
+            ...(containFilter
+              ? {
+                  OR: [
+                    {
+                      ...(filter.CREATED
+                        ? { eventType: EventType.CREATE }
+                        : {}),
+                    },
+                    {
+                      ...(filter.UPDATED
+                        ? { eventType: EventType.UPDATED }
+                        : {}),
+                    },
+                    {
+                      ...(filter.LICENSING
+                        ? { eventType: EventType.LICENSING }
+                        : {}),
+                    },
+                  ],
+                }
+              : {}),
+          },
+          {
+            OR: [
+              {
+                to: walletAddress,
+              },
+              {
+                from: walletAddress,
+              },
+            ],
+          },
+          {
+            content: {
+              contentType: contentType,
             },
-            skip: (filter.page - 1) * 20,
-            take: 15,
-          }
-        : {}),
+          },
+        ],
+      },
+      include: {
+        To: true,
+        From: true,
+        content: true,
+      },
+      orderBy: {
+        timestamp: "desc",
+      },
+      skip: (filter.page - 1) * 20,
+      take: 15,
     });
     return events;
   } catch (error) {
@@ -56,6 +93,7 @@ export async function getEvents(filter: IEventFilter): Promise<events[]> {
   }
 }
 
+//event on content detail page
 export async function getEventsByContentId(
   id: number,
   page: number
@@ -75,19 +113,6 @@ export async function getEventsByContentId(
       skip: (page - 1) * 15,
       take: 15,
     });
-    return events;
-  } catch (error) {
-    console.log(error);
-    throw new Error();
-  }
-}
-
-export async function getEventsByWalletAddress(
-  walletAddress: string,
-  filter: IEventFilter
-): Promise<events[]> {
-  try {
-    const events = await prisma.events.findMany({});
     return events;
   } catch (error) {
     console.log(error);

@@ -50,7 +50,7 @@
   left: 50%;
   top: 3.5rem;
   transform: translate(-50%, 0);
-  z-index: 99;
+  z-index: 999;
 }
 
 .dcm-modal-header {

@@ -11,15 +11,47 @@ import { BaseEvent, Event } from "../model/Event";
 import { getSolidityContentType } from "../utils";
 import { getRequest, postRequest } from "./clientRequest";
 
+export function getUserContents(
+  walletAddress: string,
+  contentType: ContentType,
+  sort: SortType,
+  page: Number,
+  q: string
+) {
+  const filter = {
+    page: page,
+    content: contentType,
+    sort: sort,
+    q: q,
+  } as IContentFilter;
+  return getUserContentsWorker(walletAddress, filter)
+    .then((contents) => Promise.resolve(contents))
+    .catch((error) => Promise.reject(error));
+}
+
+function getUserContentsWorker(
+  walletAddress: string,
+  filter: IContentFilter
+): Promise<Content[]> {
+  return getRequest<Content[]>(
+    `${CONTENT_ROUTE}/user/${walletAddress}/`,
+    filter
+  )
+    .then((contents) => Promise.resolve(contents))
+    .catch((error) => Promise.reject(error));
+}
+
 export function getContents(
   contentType: ContentType,
   sort: SortType,
-  page: Number
+  page: Number,
+  q: string
 ): Promise<Content[]> {
   const filter = {
     page: page,
     content: contentType,
     sort: sort,
+    q: q,
   } as IContentFilter;
   console.log(filter);
   return getContentsWorker(filter)
