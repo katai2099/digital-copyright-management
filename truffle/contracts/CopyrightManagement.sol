@@ -49,6 +49,8 @@ contract CopyrightManagement {
     mapping(uint256 => Agreement) public agreements;
     mapping(address => uint256) public balances;
 
+    event withdrawEvent(address _caller, uint256 _amount, uint256 _timestamp);
+
     function addContent(
         string memory _pHash,
         string memory _IPFSAddress,
@@ -128,5 +130,6 @@ contract CopyrightManagement {
         uint refund = balances[msg.sender];
         balances[msg.sender] = 0;
         payable(msg.sender).transfer(refund);
+        emit withdrawEvent(msg.sender, refund, block.timestamp);
     }
 }

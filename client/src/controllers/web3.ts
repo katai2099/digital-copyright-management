@@ -1,7 +1,7 @@
 import React from "react";
 import { AnyAction } from "redux";
 import Web3 from "web3";
-import { userActions, web3Actions } from "../contexts/state";
+import { Web3State, userActions, web3Actions } from "../contexts/state";
 import { artifact, contractAbi } from "../contracts/constant";
 import { Contract } from "web3-eth-contract";
 import detectEthereumProvider from "@metamask/detect-provider";
@@ -91,3 +91,11 @@ export const disconnectMetamask = async (
     type: userActions.reset,
   });
 };
+
+export function withdrawEther(web3State: Web3State): Promise<any> {
+  return web3State
+    .contract!.methods.withdraw()
+    .send({ from: web3State.account })
+    .then((res: any) => Promise.resolve(res))
+    .catch((err: any) => Promise.reject(err));
+}

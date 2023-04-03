@@ -51,3 +51,8 @@ export interface ISearchResult {
   users: User[];
   contents: Content[];
 }
+
+export enum AgreementOption {
+  LICENSING = "Licensing",
+  LICENSER = "Licenser",
+}

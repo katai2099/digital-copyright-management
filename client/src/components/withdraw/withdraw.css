@@ -1,0 +1,79 @@
+.withdraw-header-section {
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid #bbc0c5;
+}
+
+.transaction-item {
+  display: flex;
+}
+
+/* tr.actived {
+  background-color: #f5f5f5;
+}
+
+tr:hover {
+  background-color: #f5f5f5;
+  cursor: pointer;
+} */
+
+.table-with-accordion {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "Roboto", sans-serif;
+  color: #444;
+}
+
+.table-with-accordion th,
+.table-with-accordion td {
+  padding: 16px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.table-with-accordion th {
+  background-color: #f9f9f9;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 600;
+  color: #777;
+}
+
+.table-with-accordion tr.active {
+  background-color: #fff8e1;
+}
+
+.table-with-accordion tr:hover {
+  background-color: #fafafa;
+  cursor: pointer;
+}
+
+.table-with-accordion .accordion-toggle {
+  position: relative;
+  cursor: pointer;
+}
+
+.table-with-accordion .accordion-toggle span {
+  display: inline-flex;
+  align-items: center;
+}
+
+.table-with-accordion .accordion-toggle i {
+  margin-right: 6px;
+  font-size: 10px;
+}
+
+.table-with-accordion .accordion-details {
+  background-color: #f2f2f2;
+  padding: 16px;
+}
+
+.table-with-accordion .accordion-details ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.table-with-accordion .accordion-details li {
+  margin-bottom: 8px;
+}

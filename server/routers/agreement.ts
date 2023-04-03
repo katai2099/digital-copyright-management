@@ -4,6 +4,7 @@ import {
   getAgreementByWalletAddress,
 } from "../database/agreement";
 import { Agreement } from "../models/Agreement";
+import { toJSON } from "../utils/utils";
 
 export const agreementRouter = Router();
 
@@ -25,7 +26,7 @@ agreementRouter.get("/:walletAddress", async (req: Request, res: Response) => {
   }
   try {
     const agreements = await getAgreementByWalletAddress(walletAddress);
-    return res.status(200).send(agreements);
+    return res.status(200).send(toJSON(agreements));
   } catch (error) {
     console.log(error);
     return res.status(500).send("Internal Server Error");

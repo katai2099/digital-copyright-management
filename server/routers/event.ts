@@ -2,6 +2,7 @@ import { Request, Response, Router } from "express";
 import {
   createEvent,
   getEventsByContentId,
+  getEventsByTimestamp,
   getEventsByWalletAddress,
 } from "../database/event";
 import { IEvent, IEventFilter } from "../models/Event";
@@ -66,5 +67,19 @@ eventRouter.post("/", async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     return res.status(500).send("Internal Server Error ");
+  }
+});
+
+eventRouter.get("/withdraw/", async (req: Request, res: Response) => {
+  const { timestamp, address } = req.query;
+  try {
+    const events = await getEventsByTimestamp(
+      timestamp as string,
+      address as string
+    );
+    return res.status(200).send(toJSON(events));
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send("Internal Server Error");
   }
 });

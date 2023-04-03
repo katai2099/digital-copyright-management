@@ -1,4 +1,4 @@
-import { BaseContent } from "./Content";
+import { BaseContent, Content } from "./Content";
 import { User } from "./User";
 
 interface IBaseAgreement {
@@ -22,9 +22,6 @@ export class BaseAgreement implements IBaseAgreement {
 }
 
 export class Agreement implements IBaseAgreement {
-  licensees?: User;
-  licensers?: User;
-  content?: BaseContent;
   constructor(
     public licensee = "",
     public licenser = "",
@@ -32,18 +29,8 @@ export class Agreement implements IBaseAgreement {
     public purposeOfUse = "",
     public transactionHash = "",
     public timestamp = "",
-    licensees?: User,
-    licensers?: User,
-    content?: BaseContent
-  ) {
-    if (licensees) {
-      this.licensees = licensees;
-    }
-    if (licensers) {
-      this.licensers = licensers;
-    }
-    if (content) {
-      this.content = content;
-    }
-  }
+    public licensees = new User(),
+    public licensers = new User(),
+    public content = new Content()
+  ) {}
 }

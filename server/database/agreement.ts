@@ -25,10 +25,19 @@ export async function getAgreementByWalletAddress(walletAddress: string) {
   try {
     const agreements = await prisma.agreements.findMany({
       where: {
-        licensee: walletAddress,
+        OR: [
+          {
+            licensee: walletAddress,
+          },
+          {
+            licenser: walletAddress,
+          },
+        ],
       },
       include: {
         licensers: true,
+        licensees: true,
+        content: true,
       },
     });
     return agreements;

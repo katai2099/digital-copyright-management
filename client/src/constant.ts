@@ -1,3 +1,4 @@
+import { AgreementOption } from "./model/Common";
 import { ContentType } from "./model/Content";
 
 export const SERVER_URL = "http://127.0.0.1:8082";
@@ -9,6 +10,7 @@ export const HASH_ROUTE = "/hash";
 export const SUBMIT_ROUTE = "/submit";
 export const CONTENT_ROUTE = "/contents";
 export const EVENT_ROUTE = "/events";
+export const AGREEMENT_ROUTE = "/agreements";
 export const APP_STATE_KEY = "APP_STATE";
 export const WEB3_CONNECT_CACHED = "WEB3_CONNECT_CACHED_PROVIDER";
 
@@ -57,4 +59,9 @@ export const contentFiltersWithIcon = [
 export const profileFiltersWithIcon = [
   { value: ProfileTab.CONTENTS, icon: "las la-photo-video" } as ContentWithIcon,
   { value: ProfileTab.EVENTS, icon: "las la-history" } as ContentWithIcon,
+];
+
+export const agreementFiltersWithIcon = [
+  { value: AgreementOption.LICENSER, icon: "test" } as ContentWithIcon,
+  { value: AgreementOption.LICENSING, icon: "test" } as ContentWithIcon,
 ];

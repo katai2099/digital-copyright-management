@@ -119,3 +119,36 @@ export async function getEventsByContentId(
     throw new Error();
   }
 }
+
+export function getEventsByTimestamp(
+  timestamp: string,
+  walletAdress: string
+): Promise<events[]> {
+  try {
+    const events = prisma.events.findMany({
+      where: {
+        AND: [
+          {
+            timestamp: {
+              lte: timestamp,
+            },
+          },
+          {
+            to: walletAdress,
+          },
+          {
+            eventType: EventType.LICENSING,
+          },
+        ],
+      },
+      include: {
+        From: true,
+        content: true,
+      },
+    });
+    return events;
+  } catch (error) {
+    console.log(error);
+    throw new Error();
+  }
+}
