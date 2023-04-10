@@ -7,6 +7,11 @@ contract CopyrightManagement {
         AUDIO,
         TEXT
     }
+    enum RequestType {
+        PENDING,
+        REJECTED,
+        APPROVED
+    }
     struct Content {
         address ownerAddress;
         uint256 Id;
@@ -16,6 +21,7 @@ contract CopyrightManagement {
         string ownerName;
         string ownerEmail;
         string desc;
+        string fieldOfUse;
         uint256 price;
         uint256 publishDate;
         ContentType contentType;
@@ -26,6 +32,19 @@ contract CopyrightManagement {
         address licenser;
         uint256 contentId;
         string purposeOfUse;
+        string fieldOfUse;
+        uint256 price;
+        uint256 timestamp;
+    }
+    struct Request {
+        uint256 id;
+        address licensee;
+        uint256 contentId;
+        string purposeOfUse;
+        string fieldOfUse;
+        uint256 price;
+        RequestType requestType;
+        string rejectReason;
         uint256 timestamp;
     }
     event addContentEvent(
@@ -38,18 +57,33 @@ contract CopyrightManagement {
         uint256 indexed _contentId,
         uint256 _lastPrice,
         uint256 _currentPrice,
+        string _lastFieldOfUse,
+        string _currentFieldOfUse,
         uint256 timestamp
     );
-    event licensingEvent(Agreement _agreement, uint256 _price);
+    event licensingEvent(Agreement _agreement);
+    event requestEvent(Request _request);
+    event updateRequestEvent(
+        address indexed _caller,
+        Request _request,
+        uint256 timestamp
+    );
 
     uint256 public contentCount;
     uint256 public agreementCount;
+    uint256 public requestCount;
 
     mapping(uint256 => Content) public contents;
     mapping(uint256 => Agreement) public agreements;
+    mapping(uint256 => Request) public requests;
     mapping(address => uint256) public balances;
 
-    event withdrawEvent(address _caller, uint256 _amount, uint256 _timestamp);
+    event transferEvent(
+        address _caller,
+        address _receiver,
+        uint256 _amount,
+        uint256 _timestamp
+    );
 
     function addContent(
         string memory _pHash,
@@ -58,6 +92,7 @@ contract CopyrightManagement {
         string memory _ownerName,
         string memory _ownerEmail,
         string memory _desc,
+        string memory _fieldOfUse,
         uint256 _price,
         ContentType _contentType
     ) public {
@@ -70,6 +105,7 @@ contract CopyrightManagement {
             _ownerName,
             _ownerEmail,
             _desc,
+            _fieldOfUse,
             _price,
             block.timestamp,
             _contentType
@@ -79,27 +115,38 @@ contract CopyrightManagement {
         emit addContentEvent(msg.sender, content, block.timestamp);
     }
 
-    function updateContentData(uint256 _id, uint256 _price) public {
+    function updateContentData(
+        uint256 _id,
+        uint256 _price,
+        string memory _fieldOfUse
+    ) public {
         require(
             msg.sender == contents[_id].ownerAddress,
             "You are not the owner of the content"
         );
-        uint256 lastPrice = contents[_id].price;
+        Content memory content = contents[_id];
+        uint256 lastPrice = content.price;
         contents[_id].price = _price;
+        string memory lastFieldOfUse = content.fieldOfUse;
+        contents[_id].fieldOfUse = _fieldOfUse;
+
         emit updateContentEvent(
             msg.sender,
             _id,
             lastPrice,
             _price,
+            lastFieldOfUse,
+            _fieldOfUse,
             block.timestamp
         );
     }
 
-    function licensingContent(
-        uint256 _id,
-        string memory _purposeOfUse
+    function requestAgreement(
+        uint256 _contentId,
+        string memory _purposeOfUse,
+        string memory _fieldOfUse
     ) public payable {
-        Content memory content = contents[_id];
+        Content memory content = contents[_contentId];
         require(
             msg.sender != content.ownerAddress,
             "You are the owner.You are free to use your own content"
@@ -108,28 +155,145 @@ contract CopyrightManagement {
             msg.value >= content.price,
             "Amount of Ether provided is less than content price"
         );
+        require((bytes(content.title)).length != 0, "content does not exists");
+        for (uint256 i = 0; i < requestCount; i++) {
+            Request memory tmpRequest = requests[i];
+            if (
+                tmpRequest.contentId == _contentId &&
+                tmpRequest.licensee == msg.sender
+            ) {
+                require(
+                    tmpRequest.requestType != RequestType.PENDING,
+                    "There exist pending request"
+                );
+                require(
+                    tmpRequest.requestType != RequestType.APPROVED,
+                    "Your request to use this content has been approved"
+                );
+            }
+        }
+
         balances[content.ownerAddress] += content.price;
         if (msg.value > content.price) {
             uint256 excess = msg.value - content.price;
             payable(msg.sender).transfer(excess);
         }
+        Request memory request = Request(
+            requestCount,
+            msg.sender,
+            _contentId,
+            _purposeOfUse,
+            _fieldOfUse,
+            content.price,
+            RequestType.PENDING,
+            "",
+            block.timestamp
+        );
+        requests[requestCount] = request;
+        requestCount++;
+        emit requestEvent(request);
+        emit transferEvent(
+            msg.sender,
+            address(this),
+            content.price,
+            block.timestamp
+        );
+    }
+
+    function rejectAgreement(
+        uint256 _requestId,
+        string memory _rejectReason
+    ) public payable {
+        Request memory request = requests[_requestId];
+        Content memory content = contents[request.contentId];
+        require((bytes(content.title)).length != 0, "content does not exists");
+        require(
+            content.ownerAddress == msg.sender,
+            "You are not the owner of the content"
+        );
+        require(
+            request.requestType != RequestType.APPROVED,
+            "The request has already been approved"
+        );
+        require(
+            request.requestType != RequestType.REJECTED,
+            "You cannot reject rejected request"
+        );
+        require(
+            balances[msg.sender] > 0,
+            "You have no balance left in the smart contract"
+        );
+        require(
+            balances[msg.sender] >= request.price,
+            "It seems like there is no pending request for you"
+        );
+        requests[_requestId].requestType = RequestType.REJECTED;
+        requests[_requestId].rejectReason = _rejectReason;
+        balances[msg.sender] -= request.price;
+        payable(request.licensee).transfer(request.price);
+        emit updateRequestEvent(
+            msg.sender,
+            requests[_requestId],
+            block.timestamp
+        );
+        emit transferEvent(
+            msg.sender,
+            request.licensee,
+            request.price,
+            block.timestamp
+        );
+    }
+
+    function approveAgreement(uint256 _requestId) public payable {
+        Request memory request = requests[_requestId];
+        Content memory content = contents[request.contentId];
+        require((bytes(content.title)).length != 0, "content does not exists");
+        require(
+            content.ownerAddress == msg.sender,
+            "You are not the owner of the content"
+        );
+        require(
+            request.requestType != RequestType.APPROVED,
+            "The request has already been approved"
+        );
+        require(
+            request.requestType != RequestType.REJECTED,
+            "You cannot approve rejected request"
+        );
+        require(
+            balances[msg.sender] > 0,
+            "You have no balance left in the smart contract"
+        );
+        require(
+            balances[msg.sender] >= request.price,
+            "It seems like there is no pending request for you"
+        );
+        requests[_requestId].requestType = RequestType.APPROVED;
         Agreement memory agreement = Agreement(
             agreementCount,
+            request.licensee,
             msg.sender,
-            content.ownerAddress,
             content.Id,
-            _purposeOfUse,
+            request.purposeOfUse,
+            request.fieldOfUse,
+            request.price,
             block.timestamp
         );
         agreements[agreementCount] = agreement;
         agreementCount++;
-        emit licensingEvent(agreement, content.price);
-    }
-
-    function withdraw() public payable {
-        uint refund = balances[msg.sender];
-        balances[msg.sender] = 0;
-        payable(msg.sender).transfer(refund);
-        emit withdrawEvent(msg.sender, refund, block.timestamp);
+        balances[msg.sender] -= request.price;
+        payable(msg.sender).transfer(request.price);
+        emit updateRequestEvent(
+            msg.sender,
+            requests[_requestId],
+            block.timestamp
+        );
+        emit transferEvent(
+            request.licensee,
+            msg.sender,
+            request.price,
+            block.timestamp
+        );
+        emit licensingEvent(agreement);
     }
 }

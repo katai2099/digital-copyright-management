@@ -16,6 +16,7 @@
 .home-wrapper {
   width: 1280px;
   max-width: 100%;
+  min-height: 100vh;
   margin: 0 auto;
 }
 
@@ -42,11 +43,27 @@
   background: rgba(0, 0, 0, 0.75);
 }
 
+.loading-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  transform: translateY(-16%);
+}
+
+.loading-title {
+  margin-top: 50px;
+  font-size: 48px;
+  color: #fff;
+}
+
 .dcm-modal-box {
   position: fixed;
   display: flex;
   overflow: hidden;
   min-width: 500px;
+  /* min-height: 550px; */
   left: 50%;
   top: 3.5rem;
   transform: translate(-50%, 0);
@@ -61,7 +78,7 @@
   border-bottom: 1px solid #bbc0c5;
 }
 
-.dcm-modal-header h2 {
+.dcm-modal-header h1 {
   margin: 0;
   color: black;
 }
@@ -80,8 +97,9 @@
 
 .app-card {
   width: 100%;
-  height: 100%;
-  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   background: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
   border-radius: 10px;
@@ -131,6 +149,31 @@
   animation-iteration-count: infinite;
 }
 
+textarea {
+  padding: 8px;
+}
+
+.errorText {
+  color: #ff0000;
+}
+
+.textarea-error {
+  border-color: #ff0000;
+  outline-color: #ff0000;
+}
+
+table {
+  /* table-layout: fixed; */
+  display: table;
+  width: 100%;
+  /* overflow-x: scroll; */
+  border-spacing: 0;
+  /* overflow-x: scroll;
+  overflow-y: scroll; */
+  border-collapse: collapse;
+  line-height: 1.5;
+}
+
 @keyframes wait {
   from {
     margin-left: -100px;
@@ -138,11 +181,4 @@
   to {
     margin-left: 100px;
   }
-}
-
-@media (min-width: 768px) {
-  /* .modal-box {
-    left: calc(50% - 20rem);
-    width: 40rem;
-  } */
 }

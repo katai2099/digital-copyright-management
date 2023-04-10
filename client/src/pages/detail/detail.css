@@ -107,6 +107,15 @@
   background-color: #002c9b;
 }
 
+.item-detail-button:disabled {
+  cursor: not-allowed;
+  background-color: #87b5ff;
+}
+
+.item-detail-button:disabled:hover {
+  background-color: #87b5ff;
+}
+
 .digital-content-summary {
   width: 58%;
   height: 100px;
@@ -133,4 +142,19 @@
 
 .activity-wrapper {
   padding: 32px 16px;
+}
+
+.edit-button {
+  font-size: 24px;
+}
+
+.detail-page-modal {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin-bottom: 8px;
+}
+
+.digital-content-wrapper .dcm-modal-box {
+  min-height: 550px;
 }

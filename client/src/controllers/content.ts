@@ -1,5 +1,6 @@
+import { Dispatch } from "react";
 import { CONTENT_ROUTE, EVENT_ROUTE, SUBMIT_ROUTE } from "../constant";
-import { DcmState, Web3State } from "../contexts/state";
+import { DcmState, Web3State, loadingActions } from "../contexts/state";
 import {
   IContentFilter,
   ILatestContents,
@@ -7,9 +8,30 @@ import {
   SortType,
 } from "../model/Common";
 import { Content, ContentType } from "../model/Content";
-import { BaseEvent, Event } from "../model/Event";
-import { getSolidityContentType } from "../utils";
+import { Event } from "../model/Event";
+import { getSolidityContentType, keyValuePair } from "../utils";
 import { getRequest, postRequest } from "./clientRequest";
+import { AnyAction } from "redux";
+
+export function launchFormValidation(
+  content: Content,
+  selectedFile: File | null
+) {
+  const error: keyValuePair = {};
+  if (content.title.trim() === "") {
+    error.title = "Title is required";
+  }
+  if (content.desc.trim() === "") {
+    error.desc = "Description is required";
+  }
+  if (content.fieldOfUse.trim() === "") {
+    error.fieldOfUse = "Field of use is required";
+  }
+  if (!selectedFile) {
+    error.file = "File to registered is required";
+  }
+  return error;
+}
 
 export function getUserContents(
   walletAddress: string,
@@ -92,18 +114,25 @@ export function getLatestContents() {
     .catch((err) => Promise.reject(err));
 }
 
-export function licensingContent(content: Content, state: DcmState) {
+export function requestContent(
+  content: Content,
+  state: DcmState,
+  purpose: string,
+  fieldOfUse: string
+) {
   return state.web3State.contract?.methods
-    .licensingContent(content.id, "Rich")
+    .requestAgreement(content.id, purpose, fieldOfUse)
     .send({ from: state.web3State.account, value: content.price })
     .then((res: any) => Promise.resolve(res))
     .catch((error: any) => Promise.resolve(error));
 }
 
-export function updateContentPrice(
+export function updateContentData(
   content: Content,
   newPrice: number,
-  state: DcmState
+  state: DcmState,
+  fieldOfUse: string,
+  currentEthToUsd: number
 ) {
   //state.web3State.web3?.utils.toWei(
   // (content.price * state.coinRate.USDToETH).toString()
@@ -112,8 +141,9 @@ export function updateContentPrice(
     .updateContentData(
       content.id,
       state.web3State.web3?.utils.toWei(
-        (newPrice * state.coinRate.USDToETH).toString()
-      )
+        (newPrice * currentEthToUsd).toString()
+      ),
+      fieldOfUse
     )
     .send({ from: state.web3State.account })
     .then((res: any) => Promise.resolve(res))
@@ -124,12 +154,18 @@ export function submitDigitalContent(
   file: File,
   content: Content,
   state: DcmState,
-  contentType: ContentType
+  contentType: ContentType,
+  currentEthToUsd: number,
+  dispatch: Dispatch<AnyAction>
 ) {
   // submit to backend (hash and ipfs)
   // upload to blockchain
   const web3 = state.web3State;
   content.contentType = contentType;
+  dispatch({
+    type: loadingActions.set,
+    data: { loading: true, loadingText: "Hashing" },
+  });
   return Promise.resolve()
     .then(() => {
       if (contentType === ContentType.IMAGE) {
@@ -142,6 +178,10 @@ export function submitDigitalContent(
     })
     .then(() => {
       console.log("contract call");
+      dispatch({
+        type: loadingActions.set,
+        data: { loading: true, loadingText: "Please accept transaction" },
+      });
       return web3.contract?.methods
         .addContent(
           content.pHash,
@@ -150,20 +190,36 @@ export function submitDigitalContent(
           `${state.user.firstname} ${state.user.lastname}`,
           state.user.email,
           content.desc,
+          content.fieldOfUse,
           state.web3State.web3?.utils.toWei(
-            (content.price * state.coinRate.USDToETH).toString()
+            (content.price * currentEthToUsd).toString()
           ),
           getSolidityContentType(content.contentType)
         )
-        .send({ from: web3.account });
+        .send({ from: web3.account })
+        .on("transactionHash", function (transactionHash: any) {
+          dispatch({
+            type: loadingActions.set,
+            data: { loading: true, loadingText: "Deploying" },
+          });
+        })
+        .on("confirmation", function (confirmationNumber: any, receipt: any) {
+          return Promise.resolve(receipt);
+        })
+        .on("error", function (error: any) {
+          console.log(error);
+          return Promise.reject(error);
+        });
     })
     .then((res) => {
+      dispatch({
+        type: loadingActions.reset,
+      });
       console.log(res);
       return Promise.resolve(res);
     })
     .catch((error) => {
       console.log(error);
-
       return Promise.reject(error);
     });
 }

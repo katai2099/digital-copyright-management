@@ -6,9 +6,11 @@ import { User } from "../../model/User";
 import { Content } from "../../model/Content";
 import { search } from "../../controllers/user";
 import { ISearchResult } from "../../model/Common";
-import { debounce, getImageSrc } from "../../utils";
+import { debounce, fromWei, getImageSrc } from "../../utils";
 import { useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
+import { UseDcm } from "../../contexts/UseDcm";
+import { EtherIcon } from "../common/Icon";
 
 interface IDcmSearchProps {
   backdropActive: boolean;
@@ -16,6 +18,7 @@ interface IDcmSearchProps {
 }
 
 export const DcmSearch = (props: IDcmSearchProps) => {
+  const { state } = UseDcm();
   const [searchValue, setSearch] = useState<string>("");
   const [searchResult, setSearchResult] = useState<ISearchResult>({
     contents: [],
@@ -132,7 +135,16 @@ export const DcmSearch = (props: IDcmSearchProps) => {
                           {content.title}
                         </div>
                       </div>
-                      <div className="item-result-price">{content.price}</div>
+                      <div className="item-result-price">
+                        {" "}
+                        <div className="ether-price-wrapper">
+                          <EtherIcon />{" "}
+                          {/*  {fromWei(event.price.toString(), state)} */}
+                          <div className="ether-price">
+                            {fromWei(content.price.toString(), state)}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ))}

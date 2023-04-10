@@ -19,6 +19,7 @@ export interface IContent {
   IPFSAddress: string;
   title: string;
   desc: string;
+  fieldOfUse: string;
   price: number;
   publishDate: string;
   contentType: ContentType;
@@ -39,6 +40,7 @@ export class Content implements IContent {
     public IPFSAddress = "",
     public title = "",
     public desc = "",
+    public fieldOfUse = "",
     public price = 0,
     public publishDate = "",
     public contentType = ContentType.IMAGE

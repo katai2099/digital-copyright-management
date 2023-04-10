@@ -23,7 +23,7 @@ export const ProfileUpdate = () => {
       });
   };
   return (
-    <div className="profile-box">
+    <div className="">
       <div className="setting-header">Profile</div>
       <div className="personal-info">Public info</div>
       <div className="wallet-info-wrapper">

@@ -2,7 +2,7 @@ import { AxiosError } from "axios";
 import React, { useEffect, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 import { APP_STATE_KEY, WEB3_CONNECT_CACHED } from "../constant";
-import { connectMetamask, startLogin } from "../controllers/web3";
+import { connectMetamask, initMetamask, startLogin } from "../controllers/web3";
 import { DcmContext } from "./DcmContext";
 import { initialState, reducer, userActions } from "./state";
 
@@ -15,6 +15,9 @@ export const DcmProvider = ({ children }: IDcmProviderProps) => {
   const web3_cache = localStorage.getItem(WEB3_CONNECT_CACHED);
   const app_state_cache = localStorage.getItem(APP_STATE_KEY);
   const navigate = useNavigate();
+  if (!web3_cache && !state.web3State.web3) {
+    initMetamask(dispatch);
+  }
   useEffect(() => {
     if (web3_cache === "injected") {
       //TODO: fix does not have to check for ethereum provider if already login

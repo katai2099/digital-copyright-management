@@ -1,0 +1,12 @@
+.event-table a:link,
+.event-table a:visited {
+  color: #3b71fa;
+}
+
+.event-table a:hover {
+  color: #0633a5;
+}
+
+.link-icon {
+  color: black;
+}

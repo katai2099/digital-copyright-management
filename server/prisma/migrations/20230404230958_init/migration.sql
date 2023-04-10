@@ -21,6 +21,7 @@ CREATE TABLE `contents` (
     `IPFSAddress` VARCHAR(191) NOT NULL,
     `title` VARCHAR(191) NOT NULL,
     `desc` VARCHAR(191) NOT NULL,
+    `fieldOfUse` VARCHAR(191) NOT NULL,
     `price` BIGINT NOT NULL,
     `publishDate` VARCHAR(191) NOT NULL,
 
@@ -47,14 +48,58 @@ CREATE TABLE `events` (
 
 -- CreateTable
 CREATE TABLE `agreements` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `id` INTEGER NOT NULL,
     `licensee` VARCHAR(191) NOT NULL,
     `licenser` VARCHAR(191) NOT NULL,
     `contentId` INTEGER NOT NULL,
     `purposeOfUse` VARCHAR(191) NOT NULL,
+    `fieldOfUse` VARCHAR(191) NOT NULL,
+    `price` BIGINT NOT NULL,
+    `transactionHash` VARCHAR(191) NOT NULL,
     `timestamp` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `agreements_id_key`(`id`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `requests` (
+    `id` INTEGER NOT NULL,
+    `licensee` VARCHAR(191) NOT NULL,
+    `contentId` INTEGER NOT NULL,
+    `purposeOfUse` VARCHAR(191) NOT NULL,
+    `fieldOfUse` VARCHAR(191) NOT NULL,
+    `price` BIGINT NOT NULL,
+    `requestType` VARCHAR(191) NOT NULL,
+    `rejectReason` VARCHAR(191) NOT NULL DEFAULT '',
+    `timestamp` VARCHAR(191) NOT NULL,
+
+    UNIQUE INDEX `requests_id_key`(`id`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `requestEvents` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `transactionHash` VARCHAR(191) NOT NULL,
+    `requestId` INTEGER NOT NULL,
+    `requestType` VARCHAR(191) NOT NULL,
+    `timestamp` VARCHAR(191) NOT NULL,
+
+    UNIQUE INDEX `requestEvents_id_key`(`id`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `transferEvent` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `transactionHash` VARCHAR(191) NOT NULL,
+    `from` VARCHAR(191) NOT NULL,
+    `to` VARCHAR(191) NOT NULL,
+    `price` BIGINT NOT NULL,
+    `timestamp` VARCHAR(191) NOT NULL,
+
+    UNIQUE INDEX `transferEvent_id_key`(`id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -65,7 +110,25 @@ ALTER TABLE `contents` ADD CONSTRAINT `contents_ownerAddress_fkey` FOREIGN KEY (
 ALTER TABLE `events` ADD CONSTRAINT `events_contentId_fkey` FOREIGN KEY (`contentId`) REFERENCES `contents`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `events` ADD CONSTRAINT `events_from_fkey` FOREIGN KEY (`from`) REFERENCES `users`(`walletAddress`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `events` ADD CONSTRAINT `events_to_fkey` FOREIGN KEY (`to`) REFERENCES `users`(`walletAddress`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `agreements` ADD CONSTRAINT `agreements_licenser_fkey` FOREIGN KEY (`licenser`) REFERENCES `users`(`walletAddress`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `agreements` ADD CONSTRAINT `agreements_licensee_fkey` FOREIGN KEY (`licensee`) REFERENCES `users`(`walletAddress`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `agreements` ADD CONSTRAINT `agreements_contentId_fkey` FOREIGN KEY (`contentId`) REFERENCES `contents`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `requests` ADD CONSTRAINT `requests_licensee_fkey` FOREIGN KEY (`licensee`) REFERENCES `users`(`walletAddress`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `requests` ADD CONSTRAINT `requests_contentId_fkey` FOREIGN KEY (`contentId`) REFERENCES `contents`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `requestEvents` ADD CONSTRAINT `requestEvents_requestId_fkey` FOREIGN KEY (`requestId`) REFERENCES `requests`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -6,9 +6,18 @@ import { Event, EventType } from "../models/Event";
 import {
   createEventLogToContent,
   licensingEventLogToAgreement,
+  requestEventLogToRequest,
 } from "../utils/utils";
-import { Agreement } from "../models/Agreement";
+
 import { createAgreement } from "../database/agreement";
+import { RequestEvent } from "../models/Request";
+import {
+  createRequest,
+  createRequestEvent,
+  updateRequest,
+} from "../database/request";
+import { Transfer } from "../models/Transfer";
+import { createTransferEvent } from "../database/transfer";
 
 const copyrightManagementArtifact = require("../../client/src/contracts/CopyrightManagement.json");
 
@@ -68,6 +77,15 @@ export async function initWeb3() {
       console.log(error);
       console.log(receipt);
     });
+  contract.events.requestEvent().on("data", (event: EventData) => {
+    requestEventHandler(event.transactionHash, event.returnValues);
+  });
+  contract.events.updateRequestEvent().on("data", (event: EventData) => {
+    updateRequestEventHandler(event.transactionHash, event.returnValues);
+  });
+  contract.events.transferEvent().on("data", (event: EventData) => {
+    transferEventHandler(event.transactionHash, event.returnValues);
+  });
 }
 
 function handleAddContentEvent(eventReturnValues: any) {
@@ -103,6 +121,63 @@ function addContentEventHandler(
     Number(content.price)
   );
   createEvent(event);
+}
+
+// uint256 id;
+// address licensee;
+// uint256 contentId;
+// string purposeOfUse;
+// string restriction;
+// string licenseScope;
+// uint256 price;
+// RequestType requestType;
+// string rejectReason;
+// uint256 timestamp;
+
+function requestEventHandler(transactionHash: string, eventReturnValues: any) {
+  const request = requestEventLogToRequest(eventReturnValues._request);
+  const requestEvent = new RequestEvent(
+    transactionHash,
+    request.id,
+    request.requestType,
+    request.timestamp
+  );
+  createRequest(request)
+    .then(() => {
+      createRequestEvent(requestEvent);
+    })
+    .catch((error: any) => {
+      console.log(error);
+    });
+}
+
+function updateRequestEventHandler(
+  transactionHash: string,
+  eventReturnValues: any
+) {
+  const request = requestEventLogToRequest(eventReturnValues._request);
+  if (request.rejectReason !== "") {
+    updateRequest(request.id, request.requestType, request.rejectReason);
+  } else {
+    updateRequest(request.id, request.requestType);
+  }
+  const requestEvent = new RequestEvent(
+    transactionHash,
+    request.id,
+    request.requestType,
+    request.timestamp
+  );
+  createRequestEvent(requestEvent);
+}
+
+function transferEventHandler(transactionHash: string, eventReturnValues: any) {
+  const transfer = new Transfer();
+  transfer.transactionHash = transactionHash;
+  transfer.from = eventReturnValues._caller;
+  transfer.to = eventReturnValues._receiver;
+  transfer.price = Number(eventReturnValues._amount);
+  transfer.timestamp = eventReturnValues._timestamp;
+  createTransferEvent(transfer);
 }
 
 function updateContentEventHandler(
@@ -157,7 +232,7 @@ function licensingEventHandler(
     agreement.licensee,
     agreement.licenser,
     agreement.timestamp,
-    Number(eventReturnValues._price),
+    agreement.price,
     0
   );
   createEvent(event);

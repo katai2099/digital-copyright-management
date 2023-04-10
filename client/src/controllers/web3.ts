@@ -1,14 +1,32 @@
 import React from "react";
 import { AnyAction } from "redux";
 import Web3 from "web3";
-import { Web3State, userActions, web3Actions } from "../contexts/state";
+import {
+  DcmState,
+  Web3State,
+  userActions,
+  web3Actions,
+} from "../contexts/state";
 import { artifact, contractAbi } from "../contracts/constant";
 import { Contract } from "web3-eth-contract";
 import detectEthereumProvider from "@metamask/detect-provider";
 import { login } from "./auth";
-import { APP_STATE_KEY, WEB3_CONNECT_CACHED } from "../constant";
+import {
+  APP_STATE_KEY,
+  CRYPTO_COMPARE_API_KEY,
+  CRYPTO_COMPARE_API_URL,
+  WEB3_CONNECT_CACHED,
+} from "../constant";
 import { getRequest } from "./clientRequest";
 import { IConversionRate } from "../model/Common";
+
+export function getCurrentUsdToEth(): Promise<string> {
+  return getRequest(
+    `${CRYPTO_COMPARE_API_URL}/data/price?fsym=USD&tsyms=ETH&apikey=${CRYPTO_COMPARE_API_KEY}`
+  )
+    .then((res: any) => Promise.resolve(res.ETH))
+    .catch((error) => Promise.resolve(error));
+}
 
 export function getCoinRate(): Promise<IConversionRate> {
   return getRequest<IConversionRate>("/coinPrice")
@@ -28,6 +46,32 @@ export async function startLogin(dispatch: React.Dispatch<AnyAction>) {
     throw error;
   }
 }
+
+export const initMetamask = async (
+  dispatch: React.Dispatch<AnyAction>
+): Promise<void> => {
+  const web3 = new Web3(Web3.givenProvider || "ws://localhost:7545");
+  (window as any).web3 = web3;
+  const networkId = await web3.eth.net.getId();
+  const account = "";
+  let address: string, contract: Contract;
+  try {
+    address = artifact.networks[networkId].address;
+    contract = new web3.eth.Contract(contractAbi, address);
+    (window as any).contract = contract;
+
+    //TODO:check why state does not update
+
+    dispatch({
+      type: web3Actions.init,
+      data: { artifact, web3, account, networkId, contract },
+    });
+    return;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+};
 
 export const connectMetamask = async (
   dispatch: React.Dispatch<AnyAction>
@@ -80,22 +124,17 @@ export const connectMetamask = async (
 };
 
 export const disconnectMetamask = async (
-  dispatch: React.Dispatch<AnyAction>
+  dispatch: React.Dispatch<AnyAction>,
+  state: DcmState
 ) => {
   localStorage.removeItem(WEB3_CONNECT_CACHED);
   localStorage.removeItem(APP_STATE_KEY);
+  // console.log(state);
   dispatch({
-    type: web3Actions.reset,
+    type: web3Actions.disconnect,
+    data: { ...state.web3State, account: "" },
   });
   dispatch({
     type: userActions.reset,
   });
 };
-
-export function withdrawEther(web3State: Web3State): Promise<any> {
-  return web3State
-    .contract!.methods.withdraw()
-    .send({ from: web3State.account })
-    .then((res: any) => Promise.resolve(res))
-    .catch((err: any) => Promise.reject(err));
-}

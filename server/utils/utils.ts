@@ -1,5 +1,6 @@
 import { Agreement } from "../models/Agreement";
 import { Content, ContentType } from "../models/Content";
+import { Request, RequestType } from "../models/Request";
 
 export function clone<T = any>(whatToClone: T): T {
   return JSON.parse(JSON.stringify(whatToClone));
@@ -108,10 +109,25 @@ export function createEventLogToContent(_content: keyValuePair): Content {
   content.IPFSAddress = _content.IPFSAddress;
   content.title = _content.title;
   content.desc = _content.desc;
+  content.fieldOfUse = _content.fieldOfUse;
   content.price = Number(_content.price);
   content.publishDate = _content.publishDate;
   content.contentType = solidityContentTypeToContentType(_content.contentType);
   return content;
+}
+
+export function requestEventLogToRequest(_request: keyValuePair): Request {
+  const request = new Request();
+  request.id = parseInt(_request.id);
+  request.licensee = _request.licensee;
+  request.contentId = parseInt(_request.contentId);
+  request.purposeOfUse = _request.purposeOfUse;
+  request.fieldOfUse = _request.fieldOfUse;
+  request.price = Number(_request.price);
+  request.requestType = solidityRequestTypeToRequestType(_request.requestType);
+  request.rejectReason = _request.rejectReason;
+  request.timestamp = _request.timestamp;
+  return request;
 }
 
 export function licensingEventLogToAgreement(
@@ -123,6 +139,8 @@ export function licensingEventLogToAgreement(
   agreement.licenser = _agreement.licenser;
   agreement.contentId = parseInt(_agreement.contentId);
   agreement.purposeOfUse = _agreement.purposeOfUse;
+  agreement.fieldOfUse = _agreement.fieldOfUse;
+  agreement.price = Number(_agreement.price);
   agreement.timestamp = _agreement.timestamp;
   agreement.id = parseInt(_agreement.id);
   agreement.transactionHash = transactionHash;
@@ -138,6 +156,18 @@ export function solidityContentTypeToContentType(
     return ContentType.AUDIO;
   } else {
     return ContentType.TEXT;
+  }
+}
+
+export function solidityRequestTypeToRequestType(
+  requestType: string
+): RequestType {
+  if (requestType === "0") {
+    return RequestType.PENDING;
+  } else if (requestType === "1") {
+    return RequestType.REJECTED;
+  } else {
+    return RequestType.APPROVED;
   }
 }
 

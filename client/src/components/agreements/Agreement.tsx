@@ -1,5 +1,5 @@
 import moment from "moment";
-import { getImageSrc } from "../../utils";
+import "./agreement.css";
 import { EtherIcon } from "../common/Icon";
 import { Link } from "react-router-dom";
 import { AgreementOption } from "../../model/Common";
@@ -8,23 +8,32 @@ import { getAgreements } from "../../controllers/agreement";
 import { Agreement } from "../../model/Agreement";
 import { FilterBar } from "../filterBar/FilterBar";
 import { agreementFiltersWithIcon } from "../../constant";
+import { ContentPreviewComponent } from "../eventTable/EventTable";
+import { UseDcm } from "../../contexts/UseDcm";
+import { fromWei } from "../../utils";
+import Skeleton from "react-loading-skeleton";
 
 interface IAgreement {
   walletAddress: string;
 }
 
 export const AgreementComponent = ({ walletAddress }: IAgreement) => {
+  const { state } = UseDcm();
   const [agreements, setAgreements] = useState<Agreement[]>([]);
   const [option, setOption] = useState<AgreementOption>(
     AgreementOption.LICENSER
   );
+  const [fetching, setFetching] = useState<boolean>(false);
   useEffect(() => {
+    setFetching(true);
     getAgreements(walletAddress)
       .then((agreements) => {
         console.log(agreements);
         setAgreements(agreements);
+        setFetching(false);
       })
       .catch((error) => {
+        setFetching(false);
         console.log(error);
       });
   }, [walletAddress]);
@@ -46,7 +55,8 @@ export const AgreementComponent = ({ walletAddress }: IAgreement) => {
   );
 
   return (
-    <div>
+    <div className="agreement-component">
+      <div className="setting-header">Agreement</div>
       <FilterBar
         options={agreementFiltersWithIcon}
         inputName={"agreement"}
@@ -64,35 +74,57 @@ export const AgreementComponent = ({ walletAddress }: IAgreement) => {
           </tr>
         </thead>
         <tbody>
+          {fetching && (
+            <>
+              {Array(9)
+                .fill(0)
+                .map(() => (
+                  <tr>
+                    <td>
+                      <Skeleton />
+                    </td>
+                    <td>
+                      <Skeleton />
+                    </td>
+                    <td>
+                      <Skeleton />
+                    </td>
+                    <td>
+                      <Skeleton />
+                    </td>
+                    <td>
+                      <Skeleton />
+                    </td>
+                  </tr>
+                ))}
+            </>
+          )}
           {(isLicenser ? licenser : licensing).map((agreement) => (
             <tr>
               <td className="no-wrap">
-                <div className="content-img-wrapper">
-                  <img
-                    className="content-img"
-                    src={getImageSrc(agreement.content)}
-                    width="56px"
-                    height="56px"
-                    alt=""
-                  />
-                </div>
-                <div className="content-name">{agreement.content.desc}</div>
+                <ContentPreviewComponent content={agreement.content} />
               </td>
               <td>
                 <div>
                   <div className="ether-price-wrapper">
                     <EtherIcon />{" "}
-                    <div className="ether-price">{agreement.content.price}</div>
+                    {/*  {fromWei(event.price.toString(), state)} */}
+                    <div className="ether-price">
+                      {fromWei(agreement.price.toString(), state)}
+                    </div>
                   </div>
-                  <div className="fiat-price">($10.00)</div>
+                  <div className="fiat-price">{`($${(
+                    Number(fromWei(agreement.price.toString(), state)) *
+                    state.coinRate.ETHToUSD
+                  ).toFixed(2)})`}</div>
                 </div>
               </td>
               <td className="no-wrap">
-                <a href={`/profile/${agreement.licensee}`}>
+                <Link to={`/profile/${agreement.licensee}`}>
                   {agreement.licensees.firstname +
                     " " +
                     agreement.licensees.lastname}
-                </a>
+                </Link>
               </td>
               <td className="no-wrap">
                 <div>{agreement.purposeOfUse}</div>
@@ -102,7 +134,7 @@ export const AgreementComponent = ({ walletAddress }: IAgreement) => {
                   {moment(
                     new Date(Number(agreement.timestamp) * 1000)
                   ).fromNow()}
-                  <i className="las la-external-link-alt"></i>
+                  <i className="las la-external-link-alt link-icon"></i>
                 </Link>
               </td>
             </tr>

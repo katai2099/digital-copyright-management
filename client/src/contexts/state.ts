@@ -9,6 +9,12 @@ export interface DcmState {
   web3State: Web3State;
   user: IUser;
   coinRate: IConversionRate;
+  loadingState: LoadingState;
+}
+
+export interface LoadingState {
+  loading: boolean;
+  loadingText: string;
 }
 
 export interface Web3State {
@@ -18,6 +24,11 @@ export interface Web3State {
   networkID: number;
   contract: Contract | null;
 }
+
+const initialLoadingState: LoadingState = {
+  loading: false,
+  loadingText: "",
+};
 
 const initialWeb3State: Web3State = {
   artifact: null,
@@ -36,11 +47,13 @@ export const initialState: DcmState = {
   web3State: initialWeb3State,
   user: new User(),
   coinRate: initialConversionRate,
+  loadingState: initialLoadingState,
 };
 
 const web3Actions = {
   init: "INIT",
   reset: "RESET",
+  disconnect: "DISCONNECT",
 };
 
 const web3Reducer = (state: Web3State, action: AnyAction) => {
@@ -50,8 +63,12 @@ const web3Reducer = (state: Web3State, action: AnyAction) => {
       const tmpState: Web3State = data;
       return tmpState;
     }
-    case web3Actions.reset: {
-      return initialWeb3State;
+    // case web3Actions.reset: {
+    //   return initialWeb3State;
+    // }
+    case web3Actions.disconnect: {
+      console.log(data);
+      return { ...data };
     }
     default:
       return state;
@@ -99,10 +116,30 @@ const coinConversionReducer = (state: IConversionRate, action: AnyAction) => {
   }
 };
 
+export const loadingActions = {
+  set: "SET",
+  reset: "RESET",
+};
+
+const loadingReducer = (state: LoadingState, action: AnyAction) => {
+  const { type, data } = action;
+  switch (type) {
+    case loadingActions.set: {
+      return data;
+    }
+    case loadingActions.reset: {
+      return initialLoadingState;
+    }
+    default:
+      return state;
+  }
+};
+
 const reducer = (state: DcmState, action: AnyAction) => ({
   web3State: web3Reducer(state.web3State, action),
   user: userReducer(state.user, action),
   coinRate: coinConversionReducer(state.coinRate, action),
+  loadingState: loadingReducer(state.loadingState, action),
 });
 
 export { userActions, reducer, web3Actions };

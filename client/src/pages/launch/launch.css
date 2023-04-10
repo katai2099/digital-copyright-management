@@ -1,5 +1,5 @@
 header {
-  margin-top: 16px;
+  margin-top: 8px;
 }
 
 .launch-content-header {
@@ -12,17 +12,48 @@ header {
 
 .launch-form-area {
   display: flex;
-  margin-top: 48px;
-  align-items: center;
+  /* margin-top: 36px; */
+  align-items: flex-start;
   color: #000;
+  border: 0.5px solid #bbc0c5;
+}
+
+.information-area {
+  /* width: 60%; */
+  /* margin-left: 48px; */
+  flex: 1;
+  align-self: start;
+  /* margin-top: 2%; */
+}
+
+.information-form {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 24px;
+}
+
+.field-set {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px;
+}
+
+textarea {
+  resize: none !important;
+}
+
+legend {
+  font-size: 18px;
+  padding: 0 10px;
 }
 
 .content-upload-area {
   width: 40%;
   text-align: left;
+  align-self: center;
   border-radius: 0.25rem;
   border: 1px solid #ced4da;
-  /* padding: 16px; */
+  margin-right: 8px;
 }
 
 .content-preview-header {
@@ -42,9 +73,9 @@ header {
 }
 
 .content-display-container {
-  height: 480px;
+  /* height: 100%; */
   cursor: pointer;
-  border: 1px solid #ced4da;
+  /* border: 1px solid #ced4da; */
   border-radius: 0.25rem;
   margin: 0px auto;
   text-align: center;
@@ -59,20 +90,6 @@ header {
   object-fit: scale-down;
   width: 100%;
   height: 90%;
-}
-
-.information-area {
-  /* width: 60%; */
-  /* margin-left: 48px; */
-  flex: 1;
-  align-self: start;
-  margin-top: 10%;
-}
-
-.information-form {
-  display: flex;
-  flex-direction: column;
-  padding: 12px 24px;
 }
 
 .price-wrapper {
@@ -94,6 +111,10 @@ header {
 }
 
 .submit-button {
-  width: 100%;
-  margin-top: 16px;
+  /* width: 100%; */
+  width: 20%;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0);
+  margin: 16px 0;
 }

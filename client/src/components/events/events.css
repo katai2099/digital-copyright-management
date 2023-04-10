@@ -29,6 +29,7 @@ tr:not(:last-child) {
 }
 
 tbody tr {
+  height: 48px;
   max-height: 48px;
 }
 

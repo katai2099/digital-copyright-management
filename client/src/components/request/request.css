@@ -1,0 +1,164 @@
+.request-header-section {
+  display: flex;
+  /* justify-content: space-between; */
+  align-items: center;
+  gap: 24px;
+  /* border: 1px solid #bbc0c5; */
+  margin-bottom: 16px;
+}
+
+.request-table-section {
+  margin-top: 48px;
+}
+
+.table-name {
+  font-size: 30px !important;
+}
+
+.request-filter {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 16px;
+}
+
+/* tr.actived {
+  background-color: #f5f5f5;
+}
+
+tr:hover {
+  background-color: #f5f5f5;
+  cursor: pointer;
+} */
+
+.table-with-accordion {
+  width: 100%;
+  border-collapse: collapse;
+  color: #444;
+}
+
+.table-with-accordion th,
+.table-with-accordion td {
+  padding: 0 16px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.table-with-accordion th {
+  background-color: #f9f9f9;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 600;
+  color: #777;
+}
+
+.table-with-accordion tr.active {
+  background-color: #fff8e1;
+}
+
+.table-with-accordion tr:hover {
+  background-color: #fafafa;
+  /* cursor: pointer; */
+}
+
+.table-with-accordion .accordion-toggle {
+  position: relative;
+  cursor: pointer;
+}
+
+.table-with-accordion .accordion-toggle span {
+  display: inline-flex;
+  align-items: center;
+}
+
+.table-with-accordion .accordion-toggle i {
+  margin-right: 6px;
+  font-size: 10px;
+}
+
+.table-with-accordion .accordion-details {
+  background-color: #f2f2f2;
+  padding: 16px;
+}
+
+.table-with-accordion .accordion-details ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.table-with-accordion .accordion-details li {
+  margin-bottom: 8px;
+}
+
+.ellipsis-buttion {
+  position: relative;
+}
+
+.ellipsis-options {
+  position: absolute;
+  right: 20px;
+}
+
+.actions-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.ellipsis-options {
+  min-width: 100% !important;
+}
+
+.request-icon {
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.dropdown-menu:disabled {
+  /* cursor: not-allowed !important; */
+}
+.reject-btn {
+  margin-right: 8px;
+}
+
+.decision-btn {
+  background-color: white !important;
+  border: 0.5px solid #e9e7e7 !important;
+}
+
+.decision-btn:hover {
+  border: 0.5px solid #b5b5b5 !important;
+}
+
+.something {
+  display: inline-block;
+  border-radius: 100px;
+  background-color: #fff;
+  padding: 12px 24px;
+  color: #000;
+  font-size: 16px;
+  font-weight: 900;
+  transform: 0.2s all;
+  cursor: pointer;
+}
+.request-status {
+  text-align: center;
+  width: 100%;
+  border-radius: 8px;
+  padding: 2px 0;
+  color: #f2f2f2;
+}
+
+.rejected-status {
+  background-color: #e93446;
+}
+
+.accepted-status {
+  background-color: #1bc487;
+}
+
+.pending-status {
+  background-color: #bbc0c5;
+  color: #252525;
+}

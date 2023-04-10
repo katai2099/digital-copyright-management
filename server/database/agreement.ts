@@ -10,6 +10,8 @@ export async function createAgreement(agreement: Agreement) {
         licenser: agreement.licenser,
         contentId: agreement.contentId,
         purposeOfUse: agreement.purposeOfUse,
+        fieldOfUse: agreement.fieldOfUse,
+        price: agreement.price,
         transactionHash: agreement.transactionHash,
         timestamp: agreement.timestamp,
       },

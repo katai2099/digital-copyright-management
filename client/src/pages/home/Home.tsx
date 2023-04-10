@@ -3,11 +3,11 @@ import { Link } from "react-router-dom";
 import { ContentItems } from "../../components/latest-content/ContentItems";
 import { RadioOption } from "../../components/option/RadioOption";
 import { ContentFilter, contentFilters } from "../../constant";
-import { coinRateActions, initialConversionRate } from "../../contexts/state";
+import { coinRateActions } from "../../contexts/state";
 import { UseDcm } from "../../contexts/UseDcm";
 import { getLatestContents } from "../../controllers/content";
 import { getCoinRate } from "../../controllers/web3";
-import { IConversionRate, ILatestContents } from "../../model/Common";
+import { ILatestContents } from "../../model/Common";
 import { Content, ContentType } from "../../model/Content";
 import "./home.css";
 
@@ -18,18 +18,23 @@ export const Home = () => {
     audio: [],
     texts: [],
   });
-  const { dispatch } = UseDcm();
+  const { state, dispatch } = UseDcm();
   const [filter, setFilter] = useState<ContentFilter>(ContentFilter.ALL);
+  const [fetching, setFetching] = useState<boolean>(false);
+
   useEffect(() => {
-    getCoinRate()
-      .then((rate) => {
-        dispatch({ type: coinRateActions.set, data: rate });
-      })
-      .then(() => {
-        return getLatestContents();
-      })
+    getCoinRate().then((rate) => {
+      dispatch({ type: coinRateActions.set, data: rate });
+    });
+  }, [dispatch]);
+
+  useEffect(() => {
+    setFetching(true);
+    getLatestContents()
       .then((latestContents) => {
         setLatestContents(latestContents);
+        setFetching(false);
+
         console.log(latestContents);
       })
       .catch((err) => {
@@ -38,6 +43,8 @@ export const Home = () => {
   }, [dispatch]);
 
   const setSelectFilter = (filter: string) => {
+    console.log(state.web3State);
+
     setFilter(filter as ContentFilter);
   };
 
@@ -82,6 +89,7 @@ export const Home = () => {
             filter === ContentFilter.ALL ? images : contents.slice(0, 5)
           }
           columnNumber={0}
+          loading={fetching}
         />
         <ContentItems
           title={filter === ContentFilter.ALL ? ContentFilter.AUDIO : filter}
@@ -89,6 +97,7 @@ export const Home = () => {
             filter === ContentFilter.ALL ? audio : contents.slice(5, 10)
           }
           columnNumber={1}
+          loading={fetching}
         />
         <ContentItems
           title={filter === ContentFilter.ALL ? ContentFilter.TEXT : filter}
@@ -96,6 +105,7 @@ export const Home = () => {
             filter === ContentFilter.ALL ? texts : contents.slice(10, 15)
           }
           columnNumber={2}
+          loading={fetching}
         />
       </div>
     </div>

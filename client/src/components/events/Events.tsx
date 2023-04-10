@@ -17,14 +17,18 @@ export const Events = ({ contentType, walletAddress }: IEventProps) => {
   const [checkedState, setChecked] = useState<boolean[]>(
     new Array(3).fill(false)
   );
+  const [fetching, setFetching] = useState<boolean>(false);
   const type = contentType;
   useEffect(() => {
+    setFetching(true);
     getUserEvents(type, page, checkedState, walletAddress)
       .then((events) => {
         setEvents(events);
+        setFetching(false);
       })
       .catch((error) => {
         console.log(error);
+        setFetching(false);
       });
   }, [checkedState, page, type, walletAddress]);
   const onChangeHandler = (pos: number) => {
@@ -68,7 +72,7 @@ export const Events = ({ contentType, walletAddress }: IEventProps) => {
         </Accordion>
       </div>
       <div className="col-sm-9">
-        <EventTable events={events} hasContent={true} />
+        <EventTable events={events} hasContent={true} fetching={fetching} />
       </div>
     </div>
   );

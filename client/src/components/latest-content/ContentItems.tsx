@@ -1,17 +1,20 @@
+import Skeleton from "react-loading-skeleton";
 import { Content } from "../../model/Content";
-import { ContentItem } from "./ContentItem";
+import { ContentItem, ContentItemSkeletonLoading } from "./ContentItem";
 import "./contentItems.css";
 
 interface IContentItemsProps {
   title: string;
   contents: Content[];
   columnNumber: number;
+  loading: boolean;
 }
 
 export const ContentItems = ({
   title,
   contents,
   columnNumber,
+  loading,
 }: IContentItemsProps) => {
   return (
     <div className="latest-content-column">
@@ -20,6 +23,7 @@ export const ContentItems = ({
         <div className="header-name">{title}</div>
         <div className="header-price">Price</div>
       </div>
+      {loading && <ContentItemSkeletonLoading />}
       {contents.map((content, idx) => (
         <ContentItem
           key={columnNumber * 5 + idx + 1}
@@ -27,7 +31,9 @@ export const ContentItems = ({
           content={content}
         ></ContentItem>
       ))}
-      {contents.length === 0 && <div className="no-contents">No Contents</div>}
+      {!loading && contents.length === 0 && (
+        <div className="no-contents">No Contents</div>
+      )}
     </div>
   );
 };

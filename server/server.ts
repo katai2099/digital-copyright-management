@@ -17,6 +17,7 @@ import {
 import { eventRouter } from "./routers/event";
 import { agreementRouter } from "./routers/agreement";
 import { searchRouter } from "./routers/search";
+import { requestRouter } from "./routers/request";
 export const client = create();
 var CronJob = require("cron").CronJob;
 
@@ -84,6 +85,7 @@ app.use("/submit", submitRouter);
 app.use("/events", eventRouter);
 app.use("/agreements", agreementRouter);
 app.use("/search", searchRouter);
+app.use("/requests", requestRouter);
 app.get("/", (req: Request, res: Response) => {
   res.send("Express typescript server");
 });

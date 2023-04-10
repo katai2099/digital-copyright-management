@@ -19,6 +19,7 @@ export async function createContent(content: IContent): Promise<contents> {
         IPFSAddress: content.IPFSAddress,
         title: content.title,
         desc: content.desc,
+        fieldOfUse: content.fieldOfUse,
         price: content.price,
         publishDate: content.publishDate,
       },
@@ -106,6 +107,7 @@ export async function getContentById(id: number) {
       },
       include: {
         owner: true,
+        requests: true,
       },
     });
     return content;

@@ -3,34 +3,35 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { userActions } from "../../contexts/state";
 import { UseDcm } from "../../contexts/UseDcm";
 import { disconnectMetamask, startLogin } from "../../controllers/web3";
 import "./navbar.css";
 import { DcmSearch } from "../dcmSearch/DcmSearch";
-import { Modal } from "../common/Modal";
-import { Backdrop } from "../common/Backdrop";
 
 export const Navbar = () => {
   const { state, dispatch } = UseDcm();
   const [remainingBalance, setRemainingBalance] = useState<string>("");
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    state.web3State.web3?.eth
-      .getBalance(state.web3State.account)
-      .then((balance) => {
-        const etherBalance = state.web3State.web3?.utils.fromWei(
-          balance,
-          "ether"
-        );
-        setRemainingBalance(etherBalance!.substring(0, 5));
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    if (state.web3State.account !== "") {
+      state.web3State.web3?.eth
+        .getBalance(state.web3State.account)
+        .then((balance) => {
+          const etherBalance = state.web3State.web3?.utils.fromWei(
+            balance,
+            "ether"
+          );
+          setRemainingBalance(etherBalance!.substring(0, 5));
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   }, [
     remainingBalance,
     state.user.walletAddress,
@@ -57,7 +58,7 @@ export const Navbar = () => {
   };
 
   const handlerLogoutClick = () => {
-    disconnectMetamask(dispatch);
+    disconnectMetamask(dispatch, state);
   };
 
   const profileClickHandler = (event: React.MouseEvent<HTMLElement>) => {
@@ -68,7 +69,21 @@ export const Navbar = () => {
     event.stopPropagation();
   };
 
-  return (
+  const navRoutes = [
+    "/launch",
+    "/content/",
+    "/explore",
+    "/profile/",
+    "/settings",
+  ];
+
+  console.log(location.pathname);
+
+  const showNavBar =
+    location.pathname === "/" ||
+    navRoutes.some((route) => location.pathname.includes(route));
+
+  return showNavBar ? (
     <nav className="">
       {isOpen && (
         <div
@@ -101,22 +116,6 @@ export const Navbar = () => {
               </div>
             </div>
           </Link>
-          {/* <div className="search-bar">
-          <div className="search-icon">
-            <i>
-              <FontAwesomeIcon icon={faSearch} />
-            </i>
-          </div>
-          <input
-            className="search-input"
-            type="search"
-            placeholder="Search for titles or usernames"
-            aria-label="Search"
-            onBlur={() => {
-              console.log(state.web3State);
-            }}
-          />
-        </div> */}
           <DcmSearch
             backdropActive={isOpen}
             onSearch={(value: boolean) => {
@@ -220,5 +219,5 @@ export const Navbar = () => {
         </div>
       </div>
     </nav>
-  );
+  ) : null;
 };

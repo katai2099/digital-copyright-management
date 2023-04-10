@@ -17,22 +17,37 @@ import { getUserByWalletAddress } from "../../controllers/user";
 import { ContentType } from "../../model/Content";
 import { IUser, User } from "../../model/User";
 import "./profile.css";
+import Skeleton from "react-loading-skeleton";
+import { UseDcm } from "../../contexts/UseDcm";
+import { getCoinRate } from "../../controllers/web3";
+import { coinRateActions } from "../../contexts/state";
 
 export const Profile = () => {
+  const { dispatch } = UseDcm();
   const [user, setUser] = useState<IUser>(new User());
   const [profileTab, setProfileTab] = useState<ProfileTab>(ProfileTab.CONTENTS);
   const [contentType, setContentType] = useState<ContentType>(
     ContentType.IMAGE
   );
+  const [fetchingUser, setFetchingUser] = useState<boolean>(false);
 
   const { walletAddress } = useParams();
 
   useEffect(() => {
+    getCoinRate().then((rate) => {
+      dispatch({ type: coinRateActions.set, data: rate });
+    });
+  }, [dispatch]);
+
+  useEffect(() => {
+    setFetchingUser(true);
     getUserByWalletAddress(walletAddress!)
       .then((user) => {
         setUser(user);
+        setFetchingUser(false);
       })
       .catch((error) => {
+        setFetchingUser(false);
         console.log(error);
       });
   }, [walletAddress]);
@@ -61,50 +76,60 @@ export const Profile = () => {
         <div className="profile-image"></div>
         <br />
         <div className="wallet-name">
-          {user.firstname + " " + user.lastname}
-
-          {/* Cookies */}
-        </div>
-        <div className="wallet-email">{user.email}</div>
-        <div className="wallet-info-bar">
-          <div
-            className="wallet-detail-box"
-            onClick={() => {
-              navigator.clipboard.writeText(user.walletAddress);
-            }}
-          >
-            {user.walletAddress.substring(0, 6)}{" "}
-            <i>
-              <FontAwesomeIcon icon={faCopy} />
-            </i>
-          </div>
-          {user.username !== "" && (
-            <div
-              className="wallet-detail-box"
-              onClick={() => {
-                navigator.clipboard.writeText(user.username);
-              }}
-            >
-              {user.username}{" "}
-              <i>
-                <FontAwesomeIcon icon={faCopy} />
-              </i>
-            </div>
+          {fetchingUser ? (
+            <Skeleton width={"30%"} />
+          ) : (
+            `${user.firstname} ${user.lastname}`
           )}
-          <a
-            href={`${GOERLI_TEST_NET_URL}${user.walletAddress}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            <div className="ether-io-box">
-              <img
-                height="24px"
-                width="24px"
-                src="../../img/etherscan-logo-circle.svg"
-                alt=""
-              />
-            </div>
-          </a>
+        </div>
+        <div className="wallet-email">
+          {fetchingUser ? <Skeleton width={"20%"} /> : `${user.email}`}
+        </div>
+        <div className="wallet-info-bar">
+          {fetchingUser ? (
+            <Skeleton width={"30%"} />
+          ) : (
+            <>
+              <div
+                className="wallet-detail-box"
+                onClick={() => {
+                  navigator.clipboard.writeText(user.walletAddress);
+                }}
+              >
+                {user.walletAddress.substring(0, 6)}{" "}
+                <i>
+                  <FontAwesomeIcon icon={faCopy} />
+                </i>
+              </div>
+              {user.username !== "" && (
+                <div
+                  className="wallet-detail-box"
+                  onClick={() => {
+                    navigator.clipboard.writeText(user.username);
+                  }}
+                >
+                  {user.username}{" "}
+                  <i>
+                    <FontAwesomeIcon icon={faCopy} />
+                  </i>
+                </div>
+              )}
+              <a
+                href={`${GOERLI_TEST_NET_URL}${user.walletAddress}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <div className="ether-io-box">
+                  <img
+                    height="24px"
+                    width="24px"
+                    src="../../img/etherscan-logo-circle.svg"
+                    alt=""
+                  />
+                </div>
+              </a>
+            </>
+          )}
         </div>
         <hr />
         <FilterBar

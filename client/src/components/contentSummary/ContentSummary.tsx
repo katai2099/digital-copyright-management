@@ -1,10 +1,10 @@
-import { Link, useNavigate } from "react-router-dom";
-import { IPFS_URL } from "../../constant";
+import { Link } from "react-router-dom";
 import { UseDcm } from "../../contexts/UseDcm";
 import { Content } from "../../model/Content";
-import { getImageSrc } from "../../utils";
+import { fromWei, getImageSrc } from "../../utils";
 import { Card } from "../common/Card";
 import "./contentSummary.css";
+import Skeleton from "react-loading-skeleton";
 
 interface IContentSummaryProps {
   content: Content;
@@ -13,10 +13,7 @@ interface IContentSummaryProps {
 export const ContentSummary = ({ content }: IContentSummaryProps) => {
   const { state } = UseDcm();
 
-  const price = state.web3State.web3?.utils.fromWei(
-    content.price.toString(),
-    "ether"
-  );
+  const price = fromWei(content.price.toString(), state);
 
   return (
     <Card>
@@ -55,5 +52,37 @@ export const ContentSummary = ({ content }: IContentSummaryProps) => {
         </div>
       </Link>
     </Card>
+  );
+};
+
+export const ContentSummarySkeletonLoading = () => {
+  return (
+    <>
+      {Array(6)
+        .fill(0)
+        .map(() => (
+          <Card>
+            <div className="content-image-wrapper">
+              <div className="content-image">
+                <Skeleton height="100%" />
+              </div>
+            </div>
+            <div className="content-info-wrapper">
+              <div className="content-info">
+                <Skeleton />
+                <Skeleton />
+              </div>
+              <div className="ether">
+                <Skeleton height={20} />
+              </div>
+              <div className="content-owner">
+                <p>
+                  <Skeleton style={{ padding: "4px 0" }} />
+                </p>
+              </div>
+            </div>
+          </Card>
+        ))}
+    </>
   );
 };

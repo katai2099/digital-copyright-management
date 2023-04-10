@@ -1,5 +1,19 @@
 import { IPFS_URL } from "./constant";
-import { Content, ContentType, SolidityContentType } from "./model/Content";
+import {
+  BaseContent,
+  Content,
+  ContentType,
+  SolidityContentType,
+} from "./model/Content";
+import { DcmState } from "./contexts/state";
+
+export interface keyValuePair {
+  [key: string]: string;
+}
+
+export function isObjectEmpty(object: keyValuePair): boolean {
+  return Object.keys(object).length === 0;
+}
 
 export function clone<T = any>(whatToClone: T): T {
   return JSON.parse(JSON.stringify(whatToClone));
@@ -38,24 +52,6 @@ export function shallowCompare(
 }
 
 export function hexToBin(hexString: string): string {
-  // const hexBinLookup = {
-  //      0:   "0000" ,
-  //      1:   "0001" ,
-  //      2:   "0010" ,
-  //      3:   "0011" ,
-  //      4:   "0100" ,
-  //      5:   "0101" ,
-  //      6:   "0110" ,
-  //      7:   "0111" ,
-  //      8:   "1000" ,
-  //      9:   "1001" ,
-  //      a:   "1010" ,
-  //      b:   "1011" ,
-  //      c:   "1100" ,
-  //      d:   "1101" ,
-  //      e:   "1110" ,
-  //      f:   "1111" ,
-  // }
   let result: string = "";
   for (let i = 0; i < hexString.length; i++) {
     switch (hexString[i]) {
@@ -118,7 +114,7 @@ export const toJSON = (data: any) => {
   return JSON.parse(data);
 };
 
-export const getImageSrc = (content: Content): string => {
+export const getImageSrc = (content: Content | BaseContent): string => {
   if (content.contentType === ContentType.IMAGE) {
     return `${IPFS_URL}${content.IPFSAddress}`;
   } else if (content.contentType === ContentType.AUDIO) {
@@ -139,3 +135,19 @@ export function debounce<T extends unknown[]>(
     }, delay);
   };
 }
+
+export function toWei(value: string, state: DcmState): string {
+  return state.web3State.web3!.utils.toWei(value);
+}
+
+export function fromWei(value: string, state: DcmState): string {
+  if (state.web3State.web3) {
+    return Number(state.web3State.web3!.utils.fromWei(value)).toFixed(2);
+  }
+  return value;
+}
+
+export const isValidEmail = (email: string) => {
+  const regex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+  return regex.test(email);
+};

@@ -1,6 +1,19 @@
-.setting-wrapper {
-  padding: 0 100px;
-  font-weight: 300;
+.setting-wrapper .filter-wrapper,
+.setting-wrapper .filters {
+  margin-bottom: 16px;
+}
+
+.setting-wrapper a:link,
+.setting-wrapper a:visited {
+  color: #3b71fa;
+}
+
+.setting-wrapper a:hover {
+  color: #0633a5;
+}
+
+.setting-wrapper .link-icon {
+  color: #000;
 }
 
 .setting-header {

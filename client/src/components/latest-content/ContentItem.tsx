@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
-import { IPFS_URL } from "../../constant";
 import { UseDcm } from "../../contexts/UseDcm";
-import { Content, ContentType } from "../../model/Content";
-import { getImageSrc } from "../../utils";
+import { Content } from "../../model/Content";
+import { fromWei, getImageSrc } from "../../utils";
 import "./contentItems.css";
+import Skeleton from "react-loading-skeleton";
 
 interface IContentItemProps {
   idx: number;
@@ -12,10 +12,9 @@ interface IContentItemProps {
 
 export const ContentItem = ({ idx, content }: IContentItemProps) => {
   const { state } = UseDcm();
-  const price = state.web3State.web3?.utils.fromWei(
-    content.price.toString(),
-    "ether"
-  );
+
+  const price = fromWei(content.price.toString(), state);
+  //const price = 0;
   return (
     <Link to={`/content/${content.id}`}>
       <div className="content-item">
@@ -48,5 +47,41 @@ export const ContentItem = ({ idx, content }: IContentItemProps) => {
         </div>
       </div>
     </Link>
+  );
+};
+
+export const ContentItemSkeletonLoading = () => {
+  return (
+    <div>
+      {Array(5)
+        .fill(0)
+        .map(() => (
+          <div className="content-item">
+            <div className="item-index">
+              <Skeleton height={18} />
+            </div>
+            <div className="item-img-wrapper">
+              <Skeleton
+                //className="item-img"
+                style={{ borderRadius: "8px" }}
+                width={56}
+                height={56}
+                // containerClassName="item-img"
+              />
+            </div>
+            <div className="item-info" style={{ paddingRight: "16px" }}>
+              <div className="item-title">
+                <Skeleton />
+              </div>
+              <div className="item-owner">
+                <Skeleton />
+              </div>
+            </div>
+            <div className="item-usage" style={{ width: "40px" }}>
+              <Skeleton height={36} />
+            </div>
+          </div>
+        ))}
+    </div>
   );
 };

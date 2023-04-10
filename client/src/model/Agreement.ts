@@ -6,6 +6,8 @@ interface IBaseAgreement {
   licenser: string;
   contentId: number;
   purposeOfUse: string;
+  fieldOfUse: string;
+  price: number;
   transactionHash: string;
   timestamp: string;
 }
@@ -16,6 +18,8 @@ export class BaseAgreement implements IBaseAgreement {
     public licenser = "",
     public contentId = 0,
     public purposeOfUse = "",
+    public fieldOfUse = "",
+    public price = 0,
     public transactionHash = "",
     public timestamp = ""
   ) {}
@@ -27,6 +31,8 @@ export class Agreement implements IBaseAgreement {
     public licenser = "",
     public contentId = 0,
     public purposeOfUse = "",
+    public fieldOfUse = "",
+    public price = 0,
     public transactionHash = "",
     public timestamp = "",
     public licensees = new User(),

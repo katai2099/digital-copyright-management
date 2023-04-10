@@ -1,3 +1,8 @@
+export enum UserType {
+  LICENSER = "Licenser",
+  LICENSING = "Licensing",
+}
+
 export interface IUser {
   username: string;
   firstname: string;

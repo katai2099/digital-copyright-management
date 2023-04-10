@@ -21,6 +21,7 @@ model users {
   contents          contents[]
   eventsFrom        events[]     @relation("from")
   eventsTo          events[]     @relation("to")
+  requests          requests[]
 }
 
 model contents {
@@ -31,11 +32,13 @@ model contents {
   IPFSAddress  String
   title        String
   desc         String
+  fieldOfUse   String
   price        BigInt
   publishDate  String
   event        events[]
   owner        users?       @relation(fields: [ownerAddress], references: [walletAddress])
   agreements   agreements[]
+  requests     requests[]
 }
 
 model events {
@@ -59,9 +62,44 @@ model agreements {
   licenser        String
   contentId       Int
   purposeOfUse    String
+  fieldOfUse      String
+  price           BigInt
   transactionHash String
   timestamp       String
   licensers       users?   @relation("licenser", fields: [licenser], references: [walletAddress])
   licensees       users?   @relation("licensee", fields: [licensee], references: [walletAddress])
   content         contents @relation(fields: [contentId], references: [id])
+}
+
+model requests {
+  id            Int             @id @unique
+  licensee      String
+  contentId     Int
+  purposeOfUse  String
+  fieldOfUse    String
+  price         BigInt
+  requestType   String
+  rejectReason  String          @default("")
+  timestamp     String
+  licensees     users           @relation(fields: [licensee], references: [walletAddress])
+  content       contents        @relation(fields: [contentId], references: [id])
+  requestEvents requestEvents[]
+}
+
+model requestEvents {
+  id              Int      @id @unique @default(autoincrement())
+  transactionHash String
+  requestId       Int
+  requestType     String
+  timestamp       String
+  request         requests @relation(fields: [requestId], references: [id])
+}
+
+model transferEvent {
+  id              Int    @id @unique @default(autoincrement())
+  transactionHash String
+  from            String
+  to              String
+  price           BigInt
+  timestamp       String
 }
