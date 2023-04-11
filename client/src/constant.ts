@@ -15,8 +15,14 @@ export const CONTENT_ROUTE = "/contents";
 export const EVENT_ROUTE = "/events";
 export const AGREEMENT_ROUTE = "/agreements";
 export const REQUEST_ROUTE = "/requests";
+
 export const APP_STATE_KEY = "APP_STATE";
 export const WEB3_CONNECT_CACHED = "WEB3_CONNECT_CACHED_PROVIDER";
+export const CONFIRM_TRANSACTION = "Please confirm transaction";
+export const PROCESSING = "Processing";
+export const REJECT_TRANSACTION = "You have rejected a transaction";
+
+export const METAMASK_REJECTION_CODE = 4001;
 
 export enum SettingTab {
   Profile,

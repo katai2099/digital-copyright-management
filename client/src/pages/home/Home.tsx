@@ -23,6 +23,10 @@ export const Home = () => {
   const [fetching, setFetching] = useState<boolean>(false);
 
   useEffect(() => {
+    window.scroll(0, 0);
+  }, []);
+
+  useEffect(() => {
     getCoinRate().then((rate) => {
       dispatch({ type: coinRateActions.set, data: rate });
     });

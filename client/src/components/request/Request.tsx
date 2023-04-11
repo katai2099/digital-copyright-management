@@ -14,13 +14,13 @@ import React from "react";
 import { FilterBar } from "../filterBar/FilterBar";
 import { agreementFiltersWithIcon } from "../../constant";
 import { UserType } from "../../model/User";
-import { fromWei } from "../../utils";
+import { fromWei, handleError } from "../../utils";
 import { Modal } from "../common/Modal";
 import { ApproveRequestBody, RejectRequestBody } from "../common/Common";
 import Skeleton from "react-loading-skeleton";
 
 export const RequestComponent = () => {
-  const { state } = UseDcm();
+  const { state, dispatch } = UseDcm();
   const [activeRowIndex, setActiveRowIndex] = useState(-1);
   const [licenserRequest, setLicenserRequest] = useState<Request[]>([]);
   const [licensingRequest, setLicensingRequest] = useState<Request[]>([]);
@@ -51,10 +51,6 @@ export const RequestComponent = () => {
         console.log(error);
       });
   }, [state.web3State.account]);
-
-  useEffect(() => {
-    window.scroll(0, 0);
-  }, []);
 
   useEffect(() => {
     state.web3State.contract?.methods
@@ -100,25 +96,28 @@ export const RequestComponent = () => {
       setErrorTextArea(true);
       return;
     }
-    rejectAgreement(processingRequestId, rejectReason, state.web3State)
-      .then(() => {
-        // window.location.reload();
-        setModalOpen(false);
-      })
+    setModalOpen(false);
+
+    rejectAgreement(
+      processingRequestId,
+      rejectReason,
+      state.web3State,
+      dispatch
+    )
+      .then(() => {})
       .catch((err) => {
-        setModalOpen(false);
+        handleError(err);
         console.log(err);
       });
   };
 
   const approveHandler = () => {
-    approveRequest(processingRequestId, state.web3State)
-      .then(() => {
-        setModalOpen(false);
-      })
-      .catch((err) => {
-        setModalOpen(false);
+    setModalOpen(false);
 
+    approveRequest(processingRequestId, state.web3State, dispatch)
+      .then(() => {})
+      .catch((err) => {
+        handleError(err);
         console.log(err);
       });
   };

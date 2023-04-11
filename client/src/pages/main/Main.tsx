@@ -9,6 +9,7 @@ import { Setting } from "../setting/Setting";
 import { LoadingScreen } from "../../components/loadingScreen/LoadingScreen";
 import { UseDcm } from "../../contexts/UseDcm";
 import { ToastContainer } from "react-toastify";
+import { Hash } from "../hash/Hash";
 
 export const Main = () => {
   const { state } = UseDcm();
@@ -30,6 +31,7 @@ export const Main = () => {
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<Register />} />
         <Route path="/launch" element={<Launch />} />
+        <Route path="/hash" element={<Hash />} />
         <Route path="/content/:id" element={<Detail />} />
         <Route path="/explore" element={<Explore />} />
         <Route path="/profile/:walletAddress" element={<Profile />} />

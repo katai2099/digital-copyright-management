@@ -52,7 +52,7 @@ export const initialState: DcmState = {
 
 const web3Actions = {
   init: "INIT",
-  reset: "RESET",
+  reset: "WEB3-RESET",
   disconnect: "DISCONNECT",
 };
 
@@ -117,8 +117,8 @@ const coinConversionReducer = (state: IConversionRate, action: AnyAction) => {
 };
 
 export const loadingActions = {
-  set: "SET",
-  reset: "RESET",
+  set: "LOADING-SET",
+  reset: "LOADING-RESET",
 };
 
 const loadingReducer = (state: LoadingState, action: AnyAction) => {

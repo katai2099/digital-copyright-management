@@ -70,7 +70,7 @@ export async function initWeb3() {
       //to => _licenser
       //contentId => _contentId
       licensingEventHandler(event.transactionHash, event.returnValues);
-      addNewAgreement(event.transactionHash, event.returnValues);
+      // addNewAgreement(event.transactionHash, event.returnValues);
       console.log(event);
     })
     .on("error", function (error: any, receipt: any) {
@@ -200,9 +200,7 @@ function updateContentEventHandler(
     Number(eventReturnValues._currentPrice),
     Number(eventReturnValues._lastPrice)
   );
-  createEvent(event).then(() => {
-    updateContentPrice(event.contentId, event.price);
-  });
+  createEvent(event);
 }
 
 function licensingEventHandler(

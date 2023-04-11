@@ -18,6 +18,7 @@ export const DcmProvider = ({ children }: IDcmProviderProps) => {
   if (!web3_cache && !state.web3State.web3) {
     initMetamask(dispatch);
   }
+
   useEffect(() => {
     if (web3_cache === "injected") {
       //TODO: fix does not have to check for ethereum provider if already login

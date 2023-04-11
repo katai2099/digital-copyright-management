@@ -1,5 +1,3 @@
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 
@@ -75,6 +73,7 @@ export const Navbar = () => {
     "/explore",
     "/profile/",
     "/settings",
+    "/hash",
   ];
 
   console.log(location.pathname);
@@ -133,6 +132,9 @@ export const Navbar = () => {
               }}
             >
               <div className="menu-item">Explore</div>
+            </Link>
+            <Link to="/hash" onClick={() => setIsOpen(false)}>
+              <div className="menu-item">Hash</div>
             </Link>
             <Link
               to="/launch"

@@ -13,7 +13,7 @@ import {
 } from "../../controllers/content";
 import { getCoinRate, getCurrentUsdToEth } from "../../controllers/web3";
 import { Content } from "../../model/Content";
-import { fromWei, getImageSrc } from "../../utils";
+import { fromWei, getImageSrc, handleError } from "../../utils";
 import "./detail.css";
 import { Event } from "../../model/Event";
 import { EventTable } from "../../components/eventTable/EventTable";
@@ -41,6 +41,10 @@ export const Detail = () => {
   const [isError, setIsError] = useState<boolean>(false);
   const [fetching, setFetching] = useState<boolean>(false);
   const [fetchingUser, setFetchingUser] = useState<boolean>(false);
+
+  useEffect(() => {
+    window.scroll(0, 0);
+  }, []);
 
   useEffect(() => {
     getCoinRate().then((rate) => {
@@ -87,17 +91,28 @@ export const Detail = () => {
         setCurrentUsdToEth(Number(res));
       })
       .catch((error) => {
+        handleError(error);
         console.log(error);
       });
   };
   const confirmButtonClickHandler = () => {
-    updateContentData(content, newPrice, state, newFieldOfUse, currentUsdToEth)
+    setIsModalOpen(false);
+    setIsConfirmUI(false);
+
+    updateContentData(
+      content,
+      newPrice,
+      state,
+      newFieldOfUse,
+      currentUsdToEth,
+      dispatch
+    )
       .then((res: any) => {
         console.log(res);
-        // setContent({ ...content, price: newPrice });
         window.location.reload();
       })
       .catch((error: any) => {
+        handleError(error);
         console.log(error);
       });
   };
@@ -107,7 +122,8 @@ export const Detail = () => {
       setIsError(true);
       return;
     }
-    requestContent(content, state, reasonOfUse, fieldOfUse)
+    setRequestModalOpen(false);
+    requestContent(content, state, reasonOfUse, fieldOfUse, dispatch)
       .then((res: any) => {
         console.log(res);
       })

@@ -12,7 +12,7 @@ import { Content, ContentType } from "../../model/Content";
 import "./launch.css";
 import { ContentPriceInput } from "../../components/contentPriceInput/ContentPriceInput";
 import { Modal } from "../../components/common/Modal";
-import { isObjectEmpty, keyValuePair } from "../../utils";
+import { handleError, isObjectEmpty, keyValuePair } from "../../utils";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
@@ -32,6 +32,10 @@ export const Launch = () => {
   const [displayModal, setDisplayModal] = useState<boolean>(false);
   const [currentUsdToEth, setCurrentUsdToEth] = useState<number>(0);
   const [errors, setErrors] = useState<keyValuePair>({});
+
+  useEffect(() => {
+    window.scroll(0, 0);
+  }, []);
 
   useEffect(() => {
     getCoinRate().then((rate) => {
@@ -95,7 +99,7 @@ export const Launch = () => {
         );
       })
       .catch((error) => {
-        toast.error("You reject a transaction");
+        handleError(error);
         console.log(error);
       });
   };
@@ -150,7 +154,7 @@ export const Launch = () => {
                   setContent({ ...content, title: event.currentTarget.value });
                 }}
               />
-              {errors.title && <div className="errorText">{errors.title}</div>}
+              {errors.title && <div className="error-text">{errors.title}</div>}
               <label className="input-label">Owner</label>
               <input
                 type="text"
@@ -171,7 +175,7 @@ export const Launch = () => {
                   setContent({ ...content, desc: event.currentTarget.value });
                 }}
               />
-              {errors.desc && <div className="errorText">{errors.desc}</div>}
+              {errors.desc && <div className="error-text">{errors.desc}</div>}
             </fieldset>
             <fieldset className="field-set form-group border p-3">
               <legend className="w-auto ">Copyright info</legend>
@@ -202,7 +206,7 @@ export const Launch = () => {
                 }}
               />
               {errors.fieldOfUse && (
-                <div className="errorText">{errors.fieldOfUse}</div>
+                <div className="error-text">{errors.fieldOfUse}</div>
               )}
             </fieldset>
           </form>
@@ -248,7 +252,7 @@ export const Launch = () => {
             />
           </div>
           {errors.file && (
-            <div className="errorText" style={{ paddingLeft: "16px" }}>
+            <div className="error-text" style={{ paddingLeft: "16px" }}>
               {errors.file}
             </div>
           )}

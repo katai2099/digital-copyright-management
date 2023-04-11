@@ -1,5 +1,11 @@
 import { Dispatch } from "react";
-import { CONTENT_ROUTE, EVENT_ROUTE, SUBMIT_ROUTE } from "../constant";
+import {
+  CONFIRM_TRANSACTION,
+  CONTENT_ROUTE,
+  EVENT_ROUTE,
+  PROCESSING,
+  SUBMIT_ROUTE,
+} from "../constant";
 import { DcmState, Web3State, loadingActions } from "../contexts/state";
 import {
   IContentFilter,
@@ -118,13 +124,41 @@ export function requestContent(
   content: Content,
   state: DcmState,
   purpose: string,
-  fieldOfUse: string
+  fieldOfUse: string,
+  dispatch: Dispatch<AnyAction>
 ) {
+  dispatch({
+    type: loadingActions.set,
+    data: { loading: true, loadingText: CONFIRM_TRANSACTION },
+  });
   return state.web3State.contract?.methods
     .requestAgreement(content.id, purpose, fieldOfUse)
     .send({ from: state.web3State.account, value: content.price })
-    .then((res: any) => Promise.resolve(res))
-    .catch((error: any) => Promise.resolve(error));
+    .on("transactionHash", function (transactionHash: any) {
+      dispatch({
+        type: loadingActions.set,
+        data: { loading: true, loadingText: "Processing" },
+      });
+    })
+    .on("confirmation", function (confirmationNumber: any, receipt: any) {
+      return Promise.resolve(receipt);
+    })
+    .on("error", function (error: any) {
+      console.log(error);
+      return Promise.reject(error);
+    })
+    .then((res: any) => {
+      dispatch({
+        type: loadingActions.reset,
+      });
+      return Promise.resolve(res);
+    })
+    .catch((error: any) => {
+      dispatch({
+        type: loadingActions.reset,
+      });
+      return Promise.resolve(error);
+    });
 }
 
 export function updateContentData(
@@ -132,11 +166,13 @@ export function updateContentData(
   newPrice: number,
   state: DcmState,
   fieldOfUse: string,
-  currentEthToUsd: number
+  currentEthToUsd: number,
+  dispatch: Dispatch<AnyAction>
 ) {
-  //state.web3State.web3?.utils.toWei(
-  // (content.price * state.coinRate.USDToETH).toString()
-  // )
+  dispatch({
+    type: loadingActions.set,
+    data: { loading: true, loadingText: CONFIRM_TRANSACTION },
+  });
   return state.web3State.contract?.methods
     .updateContentData(
       content.id,
@@ -146,8 +182,31 @@ export function updateContentData(
       fieldOfUse
     )
     .send({ from: state.web3State.account })
-    .then((res: any) => Promise.resolve(res))
-    .catch((error: any) => Promise.resolve(error));
+    .on("transactionHash", function (transactionHash: any) {
+      dispatch({
+        type: loadingActions.set,
+        data: { loading: true, loadingText: PROCESSING },
+      });
+    })
+    .on("confirmation", function (confirmationNumber: any, receipt: any) {
+      return Promise.resolve(receipt);
+    })
+    .on("error", function (error: any) {
+      console.log(error);
+      return Promise.reject(error);
+    })
+    .then((res: any) => {
+      dispatch({
+        type: loadingActions.reset,
+      });
+      return Promise.resolve(res);
+    })
+    .catch((error: any) => {
+      dispatch({
+        type: loadingActions.reset,
+      });
+      return Promise.reject(error);
+    });
 }
 
 export function submitDigitalContent(
@@ -180,7 +239,7 @@ export function submitDigitalContent(
       console.log("contract call");
       dispatch({
         type: loadingActions.set,
-        data: { loading: true, loadingText: "Please accept transaction" },
+        data: { loading: true, loadingText: CONFIRM_TRANSACTION },
       });
       return web3.contract?.methods
         .addContent(
@@ -219,6 +278,10 @@ export function submitDigitalContent(
       return Promise.resolve(res);
     })
     .catch((error) => {
+      //TODO: handle hashing error and reject transaction error
+      dispatch({
+        type: loadingActions.reset,
+      });
       console.log(error);
       return Promise.reject(error);
     });

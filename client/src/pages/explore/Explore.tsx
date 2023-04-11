@@ -38,6 +38,10 @@ export const Explore = () => {
   //TODO: fetch ether price every page
 
   useEffect(() => {
+    window.scroll(0, 0);
+  }, []);
+
+  useEffect(() => {
     getCoinRate().then((rate) => {
       dispatch({ type: coinRateActions.set, data: rate });
     });

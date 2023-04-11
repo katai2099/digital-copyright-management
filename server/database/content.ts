@@ -212,11 +212,16 @@ export async function getContentsByWalletAddress(
   }
 }
 
-export async function updateContentPrice(id: number, newPrice: number) {
+export async function updateContentPrice(
+  id: number,
+  newPrice: number,
+  newFieldOfUse: string
+) {
   try {
     const updateContent = await prisma.contents.update({
       data: {
         price: newPrice,
+        fieldOfUse: newFieldOfUse,
       },
       where: {
         id: id,

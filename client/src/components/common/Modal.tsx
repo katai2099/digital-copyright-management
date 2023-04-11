@@ -64,7 +64,7 @@ export const RequestInfoModal = (props: RequestInfoModalProps) => {
         onChange={(event) => props.onReasonChange(event.currentTarget.value)}
       />
       {props.isError && (
-        <div className="errorText">Please enter reason of use!</div>
+        <div className="error-text">Please enter reason of use!</div>
       )}
       <label style={{ marginTop: "10px" }}>Field of use</label>
       <textarea

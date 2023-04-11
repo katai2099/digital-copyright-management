@@ -1,15 +1,19 @@
 import axios from "axios";
 import { NextFunction, Request, Response, Router } from "express";
 import {
+  createContent,
   getContentById,
   getContentByhash,
   getContents,
   getContentsByWalletAddress,
   getLatestContents,
+  updateContentPrice,
 } from "../database/content";
 import { ILatestContents } from "../models/common";
 import { Content, ContentType, IContentFilter } from "../models/Content";
 import { convert, toJSON } from "../utils/utils";
+import { isValidRequestBody } from "../bodyValidation";
+import { BODY_VALIDATION_FAIL } from "../utils/Error";
 export const contentRouter = Router();
 
 contentRouter.get("/latestContents", async (req: Request, res: Response) => {
@@ -87,4 +91,28 @@ contentRouter.get("/", async (req: Request, res: Response) => {
     console.log(error);
     return res.status(500).send("Internal Server Error");
   }
+});
+
+contentRouter.post("/", async (req: Request, res: Response) => {
+  const body: Content = req.body;
+  const valid = isValidRequestBody(body, new Content());
+  if (!valid) {
+    return res.status(400).send(BODY_VALIDATION_FAIL);
+  }
+  try {
+    const content = await createContent(body);
+    return res.status(200).send(content.id);
+  } catch (error) {
+    return res.status(500).send("Internal Server Error");
+  }
+});
+
+contentRouter.put("/:id", async (req: Request, res: Response) => {
+  const { id } = req.params;
+  if (!id) {
+    return res.status(400).send("Missing Id");
+  }
+  try {
+    // const content = await updateContentPrice
+  } catch (error) {}
 });

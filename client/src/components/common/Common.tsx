@@ -16,12 +16,12 @@ export const RejectRequestBody = ({
     <div className="request-body">
       <label>Please provide reason for rejection:</label>
       <textarea
-        style={error ? { borderColor: "red" } : {}}
+        className={error ? "textarea-error" : ""}
         required
         rows={3}
         onChange={(event) => onChanged!(event.currentTarget.value)}
       />
-      {error && <div>Please enter rejection reason</div>}
+      {error && <div className="error-text">Please enter rejection reason</div>}
       <small>
         !Note:{" "}
         <strong>
