@@ -1,6 +1,6 @@
 import Web3 from "web3";
 import { Contract, EventData } from "web3-eth-contract";
-import { createContent, updateContentPrice } from "../database/content";
+import { createContent } from "../database/content";
 import { createEvent } from "../database/event";
 import { Event, EventType } from "../models/Event";
 import {
@@ -11,11 +11,7 @@ import {
 
 import { createAgreement } from "../database/agreement";
 import { RequestEvent } from "../models/Request";
-import {
-  createRequest,
-  createRequestEvent,
-  updateRequest,
-} from "../database/request";
+import { createRequest, createRequestEvent } from "../database/request";
 import { Transfer } from "../models/Transfer";
 import { createTransferEvent } from "../database/transfer";
 
@@ -38,10 +34,11 @@ export async function initWeb3() {
       //from => _caller
       //content => _content
       //eventType => _action
-      handleAddContentEvent(event.returnValues).then(() => {
-        addContentEventHandler(event.transactionHash, event.returnValues);
-      });
-      console.log(event);
+      //add content => add event
+      // handleAddContentEvent(event.returnValues).then(() => {
+      //   addContentEventHandler(event.transactionHash, event.returnValues);
+      // });
+      // console.log(event);
     })
     .on("error", function (error: any, receipt: any) {
       console.log(error);
@@ -55,6 +52,8 @@ export async function initWeb3() {
       //contentId => _contentId
       //lastPrice => _lastPrice
       //eventType => _action
+
+      //update event
       updateContentEventHandler(event.transactionHash, event.returnValues);
       console.log(event);
     })
@@ -69,8 +68,11 @@ export async function initWeb3() {
       //from => _licensee
       //to => _licenser
       //contentId => _contentId
+
+      //licensing event
       licensingEventHandler(event.transactionHash, event.returnValues);
-      // addNewAgreement(event.transactionHash, event.returnValues);
+      //add new agreement
+      addNewAgreement(event.transactionHash, event.returnValues);
       console.log(event);
     })
     .on("error", function (error: any, receipt: any) {
@@ -78,9 +80,11 @@ export async function initWeb3() {
       console.log(receipt);
     });
   contract.events.requestEvent().on("data", (event: EventData) => {
-    requestEventHandler(event.transactionHash, event.returnValues);
+    //create request
+    // requestEventHandler(event.transactionHash, event.returnValues);
   });
   contract.events.updateRequestEvent().on("data", (event: EventData) => {
+    //update request
     updateRequestEventHandler(event.transactionHash, event.returnValues);
   });
   contract.events.transferEvent().on("data", (event: EventData) => {
@@ -156,11 +160,11 @@ function updateRequestEventHandler(
   eventReturnValues: any
 ) {
   const request = requestEventLogToRequest(eventReturnValues._request);
-  if (request.rejectReason !== "") {
-    updateRequest(request.id, request.requestType, request.rejectReason);
-  } else {
-    updateRequest(request.id, request.requestType);
-  }
+  // if (request.rejectReason !== "") {
+  //   updateRequest(request.id, request.requestType, request.rejectReason);
+  // } else {
+  //   updateRequest(request.id, request.requestType);
+  // }
   const requestEvent = new RequestEvent(
     transactionHash,
     request.id,
@@ -237,22 +241,3 @@ function licensingEventHandler(
 }
 
 const web3 = new Web3("ws://localhost:7545");
-
-export const getAccounts = async () => {
-  const accounts = await web3.eth.accounts.wallet;
-  // return accounts;
-  return contract;
-};
-
-export const getImageCount = async () => {
-  const imageCount = await contract.methods.imageCount().call();
-  return imageCount;
-};
-
-export const isNewImageHash = async (hash: string) => {
-  const imageCount = await contract.methods.imageCount().call();
-};
-
-export const isNewTextHash = async (hash: string) => {};
-
-export const isNewVideoHash = async (hash: string) => {};

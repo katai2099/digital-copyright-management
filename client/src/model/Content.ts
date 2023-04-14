@@ -42,19 +42,6 @@ export class BaseContent implements IBaseContent {
   ) {}
 }
 
-// interface IContent {
-//   id: number;
-//   owner: User;
-//   pHash: string;
-//   IPFSAddress: string;
-//   title: string;
-//   desc: string;
-//   price: number;
-//   publishDate: string;
-//   contentType: ContentType;
-//   event: BaseEvent;
-// }
-
 export class Content implements IBaseContent {
   constructor(
     public id = 0,
@@ -71,4 +58,15 @@ export class Content implements IBaseContent {
     public event = new BaseEvent(),
     public requests = [] as Request[]
   ) {}
+}
+
+export interface createContentEvent {
+  transactionHash: string;
+  caller: string;
+  timestamp: string;
+}
+
+export interface CreateContentPostData {
+  event: createContentEvent;
+  content: BaseContent;
 }

@@ -18,6 +18,7 @@ import { fromWei, handleError } from "../../utils";
 import { Modal } from "../common/Modal";
 import { ApproveRequestBody, RejectRequestBody } from "../common/Common";
 import Skeleton from "react-loading-skeleton";
+import { toast } from "react-toastify";
 
 export const RequestComponent = () => {
   const { state, dispatch } = UseDcm();
@@ -104,7 +105,12 @@ export const RequestComponent = () => {
       state.web3State,
       dispatch
     )
-      .then(() => {})
+      .then((req) => {
+        toast.success("Reject successfully");
+        licenserRequest[processRequestIndex].requestType = req.requestType;
+        licenserRequest[processRequestIndex].rejectReason = req.rejectReason;
+        setLicenserRequest(licenserRequest);
+      })
       .catch((err) => {
         handleError(err);
         console.log(err);
@@ -115,7 +121,11 @@ export const RequestComponent = () => {
     setModalOpen(false);
 
     approveRequest(processingRequestId, state.web3State, dispatch)
-      .then(() => {})
+      .then((req) => {
+        toast.success("Approve successfully");
+        licenserRequest[processRequestIndex].requestType = req.requestType;
+        setLicenserRequest(licenserRequest);
+      })
       .catch((err) => {
         handleError(err);
         console.log(err);
@@ -409,7 +419,3 @@ export const RequestComponent = () => {
     )
   );
 };
-
-// {activeRowIndex === 0 && (
-
-// )}

@@ -1,6 +1,12 @@
 import { Content, ContentType } from "./Content";
 import { User } from "./User";
 
+export interface IErrorResponse {
+  message: string;
+  statusCode: number;
+  contentId?: number;
+}
+
 export interface IConversionRate {
   USDToETH: number;
   ETHToUSD: number;

@@ -1,4 +1,3 @@
-import axios from "axios";
 import { NextFunction, Request, Response, Router } from "express";
 import {
   createContent,
@@ -7,13 +6,20 @@ import {
   getContents,
   getContentsByWalletAddress,
   getLatestContents,
-  updateContentPrice,
+  updateContent,
 } from "../database/content";
 import { ILatestContents } from "../models/common";
-import { Content, ContentType, IContentFilter } from "../models/Content";
+import {
+  Content,
+  ContentType,
+  CreateContentPostData,
+  IContentFilter,
+} from "../models/Content";
 import { convert, toJSON } from "../utils/utils";
-import { isValidRequestBody } from "../bodyValidation";
-import { BODY_VALIDATION_FAIL } from "../utils/Error";
+import { Event } from "../models/Event";
+import { EventType } from "../models/Event";
+import { createEvent } from "../database/event";
+
 export const contentRouter = Router();
 
 contentRouter.get("/latestContents", async (req: Request, res: Response) => {
@@ -94,25 +100,42 @@ contentRouter.get("/", async (req: Request, res: Response) => {
 });
 
 contentRouter.post("/", async (req: Request, res: Response) => {
-  const body: Content = req.body;
-  const valid = isValidRequestBody(body, new Content());
-  if (!valid) {
-    return res.status(400).send(BODY_VALIDATION_FAIL);
-  }
+  const data: CreateContentPostData = req.body;
   try {
-    const content = await createContent(body);
-    return res.status(200).send(content.id);
+    const content = await createContent(data.content);
+    const event = new Event(
+      data.event.transactionHash,
+      content.id,
+      EventType.CREATE,
+      data.event.caller,
+      data.event.caller,
+      data.event.timestamp,
+      Number(content.price)
+    );
+    const newEvent = await createEvent(event);
+    console.log(newEvent);
+    console.log(content);
+    return res.send(content.id.toString());
   } catch (error) {
+    console.log(error);
     return res.status(500).send("Internal Server Error");
   }
 });
 
 contentRouter.put("/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
+  const body: Content = req.body;
   if (!id) {
-    return res.status(400).send("Missing Id");
+    return res.status(400).send("Missing id");
   }
   try {
-    // const content = await updateContentPrice
-  } catch (error) {}
+    const content = await updateContent(
+      Number(id),
+      body.price,
+      body.fieldOfUse
+    );
+    return res.status(200).send("OK");
+  } catch (error) {
+    return res.status(500).send("INTERNAL SERVER ERROR");
+  }
 });

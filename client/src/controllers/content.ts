@@ -4,23 +4,43 @@ import {
   CONTENT_ROUTE,
   EVENT_ROUTE,
   PROCESSING,
+  REQUEST_ROUTE,
   SUBMIT_ROUTE,
 } from "../constant";
-import { DcmState, Web3State, loadingActions } from "../contexts/state";
+import { DcmState, loadingActions } from "../contexts/state";
 import {
   IContentFilter,
   ILatestContents,
   ISubmitResponse,
   SortType,
 } from "../model/Common";
-import { Content, ContentType } from "../model/Content";
+import {
+  BaseContent,
+  Content,
+  ContentType,
+  CreateContentPostData,
+  createContentEvent,
+} from "../model/Content";
 import { Event } from "../model/Event";
-import { getSolidityContentType, keyValuePair } from "../utils";
-import { getRequest, postRequest } from "./clientRequest";
+import {
+  contentToBaseContent,
+  createEventLogToContent,
+  getSolidityContentType,
+  keyValuePair,
+  requestEventLogToRequest,
+} from "../utils";
+import { getRequest, postRequest, putRequest } from "./clientRequest";
 import { AnyAction } from "redux";
+import { TransactionReceipt } from "web3-eth";
+import {
+  BaseRequest,
+  CreateRequestPostData,
+  RequestEvent,
+  createRequestEvent,
+} from "../model/Request";
 
 export function launchFormValidation(
-  content: Content,
+  content: BaseContent,
   selectedFile: File | null
 ) {
   const error: keyValuePair = {};
@@ -120,15 +140,21 @@ export function getLatestContents() {
     .catch((err) => Promise.reject(err));
 }
 
+function postDCMRequest(postData: CreateRequestPostData) {
+  return postRequest<BaseRequest>(`${REQUEST_ROUTE}/`, postData)
+    .then((req) => Promise.resolve(req))
+    .catch((err) => Promise.reject(err));
+}
+
 export function requestContent(
   content: Content,
   state: DcmState,
   purpose: string,
   fieldOfUse: string,
   dispatch: Dispatch<AnyAction>
-) {
+): Promise<BaseRequest> {
   dispatch({
-    type: loadingActions.set,
+    type: loadingActions.setLoading,
     data: { loading: true, loadingText: CONFIRM_TRANSACTION },
   });
   return state.web3State.contract?.methods
@@ -136,7 +162,7 @@ export function requestContent(
     .send({ from: state.web3State.account, value: content.price })
     .on("transactionHash", function (transactionHash: any) {
       dispatch({
-        type: loadingActions.set,
+        type: loadingActions.setLoading,
         data: { loading: true, loadingText: "Processing" },
       });
     })
@@ -147,18 +173,41 @@ export function requestContent(
       console.log(error);
       return Promise.reject(error);
     })
-    .then((res: any) => {
+    .then((res: TransactionReceipt) => {
+      const newRequest = requestEventLogToRequest(
+        res.events!.requestEvent.returnValues._request
+      );
+
+      const event: createRequestEvent = {
+        transactionHash: res.transactionHash,
+        requestType: newRequest.requestType,
+        timestamp: newRequest.timestamp,
+      };
+
+      const postData: CreateRequestPostData = {
+        request: newRequest,
+        event: event,
+      };
+      return postDCMRequest(postData);
+    })
+    .then((res: BaseRequest) => {
       dispatch({
-        type: loadingActions.reset,
+        type: loadingActions.resetLoading,
       });
       return Promise.resolve(res);
     })
     .catch((error: any) => {
       dispatch({
-        type: loadingActions.reset,
+        type: loadingActions.resetLoading,
       });
-      return Promise.resolve(error);
+      return Promise.reject(error);
     });
+}
+
+export function putContent(content: BaseContent) {
+  return putRequest<string>(`${CONTENT_ROUTE}/${content.id}`, content)
+    .then((res) => Promise.resolve(res))
+    .catch((err) => Promise.reject(err));
 }
 
 export function updateContentData(
@@ -166,25 +215,25 @@ export function updateContentData(
   newPrice: number,
   state: DcmState,
   fieldOfUse: string,
-  currentEthToUsd: number,
+  currentUsdToEth: number,
   dispatch: Dispatch<AnyAction>
 ) {
   dispatch({
-    type: loadingActions.set,
+    type: loadingActions.setLoading,
     data: { loading: true, loadingText: CONFIRM_TRANSACTION },
   });
   return state.web3State.contract?.methods
     .updateContentData(
       content.id,
       state.web3State.web3?.utils.toWei(
-        (newPrice * currentEthToUsd).toString()
+        (newPrice * currentUsdToEth).toString()
       ),
       fieldOfUse
     )
     .send({ from: state.web3State.account })
     .on("transactionHash", function (transactionHash: any) {
       dispatch({
-        type: loadingActions.set,
+        type: loadingActions.setLoading,
         data: { loading: true, loadingText: PROCESSING },
       });
     })
@@ -196,49 +245,64 @@ export function updateContentData(
       return Promise.reject(error);
     })
     .then((res: any) => {
+      console.log(res);
+      const updatedContent = contentToBaseContent(content);
+      updatedContent.price = Number(
+        state.web3State.web3?.utils.toWei(
+          (newPrice * currentUsdToEth).toString()
+        )
+      );
+      updatedContent.fieldOfUse =
+        fieldOfUse === "" ? updatedContent.fieldOfUse : fieldOfUse;
+      return putContent(updatedContent);
+    })
+    .then((res: any) => {
       dispatch({
-        type: loadingActions.reset,
+        type: loadingActions.resetLoading,
       });
       return Promise.resolve(res);
     })
     .catch((error: any) => {
       dispatch({
-        type: loadingActions.reset,
+        type: loadingActions.resetLoading,
       });
       return Promise.reject(error);
     });
 }
 
+function postContent(data: CreateContentPostData): Promise<string> {
+  return postRequest<string>(`${CONTENT_ROUTE}/`, data)
+    .then((id) => Promise.resolve(id))
+    .catch((error) => Promise.reject(error));
+}
+
 export function submitDigitalContent(
   file: File,
-  content: Content,
+  content: BaseContent,
   state: DcmState,
   contentType: ContentType,
   currentEthToUsd: number,
   dispatch: Dispatch<AnyAction>
 ) {
-  // submit to backend (hash and ipfs)
-  // upload to blockchain
   const web3 = state.web3State;
   content.contentType = contentType;
   dispatch({
-    type: loadingActions.set,
+    type: loadingActions.setLoading,
     data: { loading: true, loadingText: "Hashing" },
   });
   return Promise.resolve()
     .then(() => {
       if (contentType === ContentType.IMAGE) {
-        return submitImage(file, content, web3);
+        return submitImage(file, content);
       } else if (contentType === ContentType.AUDIO) {
-        return submitAudio(file, content, web3);
+        return submitAudio(file, content);
       } else {
-        return submitText(file, content, web3);
+        return submitText(file, content);
       }
     })
     .then(() => {
-      console.log("contract call");
       dispatch({
-        type: loadingActions.set,
+        type: loadingActions.setLoading,
         data: { loading: true, loadingText: CONFIRM_TRANSACTION },
       });
       return web3.contract?.methods
@@ -258,7 +322,7 @@ export function submitDigitalContent(
         .send({ from: web3.account })
         .on("transactionHash", function (transactionHash: any) {
           dispatch({
-            type: loadingActions.set,
+            type: loadingActions.setLoading,
             data: { loading: true, loadingText: "Deploying" },
           });
         })
@@ -270,9 +334,25 @@ export function submitDigitalContent(
           return Promise.reject(error);
         });
     })
+    .then((res: TransactionReceipt) => {
+      const newContent = createEventLogToContent(
+        res.events!.addContentEvent.returnValues._content
+      );
+
+      const event: createContentEvent = {
+        transactionHash: res.transactionHash,
+        caller: newContent.ownerAddress,
+        timestamp: res.events!.addContentEvent.returnValues.timestamp,
+      };
+      const postData: CreateContentPostData = {
+        content: newContent,
+        event: event,
+      };
+      return postContent(postData);
+    })
     .then((res) => {
       dispatch({
-        type: loadingActions.reset,
+        type: loadingActions.resetLoading,
       });
       console.log(res);
       return Promise.resolve(res);
@@ -280,18 +360,14 @@ export function submitDigitalContent(
     .catch((error) => {
       //TODO: handle hashing error and reject transaction error
       dispatch({
-        type: loadingActions.reset,
+        type: loadingActions.resetLoading,
       });
       console.log(error);
       return Promise.reject(error);
     });
 }
 
-function submitImage(
-  image: File,
-  content: Content,
-  web3: Web3State
-): Promise<any> {
+function submitImage(image: File, content: BaseContent): Promise<any> {
   return postImage(image)
     .then((response) => {
       content.IPFSAddress = response.cid;
@@ -300,11 +376,7 @@ function submitImage(
     .catch((error) => Promise.reject(error));
 }
 
-function submitAudio(
-  audio: File,
-  content: Content,
-  web3: Web3State
-): Promise<any> {
+function submitAudio(audio: File, content: BaseContent): Promise<any> {
   return postAudio(audio)
     .then((response) => {
       content.IPFSAddress = response.cid;
@@ -313,11 +385,7 @@ function submitAudio(
     .catch((error) => Promise.reject(error));
 }
 
-function submitText(
-  text: File,
-  content: Content,
-  web3: Web3State
-): Promise<any> {
+function submitText(text: File, content: BaseContent): Promise<any> {
   return postText(text)
     .then((response) => {
       content.IPFSAddress = response.cid;

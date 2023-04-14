@@ -11,7 +11,6 @@ import {
 } from "../utils/utils";
 import { getAudioHash, getImageHash, getTextHash } from "./hashing";
 import { uploadFileToIPFS } from "./ipfs";
-const Hash = require("pure-ipfs-only-hash");
 
 export const submitImage = async (image: Buffer): Promise<SubmitResponse> => {
   try {
@@ -19,19 +18,19 @@ export const submitImage = async (image: Buffer): Promise<SubmitResponse> => {
     const images = await getContentsByContentType(ContentType.IMAGE);
     console.log(images);
     for (const image of images) {
-      // if (
-      //   image.pHash == hash ||
-      //   isSimilarHammingDistance(hexToBin(image.pHash), hexToBin(hash))
-      // ) {
-      //   throw new Error("Image already existed");
-      // }
+      if (
+        image.pHash == hash ||
+        isSimilarHammingDistance(hexToBin(image.pHash), hexToBin(hash))
+      ) {
+        throw new HashingError(image.id, "Image already existed");
+      }
     }
-    // const cid = await uploadFileToIPFS(image);
-    const cid = await Hash.of(image);
+    const cid = await uploadFileToIPFS(image);
+    // const cid = await Hash.of(image);
     return { hash: hash, cid: cid } as ISubmitResponse;
   } catch (err) {
     console.log(err);
-    throw new Error();
+    throw err;
   }
 };
 
@@ -47,15 +46,18 @@ export const submitText = async (textFile: Buffer): Promise<SubmitResponse> => {
         text.pHash == hash ||
         isSimilarHammingDistance(hexToBin(text.pHash), hexToBin(hash))
       ) {
-        throw new Error("Text file with similar content already existed");
+        throw new HashingError(
+          text.id,
+          "Text file with similar content already existed"
+        );
       }
     }
     const cid = await uploadFileToIPFS(textFile);
     //const cid = await Hash.of(textFile);
     return { hash: hash, cid: cid } as ISubmitResponse;
-  } catch (error) {
-    console.log(error);
-    throw new Error();
+  } catch (err) {
+    console.log(err);
+    throw err;
   }
 };
 
@@ -71,7 +73,10 @@ export const submitAudio = async (audio: Buffer, filename: string) => {
         const sha = error.response.data;
         const audio = await getAudioByHash(sha);
         const content = convert<Content>(audio);
-        throw new HashingError(content);
+        throw new HashingError(
+          content.id,
+          "Audio with similar content already exists"
+        );
       }
     }
   }

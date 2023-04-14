@@ -41,6 +41,20 @@ export interface IRequest {
   rejectReason: string;
 }
 
+export class BaseRequest implements IRequest {
+  constructor(
+    public id = 0,
+    public licensee = "",
+    public contentId = 0,
+    public purposeOfUse = "",
+    public fieldOfUse = "",
+    public price = 0,
+    public requestType = RequestType.PENDING,
+    public timestamp = "",
+    public rejectReason = ""
+  ) {}
+}
+
 export class Request implements IRequest {
   constructor(
     public id = 0,
@@ -56,4 +70,15 @@ export class Request implements IRequest {
     public licensees = new User(),
     public requestEvents = [] as RequestEvent[]
   ) {}
+}
+
+export interface createRequestEvent {
+  transactionHash: string;
+  requestType: RequestType;
+  timestamp: string;
+}
+
+export interface CreateRequestPostData {
+  request: BaseRequest;
+  event: createRequestEvent;
 }

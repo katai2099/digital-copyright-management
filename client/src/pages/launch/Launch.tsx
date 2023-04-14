@@ -1,20 +1,22 @@
 import { useEffect, useState } from "react";
 import { RadioOption } from "../../components/option/RadioOption";
 import { ContentTypes } from "../../constant";
-import { coinRateActions, loadingActions } from "../../contexts/state";
+import { coinRateActions } from "../../contexts/state";
 import { UseDcm } from "../../contexts/UseDcm";
 import {
   launchFormValidation,
   submitDigitalContent,
 } from "../../controllers/content";
 import { getCoinRate, getCurrentUsdToEth } from "../../controllers/web3";
-import { Content, ContentType } from "../../model/Content";
+import { BaseContent, ContentType } from "../../model/Content";
 import "./launch.css";
 import { ContentPriceInput } from "../../components/contentPriceInput/ContentPriceInput";
 import { Modal } from "../../components/common/Modal";
 import { handleError, isObjectEmpty, keyValuePair } from "../../utils";
-import { ToastContainer, toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { Link, useNavigate } from "react-router-dom";
+import { AxiosError } from "axios";
+import { IErrorResponse } from "../../model/Common";
 
 export const Launch = () => {
   //TODO: Add loading modal when upload
@@ -27,11 +29,15 @@ export const Launch = () => {
   const { state, dispatch } = UseDcm();
   const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [content, setContent] = useState<Content>(new Content());
+  const [content, setContent] = useState<BaseContent>(new BaseContent());
   const [fileType, setFileType] = useState<ContentType>(ContentType.IMAGE);
   const [displayModal, setDisplayModal] = useState<boolean>(false);
   const [currentUsdToEth, setCurrentUsdToEth] = useState<number>(0);
   const [errors, setErrors] = useState<keyValuePair>({});
+  const [submitError, setSubmitError] = useState<IErrorResponse>({
+    message: "",
+    statusCode: 0,
+  });
 
   useEffect(() => {
     window.scroll(0, 0);
@@ -65,10 +71,10 @@ export const Launch = () => {
       setErrors(errors);
       return;
     }
+    setDisplayModal(true);
     getCurrentUsdToEth()
       .then((res) => {
         setCurrentUsdToEth(Number(res));
-        setDisplayModal(true);
       })
       .catch((error) => {
         console.log(error);
@@ -90,17 +96,27 @@ export const Launch = () => {
           "Content Registered Successfully. Redirect to Detail page",
           {
             onClose: () => {
-              navigate("/content/1");
+              navigate(`/content/${res}`);
             },
             onClick: () => {
-              navigate("/content/1");
+              navigate(`/content/${res}`);
             },
           }
         );
       })
       .catch((error) => {
         handleError(error);
-        console.log(error);
+        if (error instanceof AxiosError) {
+          if (error.response?.data.statusCode === 409) {
+            toast.error(error.response.data.message);
+            setSubmitError({
+              contentId: error.response.data.contentId,
+              message: error.response.data.message,
+              statusCode: error.response.data.statusCode,
+            });
+            window.scroll(0, document.body.scrollHeight);
+          }
+        }
       });
   };
 
@@ -258,11 +274,22 @@ export const Launch = () => {
           )}
         </div>
       </div>
-      <div style={{ width: "100%", position: "relative" }}>
-        <button className="submit-button" onClick={submitButtonClickHandler}>
-          Submit
-        </button>
-      </div>
+
+      <button className="submit-button" onClick={submitButtonClickHandler}>
+        Submit
+      </button>
+      {submitError.contentId && (
+        <div className="already-exist-content">
+          {submitError.message}{" "}
+          <Link
+            className="see-more-detail"
+            to={`/content/${submitError.contentId}`}
+          >
+            Click here
+          </Link>{" "}
+          to see more detail
+        </div>
+      )}
     </div>
   );
 

@@ -25,6 +25,9 @@ export async function getTransferEvent(walletAddress: string) {
       where: {
         OR: [{ from: walletAddress }, { to: walletAddress }],
       },
+      orderBy: {
+        timestamp: "desc",
+      },
     });
     return transfers;
   } catch (error) {

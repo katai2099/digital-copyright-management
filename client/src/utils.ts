@@ -12,6 +12,7 @@ import {
 import { DcmState } from "./contexts/state";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
+import { BaseRequest, RequestType } from "./model/Request";
 
 export interface keyValuePair {
   [key: string]: string;
@@ -23,6 +24,22 @@ export function isObjectEmpty(object: keyValuePair): boolean {
 
 export function clone<T = any>(whatToClone: T): T {
   return JSON.parse(JSON.stringify(whatToClone));
+}
+
+export function contentToBaseContent(content: Content): BaseContent {
+  const newContent = new BaseContent(
+    content.id,
+    content.ownerAddress,
+    content.pHash,
+    content.IPFSAddress,
+    content.title,
+    content.desc,
+    content.fieldOfUse,
+    content.price,
+    content.publishDate,
+    content.contentType
+  );
+  return newContent;
 }
 
 export function getSolidityContentType(
@@ -101,9 +118,66 @@ export function isValidEmail(email: string): boolean {
 
 export function handleError(error: any): void {
   if (error instanceof AxiosError) {
+    // if (error.response?.data.statusCode === 409) {
+    //   toast.error(error.response.data.message);
+    //   return error.response.data.contentId;
+    // }
   } else {
     if (error.code === METAMASK_REJECTION_CODE) {
       toast.error(REJECT_TRANSACTION);
     }
   }
+}
+
+export function solidityContentTypeToContentType(
+  contentType: string
+): ContentType {
+  if (contentType === "0") {
+    return ContentType.IMAGE;
+  } else if (contentType === "1") {
+    return ContentType.AUDIO;
+  } else {
+    return ContentType.TEXT;
+  }
+}
+
+export function createEventLogToContent(_content: keyValuePair): BaseContent {
+  const content = new BaseContent();
+  content.ownerAddress = _content.ownerAddress;
+  content.id = parseInt(_content.Id);
+  content.pHash = _content.pHash;
+  content.IPFSAddress = _content.IPFSAddress;
+  content.title = _content.title;
+  content.desc = _content.desc;
+  content.fieldOfUse = _content.fieldOfUse;
+  content.price = Number(_content.price);
+  content.publishDate = _content.publishDate;
+  content.contentType = solidityContentTypeToContentType(_content.contentType);
+  return content;
+}
+
+export function solidityRequestTypeToRequestType(
+  requestType: string
+): RequestType {
+  if (requestType === "0") {
+    return RequestType.PENDING;
+  } else if (requestType === "1") {
+    return RequestType.REJECTED;
+  } else {
+    return RequestType.APPROVED;
+  }
+}
+
+export function requestEventLogToRequest(_request: keyValuePair): BaseRequest {
+  const request = new BaseRequest();
+  request.id = parseInt(_request.id);
+  request.licensee = _request.licensee;
+  request.contentId = parseInt(_request.contentId);
+  request.purposeOfUse = _request.purposeOfUse;
+  request.fieldOfUse = _request.fieldOfUse;
+  request.price = Number(_request.price);
+  request.requestType = solidityRequestTypeToRequestType(_request.requestType);
+  request.rejectReason = _request.rejectReason;
+  request.timestamp = _request.timestamp;
+  return request;
 }

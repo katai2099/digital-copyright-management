@@ -2,17 +2,26 @@ import { Dispatch } from "react";
 import { CONFIRM_TRANSACTION, PROCESSING, REQUEST_ROUTE } from "../constant";
 import { Web3State, loadingActions } from "../contexts/state";
 // import {Contract} from 'web3-eth-contract';
-import { Request } from "../model/Request";
-import { getRequest } from "./clientRequest";
+import { BaseRequest, Request, RequestType } from "../model/Request";
+import { getRequest, putRequest } from "./clientRequest";
 import { AnyAction } from "redux";
+
+function putDCMRequest(baseRequest: BaseRequest): Promise<BaseRequest> {
+  return putRequest<BaseRequest>(
+    `${REQUEST_ROUTE}/${baseRequest.id}`,
+    baseRequest
+  )
+    .then((request) => Promise.resolve(request))
+    .catch((err) => Promise.reject(err));
+}
 
 export function approveRequest(
   requestId: number,
   web3State: Web3State,
   dispatch: Dispatch<AnyAction>
-): Promise<any> {
+): Promise<BaseRequest> {
   dispatch({
-    type: loadingActions.set,
+    type: loadingActions.setLoading,
     data: { loading: true, loadingText: CONFIRM_TRANSACTION },
   });
   return web3State.contract?.methods
@@ -20,7 +29,7 @@ export function approveRequest(
     .send({ from: web3State.account })
     .on("transactionHash", function (transactionHash: any) {
       dispatch({
-        type: loadingActions.set,
+        type: loadingActions.setLoading,
         data: { loading: true, loadingText: PROCESSING },
       });
     })
@@ -32,14 +41,20 @@ export function approveRequest(
       return Promise.reject(error);
     })
     .then((res: any) => {
+      console.log(res);
+      const updateRequest = new BaseRequest(requestId);
+      updateRequest.requestType = RequestType.APPROVED;
+      return putDCMRequest(updateRequest);
+    })
+    .then((res: BaseRequest) => {
       dispatch({
-        type: loadingActions.reset,
+        type: loadingActions.resetLoading,
       });
       return Promise.resolve(res);
     })
     .catch((err: any) => {
       dispatch({
-        type: loadingActions.reset,
+        type: loadingActions.resetLoading,
       });
       return Promise.reject(err);
     });
@@ -50,9 +65,9 @@ export function rejectAgreement(
   rejectReason: string,
   web3State: Web3State,
   dispatch: Dispatch<AnyAction>
-): Promise<any> {
+): Promise<BaseRequest> {
   dispatch({
-    type: loadingActions.set,
+    type: loadingActions.setLoading,
     data: { loading: true, loadingText: CONFIRM_TRANSACTION },
   });
   return web3State.contract?.methods
@@ -60,7 +75,7 @@ export function rejectAgreement(
     .send({ from: web3State.account })
     .on("transactionHash", function (transactionHash: any) {
       dispatch({
-        type: loadingActions.set,
+        type: loadingActions.setLoading,
         data: { loading: true, loadingText: PROCESSING },
       });
     })
@@ -72,14 +87,21 @@ export function rejectAgreement(
       return Promise.reject(error);
     })
     .then((res: any) => {
+      console.log(res);
+      const updateRequest = new BaseRequest(requestId);
+      updateRequest.requestType = RequestType.REJECTED;
+      updateRequest.rejectReason = rejectReason;
+      return putDCMRequest(updateRequest);
+    })
+    .then((res: BaseRequest) => {
       dispatch({
-        type: loadingActions.reset,
+        type: loadingActions.resetLoading,
       });
       return Promise.resolve(res);
     })
     .catch((err: any) => {
       dispatch({
-        type: loadingActions.reset,
+        type: loadingActions.resetLoading,
       });
       return Promise.reject(err);
     });

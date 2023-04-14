@@ -12,13 +12,14 @@ import {
   updateContentData,
 } from "../../controllers/content";
 import { getCoinRate, getCurrentUsdToEth } from "../../controllers/web3";
-import { Content } from "../../model/Content";
+import { BaseContent, Content } from "../../model/Content";
 import { fromWei, getImageSrc, handleError } from "../../utils";
 import "./detail.css";
 import { Event } from "../../model/Event";
 import { EventTable } from "../../components/eventTable/EventTable";
-import { RequestType } from "../../model/Request";
+import { BaseRequest, Request, RequestType } from "../../model/Request";
 import Skeleton from "react-loading-skeleton";
+import { toast } from "react-toastify";
 
 export const Detail = () => {
   const { state, dispatch } = UseDcm();
@@ -58,7 +59,6 @@ export const Detail = () => {
       .then((content: Content) => {
         setContent(content);
         setFetchingUser(false);
-
         return content;
       })
       .catch((error) => {
@@ -69,7 +69,6 @@ export const Detail = () => {
 
   useEffect(() => {
     setFetching(true);
-
     getContentEvents(Number(id), page)
       .then((events) => {
         console.log(events);
@@ -98,7 +97,6 @@ export const Detail = () => {
   const confirmButtonClickHandler = () => {
     setIsModalOpen(false);
     setIsConfirmUI(false);
-
     updateContentData(
       content,
       newPrice,
@@ -108,8 +106,16 @@ export const Detail = () => {
       dispatch
     )
       .then((res: any) => {
-        console.log(res);
-        window.location.reload();
+        setContent({
+          ...content,
+          price: Number(
+            state.web3State.web3?.utils.toWei(
+              (newPrice * currentUsdToEth).toString()
+            )
+          ),
+          fieldOfUse: newFieldOfUse === "" ? fieldOfUse : newFieldOfUse,
+        });
+        toast.success("Update successfully");
       })
       .catch((error: any) => {
         handleError(error);
@@ -124,8 +130,22 @@ export const Detail = () => {
     }
     setRequestModalOpen(false);
     requestContent(content, state, reasonOfUse, fieldOfUse, dispatch)
-      .then((res: any) => {
+      .then((res: BaseRequest) => {
         console.log(res);
+        toast.success("Request sent sucessfully");
+        const tmpRequest = [
+          new Request(
+            res.id,
+            res.licensee,
+            res.contentId,
+            res.purposeOfUse,
+            res.fieldOfUse,
+            res.price,
+            res.requestType,
+            res.timestamp
+          ),
+        ];
+        setContent({ ...content, requests: tmpRequest });
       })
       .catch((error: any) => {
         console.log(error);

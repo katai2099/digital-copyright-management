@@ -52,7 +52,6 @@ export const initialState: DcmState = {
 
 const web3Actions = {
   init: "INIT",
-  reset: "WEB3-RESET",
   disconnect: "DISCONNECT",
 };
 
@@ -63,9 +62,6 @@ const web3Reducer = (state: Web3State, action: AnyAction) => {
       const tmpState: Web3State = data;
       return tmpState;
     }
-    // case web3Actions.reset: {
-    //   return initialWeb3State;
-    // }
     case web3Actions.disconnect: {
       console.log(data);
       return { ...data };
@@ -117,17 +113,17 @@ const coinConversionReducer = (state: IConversionRate, action: AnyAction) => {
 };
 
 export const loadingActions = {
-  set: "LOADING-SET",
-  reset: "LOADING-RESET",
+  setLoading: "LOADING-SET",
+  resetLoading: "LOADING-RESET",
 };
 
 const loadingReducer = (state: LoadingState, action: AnyAction) => {
   const { type, data } = action;
   switch (type) {
-    case loadingActions.set: {
+    case loadingActions.setLoading: {
       return data;
     }
-    case loadingActions.reset: {
+    case loadingActions.resetLoading: {
       return initialLoadingState;
     }
     default:

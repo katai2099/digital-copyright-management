@@ -156,7 +156,7 @@ export async function updateRequest(
       },
       data: {
         requestType: requestType,
-        ...(reasonForReject ? { rejectReason: reasonForReject } : {}),
+        ...(reasonForReject !== "" ? { rejectReason: reasonForReject } : {}),
       },
     });
     return updateRequest;

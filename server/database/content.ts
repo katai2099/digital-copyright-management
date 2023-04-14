@@ -212,7 +212,7 @@ export async function getContentsByWalletAddress(
   }
 }
 
-export async function updateContentPrice(
+export async function updateContent(
   id: number,
   newPrice: number,
   newFieldOfUse: string

@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { UseDcm } from "../../contexts/UseDcm";
-import { IUser } from "../../model/User";
+import { IUser, User } from "../../model/User";
 import { updateUser } from "../../controllers/user";
 import { userActions } from "../../contexts/state";
 import { shallowCompare } from "../../utils";
 
 export const ProfileUpdate = () => {
   const { state, dispatch } = UseDcm();
-  const [user, setUser] = useState<IUser>(state.user);
+  const [user, setUser] = useState<IUser>(new User());
   useEffect(() => {
     console.log(state.user);
     setUser(state.user);
@@ -42,7 +42,8 @@ export const ProfileUpdate = () => {
                 ? state.user.walletAddress
                 : state.user.username
             }
-            onBlur={(event) => {
+            value={user.username}
+            onChange={(event) => {
               setUser({ ...user, username: event?.currentTarget.value });
             }}
           />
@@ -59,8 +60,9 @@ export const ProfileUpdate = () => {
         <div className="input-wrapper">
           <input
             type="text"
+            value={user.firstname}
             defaultValue={state.user.firstname}
-            onBlur={(event) => {
+            onChange={(event) => {
               setUser({ ...user, firstname: event?.currentTarget.value });
             }}
           />
@@ -71,8 +73,8 @@ export const ProfileUpdate = () => {
         <div className="input-wrapper">
           <input
             type="text"
-            defaultValue={state.user.lastname}
-            onBlur={(event) => {
+            value={user.lastname}
+            onChange={(event) => {
               setUser({ ...user, lastname: event?.currentTarget.value });
             }}
           />

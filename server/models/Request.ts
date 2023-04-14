@@ -51,3 +51,14 @@ export enum RequestType {
   REJECTED = "Rejected",
   APPROVED = "Approved",
 }
+
+export interface createRequestEvent {
+  transactionHash: string;
+  requestType: RequestType;
+  timestamp: string;
+}
+
+export interface CreateRequestPostData {
+  request: Request;
+  event: createRequestEvent;
+}

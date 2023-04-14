@@ -4,14 +4,13 @@ import {
   PrismaClientUnknownRequestError,
   PrismaClientValidationError,
 } from "@prisma/client/runtime/library";
-import { Content } from "../models/Content";
 
 export class HashingError extends Error {
-  content: Content;
-  errorCode: number = 0;
-  constructor(content: Content, errorMsg?: string, errorCode?: number) {
+  contentId: number = 0;
+  errorCode: number = 409;
+  constructor(contentId: number, errorMsg?: string, errorCode?: number) {
     super(errorMsg);
-    this.content = content;
+    this.contentId = contentId;
     if (errorCode) {
       this.errorCode = errorCode;
     }

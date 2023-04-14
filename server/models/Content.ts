@@ -46,3 +46,14 @@ export class Content implements IContent {
     public contentType = ContentType.IMAGE
   ) {}
 }
+
+export interface createContentEvent {
+  transactionHash: string;
+  caller: string;
+  timestamp: string;
+}
+
+export interface CreateContentPostData {
+  content: Content;
+  event: createContentEvent;
+}

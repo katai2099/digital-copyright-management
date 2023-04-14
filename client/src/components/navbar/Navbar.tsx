@@ -136,14 +136,16 @@ export const Navbar = () => {
             <Link to="/hash" onClick={() => setIsOpen(false)}>
               <div className="menu-item">Hash</div>
             </Link>
-            <Link
-              to="/launch"
-              onClick={() => {
-                setIsOpen(false);
-              }}
-            >
-              <div className="menu-item">Launch</div>
-            </Link>
+            {state.user.walletAddress !== "" && (
+              <Link
+                to="/launch"
+                onClick={() => {
+                  setIsOpen(false);
+                }}
+              >
+                <div className="menu-item">Launch</div>
+              </Link>
+            )}
           </div>
           {state.web3State.account === "" ? (
             <button className="btn-connect" onClick={handleConnectButtonClick}>

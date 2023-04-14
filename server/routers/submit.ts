@@ -2,7 +2,7 @@ import { HttpStatusCode } from "axios";
 import express, { Request, Response } from "express";
 import multer from "multer";
 import { submitAudio, submitImage, submitText } from "../controllers/submit";
-import { HashingError } from "../utils/Error";
+import { handleDCMError } from "../utils/utils";
 const storage = multer.memoryStorage();
 export const upload = multer({ storage: storage });
 
@@ -16,7 +16,7 @@ submitRouter.post(
       const response = await submitImage(req.file!.buffer);
       res.status(HttpStatusCode.Created).send(response);
     } catch (error) {
-      res.status(HttpStatusCode.InternalServerError).send("Error");
+      handleDCMError(error, res);
     }
   }
 );
@@ -27,12 +27,9 @@ submitRouter.post(
     try {
       const file = req.file!;
       const response = await submitAudio(file.buffer, file.originalname);
-      res.status(HttpStatusCode.Created).send(response);
+      return res.status(HttpStatusCode.Created).send(response);
     } catch (error) {
-      if (error instanceof HashingError) {
-        return res.status(HttpStatusCode.BadRequest).send(error.content);
-      }
-      res.status(HttpStatusCode.InternalServerError).send("Error");
+      handleDCMError(error, res);
     }
   }
 );
@@ -44,7 +41,7 @@ submitRouter.post(
       const response = await submitText(req.file!.buffer);
       res.status(HttpStatusCode.Created).send(response);
     } catch (error) {
-      res.status(HttpStatusCode.InternalServerError).send("Error");
+      handleDCMError(error, res);
     }
   }
 );

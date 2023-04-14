@@ -1,6 +1,10 @@
+import { Response } from "express";
 import { Agreement } from "../models/Agreement";
 import { Content, ContentType } from "../models/Content";
 import { Request, RequestType } from "../models/Request";
+import { HashingError } from "./Error";
+import { IErrorResponse, InternalServerError } from "../models/common";
+import { HttpStatusCode } from "axios";
 
 export function clone<T = any>(whatToClone: T): T {
   return JSON.parse(JSON.stringify(whatToClone));
@@ -172,3 +176,17 @@ export function solidityRequestTypeToRequestType(
 }
 
 export function prismaModelToObject() {}
+
+export function handleDCMError(error: any, res: Response) {
+  if (error instanceof HashingError) {
+    return res.status(error.errorCode).send({
+      message: error.message,
+      statusCode: error.errorCode,
+      contentId: error.contentId,
+    } as IErrorResponse);
+  }
+  return res.status(HttpStatusCode.InternalServerError).send({
+    message: InternalServerError,
+    statusCode: HttpStatusCode.InternalServerError,
+  } as IErrorResponse);
+}
