@@ -49,22 +49,43 @@ legend {
 
 .content-upload-area {
   width: 40%;
+  height: 75vh;
   text-align: left;
-  align-self: center;
+  margin-top: 12px;
   border-radius: 0.25rem;
   border: 1px solid #ced4da;
-  margin-right: 8px;
+  display: flex;
+  flex-direction: column;
 }
 
 .content-preview-header {
-  /* text-align: left; */
   border-bottom: 1px solid #ced4da;
   background-color: #ced4da;
   padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.zoom-icon {
+  font-size: 24px;
+  align-self: flex-start;
+}
+
+.zoom-icon:hover {
+  cursor: pointer;
+}
+
+.zoom-icon:active {
+  transform: translateY(2px);
 }
 
 .file-upload-area {
   padding: 16px;
+  min-height: 90%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .file-type-wrapper {
@@ -73,23 +94,24 @@ legend {
 }
 
 .content-display-container {
-  /* height: 100%; */
+  max-height: 90%;
+  flex: 1;
   cursor: pointer;
-  /* border: 1px solid #ced4da; */
   border-radius: 0.25rem;
-  margin: 0px auto;
   text-align: center;
   color: #495057;
   padding: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
 #displayContent {
   object-fit: scale-down;
-  width: 100%;
-  height: 90%;
+  max-width: 95%;
+  max-height: 100%;
 }
 
 .price-wrapper {

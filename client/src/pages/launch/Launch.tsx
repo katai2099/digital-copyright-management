@@ -17,6 +17,7 @@ import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { AxiosError } from "axios";
 import { IErrorResponse } from "../../model/Common";
+import { ContentZoom } from "../../components/contentZoom/ContentZoom";
 
 export const Launch = () => {
   //TODO: Add loading modal when upload
@@ -38,6 +39,19 @@ export const Launch = () => {
     message: "",
     statusCode: 0,
   });
+  const [fullscreen, setFullscreen] = useState<boolean>(false);
+
+  function resetExistingContentError() {
+    if (submitError.contentId) {
+      setSubmitError({ message: "", statusCode: 0 });
+    }
+  }
+
+  useEffect(() => {
+    if (state.web3State.account === "") {
+      navigate("/");
+    }
+  });
 
   useEffect(() => {
     window.scroll(0, 0);
@@ -58,6 +72,7 @@ export const Launch = () => {
         const { file, ...newErrors } = errors;
         setErrors(newErrors);
       }
+      resetExistingContentError();
       setSelectedFile(event.currentTarget.files[0]);
     }
   };
@@ -108,7 +123,9 @@ export const Launch = () => {
         handleError(error);
         if (error instanceof AxiosError) {
           if (error.response?.data.statusCode === 409) {
-            toast.error(error.response.data.message);
+            toast.error(error.response.data.message, {
+              hideProgressBar: true,
+            });
             setSubmitError({
               contentId: error.response.data.contentId,
               message: error.response.data.message,
@@ -127,12 +144,22 @@ export const Launch = () => {
       setFileType(contentType);
       setSelectedFile(null);
     }
+    resetExistingContentError();
   };
 
   const acceptFileType = getAcceptFileType(fileType);
 
   return (
     <div className="home-wrapper">
+      {fullscreen && (
+        <ContentZoom
+          file={selectedFile}
+          onClose={() => {
+            setFullscreen(false);
+          }}
+          contentType={fileType}
+        />
+      )}
       <Modal
         title={"Please Confirm"}
         open={displayModal}
@@ -230,6 +257,14 @@ export const Launch = () => {
         <div className="content-upload-area">
           <div className="content-preview-header">
             <h3>Preview</h3>
+            {selectedFile && (
+              <i
+                className="las la-search-plus zoom-icon"
+                onClick={() => {
+                  setFullscreen(true);
+                }}
+              />
+            )}
           </div>
           <div className="file-upload-area">
             <div className="file-type-wrapper">
@@ -259,6 +294,7 @@ export const Launch = () => {
               />
               <div>{selectedFile ? selectedFile.name : "Select file"}</div>
             </div>
+
             <input
               hidden={true}
               type="file"
