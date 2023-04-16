@@ -10,6 +10,7 @@ import { prisma } from "./prisma";
 
 export async function createContent(content: IContent): Promise<contents> {
   try {
+    console.log(content.price);
     const newContent = await prisma.contents.create({
       data: {
         id: content.id,
@@ -26,6 +27,7 @@ export async function createContent(content: IContent): Promise<contents> {
     });
     return newContent;
   } catch (error) {
+    console.log("Create content errror");
     console.log(error);
     throw new Error();
   }
@@ -214,7 +216,7 @@ export async function getContentsByWalletAddress(
 
 export async function updateContent(
   id: number,
-  newPrice: number,
+  newPrice: string,
   newFieldOfUse: string
 ) {
   try {
@@ -227,6 +229,7 @@ export async function updateContent(
         id: id,
       },
     });
+    return updateContent;
   } catch (error) {
     console.log(error);
     throw new Error();

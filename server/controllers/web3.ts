@@ -122,7 +122,7 @@ function addContentEventHandler(
     eventReturnValues._caller,
     eventReturnValues._caller,
     eventReturnValues.timestamp,
-    Number(content.price)
+    content.price
   );
   createEvent(event);
 }
@@ -179,7 +179,7 @@ function transferEventHandler(transactionHash: string, eventReturnValues: any) {
   transfer.transactionHash = transactionHash;
   transfer.from = eventReturnValues._caller;
   transfer.to = eventReturnValues._receiver;
-  transfer.price = Number(eventReturnValues._amount);
+  transfer.price = eventReturnValues._amount;
   transfer.timestamp = eventReturnValues._timestamp;
   createTransferEvent(transfer);
 }
@@ -201,8 +201,8 @@ function updateContentEventHandler(
     eventReturnValues._caller,
     eventReturnValues._caller,
     eventReturnValues.timestamp,
-    Number(eventReturnValues._currentPrice),
-    Number(eventReturnValues._lastPrice)
+    eventReturnValues._currentPrice,
+    eventReturnValues._lastPrice
   );
   createEvent(event);
 }
@@ -235,7 +235,7 @@ function licensingEventHandler(
     agreement.licenser,
     agreement.timestamp,
     agreement.price,
-    0
+    "0"
   );
   createEvent(event);
 }

@@ -126,11 +126,9 @@ export const Detail = () => {
       .then((res: any) => {
         setContent({
           ...content,
-          price: Number(
-            state.web3State.web3?.utils.toWei(
-              (newPrice * currentUsdToEth).toString()
-            )
-          ),
+          price: state.web3State.web3?.utils.toWei(
+            (newPrice * currentUsdToEth).toString()
+          )!,
           fieldOfUse: newFieldOfUse === "" ? content.fieldOfUse : newFieldOfUse,
         });
         toast.success("Update successfully");

@@ -247,11 +247,9 @@ export function updateContentData(
     .then((res: any) => {
       console.log(res);
       const updatedContent = contentToBaseContent(content);
-      updatedContent.price = Number(
-        state.web3State.web3?.utils.toWei(
-          (newPrice * currentUsdToEth).toString()
-        )
-      );
+      updatedContent.price = state.web3State.web3?.utils.toWei(
+        (newPrice * currentUsdToEth).toString()
+      )!;
       updatedContent.fieldOfUse =
         fieldOfUse === "" ? updatedContent.fieldOfUse : fieldOfUse;
       return putContent(updatedContent);
@@ -315,7 +313,7 @@ export function submitDigitalContent(
           content.desc,
           content.fieldOfUse,
           state.web3State.web3?.utils.toWei(
-            (content.price * currentEthToUsd).toString()
+            (Number(content.price) * currentEthToUsd).toString()
           ),
           getSolidityContentType(content.contentType)
         )

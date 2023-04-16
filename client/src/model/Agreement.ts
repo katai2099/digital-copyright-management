@@ -1,4 +1,4 @@
-import { BaseContent, Content } from "./Content";
+import { Content } from "./Content";
 import { User } from "./User";
 
 interface IBaseAgreement {
@@ -7,7 +7,7 @@ interface IBaseAgreement {
   contentId: number;
   purposeOfUse: string;
   fieldOfUse: string;
-  price: number;
+  price: string;
   transactionHash: string;
   timestamp: string;
 }
@@ -19,7 +19,7 @@ export class BaseAgreement implements IBaseAgreement {
     public contentId = 0,
     public purposeOfUse = "",
     public fieldOfUse = "",
-    public price = 0,
+    public price = "0",
     public transactionHash = "",
     public timestamp = ""
   ) {}
@@ -32,7 +32,7 @@ export class Agreement implements IBaseAgreement {
     public contentId = 0,
     public purposeOfUse = "",
     public fieldOfUse = "",
-    public price = 0,
+    public price = "0",
     public transactionHash = "",
     public timestamp = "",
     public licensees = new User(),

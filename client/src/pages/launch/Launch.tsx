@@ -171,7 +171,7 @@ export const Launch = () => {
         onConfirm={confirmClickHandler}
       >
         <div>{`The final price for your content in Eth is ${
-          currentUsdToEth * content.price
+          currentUsdToEth * Number(content.price)
         }`}</div>
         <div>{`Current USD to ETH rate is ${currentUsdToEth}`}</div>
       </Modal>
@@ -224,12 +224,12 @@ export const Launch = () => {
               <legend className="w-auto ">Copyright info</legend>
               <ContentPriceInput
                 onChange={(price: number) => {
-                  setContent({ ...content, price: price });
+                  setContent({ ...content, price: price.toString() });
                 }}
                 ethToUsd={state.coinRate.ETHToUSD}
                 usdToEth={state.coinRate.USDToETH}
                 onConvert={(price: number) => {
-                  setContent({ ...content, price: price });
+                  setContent({ ...content, price: price.toString() });
                 }}
               />
               <label>Field of use*</label>

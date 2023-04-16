@@ -114,7 +114,7 @@ export function createEventLogToContent(_content: keyValuePair): Content {
   content.title = _content.title;
   content.desc = _content.desc;
   content.fieldOfUse = _content.fieldOfUse;
-  content.price = Number(_content.price);
+  content.price = _content.price;
   content.publishDate = _content.publishDate;
   content.contentType = solidityContentTypeToContentType(_content.contentType);
   return content;
@@ -127,7 +127,7 @@ export function requestEventLogToRequest(_request: keyValuePair): Request {
   request.contentId = parseInt(_request.contentId);
   request.purposeOfUse = _request.purposeOfUse;
   request.fieldOfUse = _request.fieldOfUse;
-  request.price = Number(_request.price);
+  request.price = _request.price;
   request.requestType = solidityRequestTypeToRequestType(_request.requestType);
   request.rejectReason = _request.rejectReason;
   request.timestamp = _request.timestamp;
@@ -144,7 +144,7 @@ export function licensingEventLogToAgreement(
   agreement.contentId = parseInt(_agreement.contentId);
   agreement.purposeOfUse = _agreement.purposeOfUse;
   agreement.fieldOfUse = _agreement.fieldOfUse;
-  agreement.price = Number(_agreement.price);
+  agreement.price = _agreement.price;
   agreement.timestamp = _agreement.timestamp;
   agreement.id = parseInt(_agreement.id);
   agreement.transactionHash = transactionHash;

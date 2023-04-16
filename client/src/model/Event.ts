@@ -1,4 +1,4 @@
-import { BaseContent, Content } from "./Content";
+import { Content } from "./Content";
 import { User } from "./User";
 
 export enum EventType {
@@ -15,8 +15,8 @@ interface IBaseEvent {
   from: string;
   timestamp: string;
   to: string;
-  price: number;
-  lastPrice: number;
+  price: string;
+  lastPrice: string;
 }
 
 export class BaseEvent implements IBaseEvent {
@@ -28,8 +28,8 @@ export class BaseEvent implements IBaseEvent {
     public from = "",
     public timestamp = "",
     public to = "",
-    public price = 0,
-    public lastPrice = 0
+    public price = "0",
+    public lastPrice = "0"
   ) {}
 }
 
@@ -45,8 +45,8 @@ export class Event implements IBaseEvent {
     public from = "",
     public timestamp = "",
     public to = "",
-    public price = 0,
-    public lastPrice = 0,
+    public price = "0",
+    public lastPrice = "0",
     content: Content,
     From: User,
     To: User

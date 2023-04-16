@@ -20,7 +20,7 @@ export interface IContent {
   title: string;
   desc: string;
   fieldOfUse: string;
-  price: number;
+  price: string;
   publishDate: string;
   contentType: ContentType;
 }
@@ -41,7 +41,7 @@ export class Content implements IContent {
     public title = "",
     public desc = "",
     public fieldOfUse = "",
-    public price = 0,
+    public price = "0",
     public publishDate = "",
     public contentType = ContentType.IMAGE
   ) {}

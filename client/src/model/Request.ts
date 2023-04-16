@@ -35,7 +35,7 @@ export interface IRequest {
   contentId: number;
   purposeOfUse: string;
   fieldOfUse: string;
-  price: number;
+  price: string;
   requestType: RequestType;
   timestamp: string;
   rejectReason: string;
@@ -48,7 +48,7 @@ export class BaseRequest implements IRequest {
     public contentId = 0,
     public purposeOfUse = "",
     public fieldOfUse = "",
-    public price = 0,
+    public price = "0",
     public requestType = RequestType.PENDING,
     public timestamp = "",
     public rejectReason = ""
@@ -62,7 +62,7 @@ export class Request implements IRequest {
     public contentId = 0,
     public purposeOfUse = "",
     public fieldOfUse = "",
-    public price = 0,
+    public price = "0",
     public requestType = RequestType.PENDING,
     public timestamp = "",
     public rejectReason = "",

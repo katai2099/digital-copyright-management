@@ -102,6 +102,7 @@ contentRouter.get("/", async (req: Request, res: Response) => {
 contentRouter.post("/", async (req: Request, res: Response) => {
   const data: CreateContentPostData = req.body;
   try {
+    console.log(data.content);
     const content = await createContent(data.content);
     const event = new Event(
       data.event.transactionHash,
@@ -110,7 +111,7 @@ contentRouter.post("/", async (req: Request, res: Response) => {
       data.event.caller,
       data.event.caller,
       data.event.timestamp,
-      Number(content.price)
+      content.price
     );
     const newEvent = await createEvent(event);
     console.log(newEvent);

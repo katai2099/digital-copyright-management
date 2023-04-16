@@ -33,7 +33,7 @@ model contents {
   title        String
   desc         String
   fieldOfUse   String
-  price        BigInt
+  price        String
   publishDate  String
   event        events[]
   owner        users?       @relation(fields: [ownerAddress], references: [walletAddress])
@@ -48,8 +48,8 @@ model events {
   eventType       String
   from            String
   to              String   @default("")
-  price           BigInt   @default(0)
-  lastPrice       BigInt   @default(0)
+  price           String   @default("0")
+  lastPrice       String   @default("0")
   timestamp       String
   content         contents @relation(fields: [contentId], references: [id])
   From            users    @relation("from", fields: [from], references: [walletAddress])
@@ -63,7 +63,7 @@ model agreements {
   contentId       Int
   purposeOfUse    String
   fieldOfUse      String
-  price           BigInt
+  price           String
   transactionHash String
   timestamp       String
   licensers       users?   @relation("licenser", fields: [licenser], references: [walletAddress])
@@ -77,7 +77,7 @@ model requests {
   contentId     Int
   purposeOfUse  String
   fieldOfUse    String
-  price         BigInt
+  price         String
   requestType   String
   rejectReason  String          @default("")
   timestamp     String
@@ -100,6 +100,6 @@ model transferEvent {
   transactionHash String
   from            String
   to              String
-  price           BigInt
+  price           String
   timestamp       String
 }

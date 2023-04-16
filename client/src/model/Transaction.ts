@@ -3,7 +3,7 @@ interface ITransaction {
   transactionHash: string;
   from: string;
   to: string;
-  price: number;
+  price: string;
   timestamp: string;
 }
 
@@ -13,7 +13,7 @@ export class Transaction implements ITransaction {
     public transactionHash = "",
     public from = "",
     public to = "",
-    public price = 0,
+    public price = "0",
     public timestamp = ""
   ) {}
 }

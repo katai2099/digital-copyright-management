@@ -4,7 +4,7 @@ interface IAgreement {
   contentId: number;
   purposeOfUse: string;
   fieldOfUse: string;
-  price: number;
+  price: string;
   transactionHash: string;
   timestamp: string;
   id: number;
@@ -17,7 +17,7 @@ export class Agreement implements IAgreement {
     public contentId = 0,
     public purposeOfUse = "",
     public fieldOfUse = "",
-    public price = 0,
+    public price = "0",
     public transactionHash = "",
     public timestamp = "",
     public id = 0

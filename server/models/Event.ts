@@ -33,8 +33,8 @@ export interface IEvent {
   from: string;
   to: string;
   timestamp: string;
-  price: number;
-  lastPrice: number;
+  price: string;
+  lastPrice: string;
 }
 
 export class Event implements IEvent {
@@ -46,7 +46,7 @@ export class Event implements IEvent {
     public from = "",
     public to = "",
     public timestamp = "",
-    public price = 0,
-    public lastPrice = 0
+    public price = "0",
+    public lastPrice = "0"
   ) {}
 }

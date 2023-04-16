@@ -22,7 +22,7 @@ interface IBaseContent {
   title: string;
   desc: string;
   fieldOfUse: string;
-  price: number;
+  price: string;
   publishDate: string;
   contentType: ContentType;
 }
@@ -36,7 +36,7 @@ export class BaseContent implements IBaseContent {
     public title = "",
     public desc = "",
     public fieldOfUse = "",
-    public price = 0,
+    public price = "0",
     public publishDate = "",
     public contentType = ContentType.IMAGE
   ) {}
@@ -52,7 +52,7 @@ export class Content implements IBaseContent {
     public title = "",
     public desc = "",
     public fieldOfUse = "",
-    public price = 0,
+    public price = "0",
     public publishDate = "",
     public contentType = ContentType.IMAGE,
     public event = new BaseEvent(),
