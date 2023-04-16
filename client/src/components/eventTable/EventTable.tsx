@@ -8,17 +8,24 @@ import moment from "moment";
 import { UseDcm } from "../../contexts/UseDcm";
 import { Link } from "react-router-dom";
 import Skeleton from "react-loading-skeleton";
+import { ClipLoader } from "react-spinners";
 
 interface IEventTableProps {
   events: Event[];
   fetching: boolean;
   hasContent?: boolean;
+  endOfPage: boolean;
+  fetchMoreContent: boolean;
+  pageChangeHandler: () => void;
 }
 
 export const EventTable = ({
   events,
   fetching,
   hasContent = false,
+  endOfPage,
+  fetchMoreContent,
+  pageChangeHandler,
 }: IEventTableProps) => {
   const { state } = UseDcm();
   return (
@@ -122,6 +129,31 @@ export const EventTable = ({
           ))}
         </tbody>
       </table>
+      <div>
+        <div className="btn-load-more-wrapper">
+          {!endOfPage && !fetchMoreContent && (
+            <button
+              className="btn-explore btn-load-more"
+              onClick={pageChangeHandler}
+            >
+              Load more
+            </button>
+          )}
+        </div>
+        {endOfPage && (
+          <div className="end-of-contents-text">You have reached the end</div>
+        )}
+      </div>
+      {fetchMoreContent && (
+        <div style={{ margin: "10px 0", textAlign: "center" }}>
+          <ClipLoader
+            color="#88a9ea"
+            size={50}
+            loading={true}
+            speedMultiplier={0.9}
+          />
+        </div>
+      )}
     </div>
   );
 };

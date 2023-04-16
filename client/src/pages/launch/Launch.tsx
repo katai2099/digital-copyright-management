@@ -151,15 +151,15 @@ export const Launch = () => {
 
   return (
     <div className="home-wrapper">
-      {fullscreen && (
-        <ContentZoom
-          file={selectedFile}
-          onClose={() => {
-            setFullscreen(false);
-          }}
-          contentType={fileType}
-        />
-      )}
+      <ContentZoom
+        open={fullscreen}
+        file={selectedFile}
+        onClose={() => {
+          setFullscreen(false);
+        }}
+        contentType={fileType}
+      />
+
       <Modal
         title={"Please Confirm"}
         open={displayModal}

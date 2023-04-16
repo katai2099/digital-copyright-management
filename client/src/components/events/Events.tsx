@@ -72,7 +72,16 @@ export const Events = ({ contentType, walletAddress }: IEventProps) => {
         </Accordion>
       </div>
       <div className="col-sm-9">
-        <EventTable events={events} hasContent={true} fetching={fetching} />
+        <EventTable
+          events={events}
+          hasContent={true}
+          fetching={fetching}
+          endOfPage={false}
+          fetchMoreContent={false}
+          pageChangeHandler={function (): void {
+            throw new Error("Function not implemented.");
+          }}
+        />
       </div>
     </div>
   );

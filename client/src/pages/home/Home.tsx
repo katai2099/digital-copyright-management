@@ -94,6 +94,7 @@ export const Home = () => {
           }
           columnNumber={0}
           loading={fetching}
+          all={filter === ContentFilter.ALL}
         />
         <ContentItems
           title={filter === ContentFilter.ALL ? ContentFilter.AUDIO : filter}
@@ -102,6 +103,7 @@ export const Home = () => {
           }
           columnNumber={1}
           loading={fetching}
+          all={filter === ContentFilter.ALL}
         />
         <ContentItems
           title={filter === ContentFilter.ALL ? ContentFilter.TEXT : filter}
@@ -110,6 +112,7 @@ export const Home = () => {
           }
           columnNumber={2}
           loading={fetching}
+          all={filter === ContentFilter.ALL}
         />
       </div>
     </div>

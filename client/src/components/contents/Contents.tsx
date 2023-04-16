@@ -17,7 +17,7 @@ import { ClipLoader } from "react-spinners";
 export const Contents = ({ contentType, walletAddress }: IEventProps) => {
   const [contents, setContents] = useState<Content[]>([]);
   const [sort, setSort] = useState<SortType>(SortType.LATEST);
-  const [page, setPage] = useState<number>(0);
+  const [page, setPage] = useState<number>(1);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [endOfPage, setEndOfPage] = useState<boolean>(false);
   const [noContent, setNoContent] = useState<boolean>(false);
@@ -29,19 +29,19 @@ export const Contents = ({ contentType, walletAddress }: IEventProps) => {
 
   useEffect(() => {
     contentTypeReset();
-    if (page === 0) setFirstFetching(true);
+    if (page === 1) setFirstFetching(true);
     getUserContents(walletAddress, contentType, sort, page, searchQuery)
       .then((newContents) => {
         setFirstFetching(false);
-        if (page === 0 && newContents.length === 0) {
+        if (page === 1 && newContents.length === 0) {
           setNoContent(true);
         }
-        if (page !== 0) {
+        if (page !== 1) {
           setContents((prevContents) => [...prevContents, ...newContents]);
         } else {
           setContents(newContents);
         }
-        if (page !== 0 && newContents.length === 0) {
+        if (page !== 1 && newContents.length === 0) {
           setEndOfPage(true);
         }
         setFetchMoreContent(false);
@@ -58,7 +58,7 @@ export const Contents = ({ contentType, walletAddress }: IEventProps) => {
       setSearchQuery("");
       setContents([]);
       setEndOfPage(false);
-      setPage(0);
+      setPage(1);
       setNoContent(false);
       // setSearchQuery("");
     }
@@ -67,14 +67,14 @@ export const Contents = ({ contentType, walletAddress }: IEventProps) => {
   const sortSelected = (sort: SortType) => {
     console.log(sort);
     setEndOfPage(false);
-    setPage(0);
+    setPage(1);
     setNoContent(false);
     setSort(sort);
   };
 
   const onSeachChangeHandler = debounce((event: string) => {
     setContents([]);
-    setPage(0);
+    setPage(1);
     setNoContent(false);
     setEndOfPage(false);
     setFetchMoreContent(false);

@@ -25,11 +25,46 @@
   background-color: #f2f2f2;
 }
 
+.digital-content-image-wrapper:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+  opacity: 0.8;
+}
+
+.digital-content-image-wrapper:hover .circle {
+  display: flex;
+}
+
 .digital-content-image {
   position: absolute;
   width: 100%;
   height: 100%;
   object-fit: contain;
+}
+
+.circle {
+  position: absolute;
+  top: calc(50% - 20px);
+  left: calc(50% - 20px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 10px;
+  border-radius: 50%;
+  background-color: white;
+  transition: all 0.5s ease;
+  z-index: 77;
+  opacity: 1;
+  cursor: pointer;
+}
+
+.circle:hover {
+  transform: scale(1.1);
+}
+.zoom-content-detail {
+  font-size: 30px;
+  color: #000000;
 }
 
 .item-info-block {
@@ -141,7 +176,7 @@
 }
 
 .activity-wrapper {
-  padding: 32px 16px;
+  padding: 22px 0;
 }
 
 .edit-button {
@@ -157,4 +192,23 @@
 
 .digital-content-wrapper .dcm-modal-box {
   min-height: 550px;
+}
+
+/* .agreement-block{
+  display: flex;
+} */
+
+.agreement-block-price-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.agreement-block-title {
+  color: #212121;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.agreement-block-info {
+  display: inline-block;
 }

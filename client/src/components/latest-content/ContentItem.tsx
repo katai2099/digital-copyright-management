@@ -14,7 +14,7 @@ export const ContentItem = ({ idx, content }: IContentItemProps) => {
   const { state } = UseDcm();
 
   const price = fromWei(content.price.toString(), state);
-  //const price = 0;
+
   return (
     <Link to={`/content/${content.id}`}>
       <div className="content-item">

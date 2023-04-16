@@ -1,8 +1,23 @@
 import { AxiosError } from "axios";
 import { BufferObject, imageHash } from "image-hash";
 import { Tlsh } from "tlsh_ts";
-import { hexToBin, isSimilarHammingDistance } from "../utils/utils";
 import { axiosRequest } from "./networkCall";
+import { getContentsByContentType } from "../database/content";
+import { ContentType } from "../models/Content";
+import { hexToBin, isSimilarHammingDistance } from "../utils/utils";
+import { HashingError } from "../utils/Error";
+
+export const compareImageHash = async (hash: string): Promise<void> => {
+  const images = await getContentsByContentType(ContentType.IMAGE);
+  for (const image of images) {
+    if (
+      image.pHash == hash ||
+      isSimilarHammingDistance(hexToBin(image.pHash), hexToBin(hash))
+    ) {
+      throw new HashingError(image.id, "Image already existed");
+    }
+  }
+};
 
 export const getImageHash = async (image: Buffer): Promise<string> => {
   const tmpImage = { data: image } as BufferObject;
@@ -15,6 +30,22 @@ export const getImageHash = async (image: Buffer): Promise<string> => {
       resolve(hash);
     });
   });
+};
+
+export const compareTextHash = async (hash: string): Promise<void> => {
+  const texts = await getContentsByContentType(ContentType.TEXT);
+  console.log(hash);
+  for (const text of texts) {
+    if (
+      text.pHash == hash ||
+      isSimilarHammingDistance(hexToBin(text.pHash), hexToBin(hash))
+    ) {
+      throw new HashingError(
+        text.id,
+        "Text file with similar content already existed"
+      );
+    }
+  }
 };
 
 export const getTextHash = async (text: string) => {

@@ -160,7 +160,7 @@ export async function getContents(filter: IContentFilter): Promise<contents[]> {
       include: {
         owner: true,
       },
-      skip: filter.page * 15,
+      skip: (filter.page - 1) * 15,
       take: 15,
     });
     return contents;
@@ -202,7 +202,7 @@ export async function getContentsByWalletAddress(
       include: {
         owner: true,
       },
-      skip: filter.page * 15,
+      skip: (filter.page - 1) * 15,
       take: 15,
     });
     return contents;

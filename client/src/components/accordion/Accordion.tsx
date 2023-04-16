@@ -15,10 +15,6 @@ export const Accordion = ({
   const [open, setOpen] = useState<boolean>(isOpen);
   const accordionClickHandler = () => {
     setOpen((prev) => !prev);
-    // const accordion = document.getElementById(`dcm-accordion-button${title}`);
-    // accordion?.classList.toggle("active");
-    // const accordionBody = document.getElementById(`accordion-body${title}`);
-    // accordionBody?.classList.toggle("show");
   };
   return (
     <div>

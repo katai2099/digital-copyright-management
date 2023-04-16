@@ -74,6 +74,7 @@ tbody tr {
 .ether-price {
   align-self: flex-end;
   padding-top: 4px;
+  color: #212121;
 }
 .fiat-price {
   padding-left: 2px;

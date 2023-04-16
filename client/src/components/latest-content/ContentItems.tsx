@@ -1,4 +1,3 @@
-import Skeleton from "react-loading-skeleton";
 import { Content } from "../../model/Content";
 import { ContentItem, ContentItemSkeletonLoading } from "./ContentItem";
 import "./contentItems.css";
@@ -8,6 +7,7 @@ interface IContentItemsProps {
   contents: Content[];
   columnNumber: number;
   loading: boolean;
+  all: boolean;
 }
 
 export const ContentItems = ({
@@ -15,6 +15,7 @@ export const ContentItems = ({
   contents,
   columnNumber,
   loading,
+  all,
 }: IContentItemsProps) => {
   return (
     <div className="latest-content-column">
@@ -27,7 +28,7 @@ export const ContentItems = ({
       {contents.map((content, idx) => (
         <ContentItem
           key={columnNumber * 5 + idx + 1}
-          idx={columnNumber * 5 + idx + 1}
+          idx={all ? idx + 1 : columnNumber * 5 + idx + 1}
           content={content}
         ></ContentItem>
       ))}

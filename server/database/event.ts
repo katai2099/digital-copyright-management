@@ -83,7 +83,7 @@ export async function getEventsByWalletAddress(
       orderBy: {
         timestamp: "desc",
       },
-      skip: (filter.page - 1) * 20,
+      skip: (filter.page - 1) * 15,
       take: 15,
     });
     return events;

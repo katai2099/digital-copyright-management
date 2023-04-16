@@ -12,14 +12,16 @@ import {
   updateContentData,
 } from "../../controllers/content";
 import { getCoinRate, getCurrentUsdToEth } from "../../controllers/web3";
-import { BaseContent, Content } from "../../model/Content";
+import { Content } from "../../model/Content";
 import { fromWei, getImageSrc, handleError } from "../../utils";
 import "./detail.css";
-import { Event } from "../../model/Event";
+import { Event, EventType } from "../../model/Event";
 import { EventTable } from "../../components/eventTable/EventTable";
 import { BaseRequest, Request, RequestType } from "../../model/Request";
 import Skeleton from "react-loading-skeleton";
 import { toast } from "react-toastify";
+import { EthereumPriceWrapper } from "../../components/common/Common";
+import { ContentZoom } from "../../components/contentZoom/ContentZoom";
 
 export const Detail = () => {
   const { state, dispatch } = UseDcm();
@@ -27,13 +29,16 @@ export const Detail = () => {
   const [content, setContent] = useState<Content>(new Content());
   const [events, setEvents] = useState<Event[]>([]);
   const [page, setPage] = useState<number>(1);
-  const [isLicensing, setIsLicensing] = useState<boolean>(false);
+  const [endOfPage, setEndOfPage] = useState<boolean>(false);
+  const [fetchMoreContent, setFetchMoreContent] = useState<boolean>(false);
+
   //editModal
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [currentUsdToEth, setCurrentUsdToEth] = useState<number>(0);
   const [isConfirmUI, setIsConfirmUI] = useState<boolean>(false);
   const [newPrice, setNewPrice] = useState<number>(0);
   const [newFieldOfUse, setNewFieldOfUse] = useState<string>("");
+  const [fullscreen, setFullscreen] = useState<boolean>(false);
 
   //request modal
   const [requestModalOpen, setRequestModalOpen] = useState<boolean>(false);
@@ -68,18 +73,31 @@ export const Detail = () => {
   }, [dispatch, id]);
 
   useEffect(() => {
-    setFetching(true);
+    if (page === 1) setFetching(true);
     getContentEvents(Number(id), page)
-      .then((events) => {
-        console.log(events);
-        setEvents(events);
+      .then((newEvents) => {
+        console.log(newEvents);
         setFetching(false);
+        if (page !== 1) {
+          setEvents((prevEvents) => [...prevEvents, ...newEvents]);
+        } else {
+          setEvents(newEvents);
+        }
+        if (page !== 1 && newEvents.length === 0) {
+          setEndOfPage(true);
+        }
+        setFetchMoreContent(false);
       })
       .catch((error) => {
         console.log(error);
         setFetching(false);
       });
   }, [id, page]);
+
+  const pageChangeHandler = () => {
+    setFetchMoreContent(true);
+    setPage((oldValue) => oldValue + 1);
+  };
 
   const price = fromWei(content.price.toString(), state);
 
@@ -113,7 +131,7 @@ export const Detail = () => {
               (newPrice * currentUsdToEth).toString()
             )
           ),
-          fieldOfUse: newFieldOfUse === "" ? fieldOfUse : newFieldOfUse,
+          fieldOfUse: newFieldOfUse === "" ? content.fieldOfUse : newFieldOfUse,
         });
         toast.success("Update successfully");
       })
@@ -159,12 +177,44 @@ export const Detail = () => {
       entry.licensee === state.web3State.account &&
       entry.requestType === RequestType.PENDING
   );
+  const isAccepted = content.requests.some(
+    (entry) =>
+      entry.contentId === Number(id) &&
+      entry.licensee === state.web3State.account &&
+      entry.requestType === RequestType.APPROVED
+  );
+
+  const agreementRequest = content.requests.find(
+    (entry) =>
+      entry.contentId === Number(id) &&
+      entry.licensee === state.web3State.account &&
+      entry.requestType === RequestType.APPROVED
+  );
+
+  const priceHistory = events.filter(
+    (event) =>
+      event.eventType === EventType.CREATE ||
+      event.eventType === EventType.UPDATED
+  );
 
   return (
     <div className="home-wrapper">
+      <ContentZoom
+        open={fullscreen}
+        onClose={() => setFullscreen(false)}
+        contentType={content.contentType}
+        fileUrl={content.IPFSAddress}
+      />
+
       <div className="digital-content-wrapper">
         <div className="left-block">
           <div className="digital-content-image-wrapper">
+            <div className="circle">
+              <i
+                className="las la-search-plus zoom-content-detail"
+                onClick={() => setFullscreen(true)}
+              />
+            </div>
             <img
               className="digital-content-image"
               src={getImageSrc(content)}
@@ -222,12 +272,18 @@ export const Detail = () => {
             </div>
 
             <button
-              title={isOwner ? "You are the owner" : ""}
+              title={
+                isOwner
+                  ? "You are the owner"
+                  : isAccepted
+                  ? "Your request has been accepted"
+                  : ""
+              }
               className="item-detail-button"
               onClick={() => setRequestModalOpen(true)}
-              disabled={isPending || isOwner}
+              disabled={isPending || isOwner || isAccepted}
             >
-              {isPending ? "Pending" : "Request"}
+              {isPending ? "Pending" : isAccepted ? "Accepted" : "Request"}
             </button>
           </div>
         </div>
@@ -239,9 +295,83 @@ export const Detail = () => {
         </div>
         <div className="right-block">
           <Accordion title="Price History">
-            <div>asdf</div>
+            <div className="row">
+              <div className="row">
+                <div className="col-sm-6 agreement-block-title">Date:</div>
+                <div className="col-sm-6 agreement-block-title">Price:</div>
+              </div>
+
+              {priceHistory.map((price) => (
+                <div className="row">
+                  <div className="col-sm-6">{`${new Date(
+                    Number(price.timestamp) * 1000
+                  ).toDateString()}`}</div>
+                  <div className="col-sm-6">
+                    <EthereumPriceWrapper
+                      ether={fromWei(price.price.toString(), state)}
+                      fiat={(
+                        Number(fromWei(price.price.toString(), state)) *
+                        state.coinRate.ETHToUSD
+                      ).toFixed(2)}
+                      horizontal={true}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
           </Accordion>
         </div>
+        <div className="left-block">
+          <Accordion title="Field of use" isOpen={false}>
+            <div>{content.fieldOfUse}</div>
+          </Accordion>
+        </div>
+        {agreementRequest && (
+          <div className="right-block">
+            <Accordion title="Agreement" isOpen={false}>
+              <div className="agreement-block">
+                <div>
+                  <div className="agreement-block-title">Date: &nbsp;</div>
+                  <div className="agreement-block-info">{`${new Date(
+                    Number(agreementRequest.timestamp) * 1000
+                  ).toDateString()}`}</div>
+                </div>
+                <div className="agreement-block-price-wrapper">
+                  <div className="agreement-block-title">Price: &nbsp;</div>
+                  <div className="agreement-block-info">
+                    <EthereumPriceWrapper
+                      ether={fromWei(agreementRequest.price.toString(), state)}
+                      fiat={(
+                        Number(
+                          fromWei(agreementRequest.price.toString(), state)
+                        ) * state.coinRate.ETHToUSD
+                      ).toFixed(2)}
+                      horizontal={true}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <div className="agreement-block-title">
+                    Reason of use: &nbsp;
+                  </div>
+                  <div className="agreement-block-info">
+                    {agreementRequest.purposeOfUse}
+                  </div>
+                </div>
+                <div>
+                  <div className="agreement-block-title">
+                    Field of use: &nbsp;
+                  </div>
+                  <div className="agreement-block-info">
+                    {agreementRequest.fieldOfUse !== ""
+                      ? agreementRequest.fieldOfUse
+                      : content.fieldOfUse}
+                  </div>
+                </div>
+              </div>
+            </Accordion>
+          </div>
+        )}
 
         <Modal
           title={isConfirmUI ? "Confirmation" : "Please enter a new data"}
@@ -330,7 +460,15 @@ export const Detail = () => {
         <div className="full-block">
           <Accordion title="Activity">
             <div className="col-sm-12 activity-wrapper">
-              <EventTable events={events} fetching={fetching} />
+              <EventTable
+                events={events}
+                fetching={fetching}
+                endOfPage={endOfPage}
+                fetchMoreContent={fetchMoreContent}
+                pageChangeHandler={() => {
+                  pageChangeHandler();
+                }}
+              />
             </div>
           </Accordion>
         </div>

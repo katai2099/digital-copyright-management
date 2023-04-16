@@ -47,3 +47,28 @@ export const ApproveRequestBody = ({ price }: IRequestModalBodyProps) => {
     </div>
   );
 };
+
+interface IEtherPriceWrapperProps {
+  ether: string;
+  fiat: string;
+  horizontal?: boolean;
+}
+
+export const EthereumPriceWrapper = ({
+  ether,
+  fiat,
+  horizontal,
+}: IEtherPriceWrapperProps) => {
+  return (
+    <div
+      style={
+        horizontal ? { display: "flex", alignItems: "center", gap: "10px" } : {}
+      }
+    >
+      <div className="ether-price-wrapper">
+        <EtherIcon /> <div className="ether-price">{ether}</div>
+      </div>
+      <div className="fiat-price">{`(${fiat}$)`}</div>
+    </div>
+  );
+};

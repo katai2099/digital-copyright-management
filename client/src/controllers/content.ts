@@ -3,6 +3,7 @@ import {
   CONFIRM_TRANSACTION,
   CONTENT_ROUTE,
   EVENT_ROUTE,
+  HASH_ROUTE,
   PROCESSING,
   REQUEST_ROUTE,
   SUBMIT_ROUTE,
@@ -35,7 +36,6 @@ import { TransactionReceipt } from "web3-eth";
 import {
   BaseRequest,
   CreateRequestPostData,
-  RequestEvent,
   createRequestEvent,
 } from "../model/Request";
 
@@ -433,7 +433,59 @@ export function postText(text: File): Promise<ISubmitResponse> {
     .catch((error) => Promise.reject(error));
 }
 
-// // hashing and upload to ipfs
+export function hashImage(image: File): Promise<string> {
+  const formData = new FormData();
+  formData.append("image", image);
+  return postRequest<string>(`${HASH_ROUTE}/image`, formData, null, true)
+    .then((res) => Promise.resolve(res))
+    .catch((error) => Promise.reject(error));
+}
 
-// export const hashImage = (image: File): Promise<string> =>
-//   postRequest("/hash/image", image, "jf");
+export function hashText(text: File): Promise<string> {
+  const formData = new FormData();
+  formData.append("text", text);
+  return postRequest<string>(`${HASH_ROUTE}/text`, formData, null, true)
+    .then((res) => Promise.resolve(res))
+    .catch((error) => Promise.reject(error));
+}
+
+export function hashAudio(audio: File): Promise<string> {
+  const formData = new FormData();
+  formData.append("audio", audio);
+  return postRequest<string>(`${HASH_ROUTE}/audio`, formData, null, true)
+    .then((res) => Promise.resolve(res))
+    .catch((error) => Promise.reject(error));
+}
+
+export function hashDigitalContent(
+  file: File,
+  contentType: ContentType,
+  dispatch: Dispatch<AnyAction>
+) {
+  dispatch({
+    type: loadingActions.setLoading,
+    data: { loading: true, loadingText: "Hashing" },
+  });
+  return Promise.resolve()
+    .then(() => {
+      if (contentType === ContentType.IMAGE) {
+        return hashImage(file);
+      } else if (contentType === ContentType.AUDIO) {
+        return hashAudio(file);
+      } else {
+        return hashText(file);
+      }
+    })
+    .then((res) => {
+      dispatch({
+        type: loadingActions.resetLoading,
+      });
+      return Promise.resolve(res);
+    })
+    .catch((err) => {
+      dispatch({
+        type: loadingActions.resetLoading,
+      });
+      return Promise.reject(err);
+    });
+}

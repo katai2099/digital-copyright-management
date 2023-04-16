@@ -3,28 +3,20 @@ import { getContentsByContentType, getAudioByHash } from "../database/content";
 import { ISubmitResponse, SubmitResponse } from "../models/common";
 import { Content, ContentType } from "../models/Content";
 import { HashingError } from "../utils/Error";
+import { isSimilarHammingDistance, hexToBin, convert } from "../utils/utils";
 import {
-  isSimilarHammingDistance,
-  hexToBin,
-  clone,
-  convert,
-} from "../utils/utils";
-import { getAudioHash, getImageHash, getTextHash } from "./hashing";
+  compareImageHash,
+  compareTextHash,
+  getAudioHash,
+  getImageHash,
+  getTextHash,
+} from "./hashing";
 import { uploadFileToIPFS } from "./ipfs";
 
 export const submitImage = async (image: Buffer): Promise<SubmitResponse> => {
   try {
     const hash = await getImageHash(image);
-    const images = await getContentsByContentType(ContentType.IMAGE);
-    console.log(images);
-    for (const image of images) {
-      if (
-        image.pHash == hash ||
-        isSimilarHammingDistance(hexToBin(image.pHash), hexToBin(hash))
-      ) {
-        throw new HashingError(image.id, "Image already existed");
-      }
-    }
+    await compareImageHash(hash);
     const cid = await uploadFileToIPFS(image);
     // const cid = await Hash.of(image);
     return { hash: hash, cid: cid } as ISubmitResponse;
@@ -38,20 +30,7 @@ export const submitText = async (textFile: Buffer): Promise<SubmitResponse> => {
   try {
     const text = Buffer.from(textFile).toString();
     const hash = await getTextHash(text);
-    console.log(hash);
-    const texts = await getContentsByContentType(ContentType.TEXT);
-    console.log(hash);
-    for (const text of texts) {
-      if (
-        text.pHash == hash ||
-        isSimilarHammingDistance(hexToBin(text.pHash), hexToBin(hash))
-      ) {
-        throw new HashingError(
-          text.id,
-          "Text file with similar content already existed"
-        );
-      }
-    }
+    await compareTextHash(hash);
     const cid = await uploadFileToIPFS(textFile);
     //const cid = await Hash.of(textFile);
     return { hash: hash, cid: cid } as ISubmitResponse;
