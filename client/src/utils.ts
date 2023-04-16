@@ -181,3 +181,21 @@ export function requestEventLogToRequest(_request: keyValuePair): BaseRequest {
   request.timestamp = _request.timestamp;
   return request;
 }
+
+function generateRandomHex(): string {
+  let hexCode1 = "";
+  let hexValues1 = "0123456789abcdef";
+
+  for (let i = 0; i < 6; i++) {
+    hexCode1 += hexValues1.charAt(
+      Math.floor(Math.random() * hexValues1.length)
+    );
+  }
+  return hexCode1;
+}
+
+export function generateRandomLinearGradient(): string {
+  const deg = Math.floor(Math.random() * 360);
+  const gradient = `linear-gradient(${deg}deg,#${generateRandomHex()},#${generateRandomHex()})`;
+  return gradient;
+}

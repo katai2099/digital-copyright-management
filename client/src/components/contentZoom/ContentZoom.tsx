@@ -66,7 +66,7 @@ export const ContentZoom = ({
           onClick={() => {
             onClose();
           }}
-        ></i>
+        />
         <div className="zoom-img-container">
           {contentType === ContentType.IMAGE && (
             <img

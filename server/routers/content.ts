@@ -90,8 +90,10 @@ contentRouter.get("/:id", async (req: Request, res: Response) => {
 contentRouter.get("/", async (req: Request, res: Response) => {
   const query = req.query;
   const filter = query as unknown as IContentFilter;
+  console.log(filter);
   try {
     const contents = await getContents(filter);
+
     return res.status(200).send(toJSON(contents));
   } catch (error) {
     console.log(error);

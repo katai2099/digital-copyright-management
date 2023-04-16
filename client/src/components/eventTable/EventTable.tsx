@@ -16,6 +16,7 @@ interface IEventTableProps {
   hasContent?: boolean;
   endOfPage: boolean;
   fetchMoreContent: boolean;
+  noEvent?: boolean;
   pageChangeHandler: () => void;
 }
 
@@ -25,6 +26,7 @@ export const EventTable = ({
   hasContent = false,
   endOfPage,
   fetchMoreContent,
+  noEvent,
   pageChangeHandler,
 }: IEventTableProps) => {
   const { state } = UseDcm();
@@ -129,21 +131,25 @@ export const EventTable = ({
           ))}
         </tbody>
       </table>
-      <div>
-        <div className="btn-load-more-wrapper">
-          {!endOfPage && !fetchMoreContent && (
-            <button
-              className="btn-explore btn-load-more"
-              onClick={pageChangeHandler}
-            >
-              Load more
-            </button>
+      {!fetching && noEvent ? (
+        <div className="no-contents">No events</div>
+      ) : (
+        <div>
+          <div className="btn-load-more-wrapper">
+            {!endOfPage && !fetchMoreContent && (
+              <button
+                className="btn-explore btn-load-more"
+                onClick={pageChangeHandler}
+              >
+                Load more
+              </button>
+            )}
+          </div>
+          {endOfPage && (
+            <div className="end-of-contents-text">You have reached the end</div>
           )}
         </div>
-        {endOfPage && (
-          <div className="end-of-contents-text">You have reached the end</div>
-        )}
-      </div>
+      )}
       {fetchMoreContent && (
         <div style={{ margin: "10px 0", textAlign: "center" }}>
           <ClipLoader
@@ -164,17 +170,19 @@ interface IContentPreviewProps {
 
 export const ContentPreviewComponent = ({ content }: IContentPreviewProps) => {
   return (
-    <div className="d-flex align-items-center">
-      <div className="content-img-wrapper">
-        <img
-          className="content-img"
-          src={getImageSrc(content)}
-          width="56px"
-          height="56px"
-          alt=""
-        />
+    <Link to={`/content/${content.id}`}>
+      <div className="d-flex align-items-center">
+        <div className="content-img-wrapper">
+          <img
+            className="content-img"
+            src={getImageSrc(content)}
+            width="56px"
+            height="56px"
+            alt=""
+          />
+        </div>
+        <div className="content-name">{content.title}</div>
       </div>
-      <div className="content-name">{content.title}</div>
-    </div>
+    </Link>
   );
 };

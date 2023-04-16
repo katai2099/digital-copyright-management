@@ -165,6 +165,20 @@ export async function getContents(filter: IContentFilter): Promise<contents[]> {
       skip: (filter.page - 1) * 15,
       take: 15,
     });
+    if (!isPublishDateFilter) {
+      if (filter.sort === FilterType.LOWEST) {
+        const sortContents = contents.sort((a, b) => {
+          return Number(BigInt(a.price)) - Number(BigInt(b.price));
+        });
+        return sortContents;
+      } else {
+        const sortContents = contents.sort((a, b) => {
+          return Number(BigInt(b.price)) - Number(BigInt(a.price));
+        });
+        return sortContents;
+      }
+    }
+
     return contents;
   } catch (error) {
     console.log(error);
@@ -207,6 +221,20 @@ export async function getContentsByWalletAddress(
       skip: (filter.page - 1) * 15,
       take: 15,
     });
+    if (!isPublishDateFilter) {
+      if (filter.sort === FilterType.LOWEST) {
+        const sortContents = contents.sort((a, b) => {
+          return Number(BigInt(a.price)) - Number(BigInt(b.price));
+        });
+        return sortContents;
+      } else {
+        const sortContents = contents.sort((a, b) => {
+          return Number(BigInt(b.price)) - Number(BigInt(a.price));
+        });
+        return sortContents;
+      }
+    }
+
     return contents;
   } catch (error) {
     console.log(error);

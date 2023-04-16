@@ -44,7 +44,7 @@ export const ContentSummary = ({ content }: IContentSummaryProps) => {
           <div className="content-owner">
             <p>
               Owned by{" "}
-              <Link to="/profile" className="link">
+              <Link to={`/profile/${content.ownerAddress}`} className="link">
                 {content.owner.firstname + " " + content.owner.lastname}
               </Link>
             </p>

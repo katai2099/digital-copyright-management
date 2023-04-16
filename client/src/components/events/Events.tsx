@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Event } from "../../model/Event";
 import { getUserEvents } from "../../controllers/event";
 import { ContentType } from "../../model/Content";
+import { usePrevious } from "../../hooks/usePrevious";
 
 export interface IEventProps {
   contentType: ContentType;
@@ -19,25 +20,61 @@ export const Events = ({ contentType, walletAddress }: IEventProps) => {
   );
   const [fetching, setFetching] = useState<boolean>(false);
   const type = contentType;
+  const [endOfPage, setEndOfPage] = useState<boolean>(false);
+  const [fetchMoreContent, setFetchMoreContent] = useState<boolean>(false);
+  const [noEvent, setNoEvent] = useState<boolean>(false);
+
+  const prevContentType = usePrevious(type);
+
+  const pageChangeHandler = () => {
+    setFetchMoreContent(true);
+    setPage((oldValue) => oldValue + 1);
+  };
+
   useEffect(() => {
-    setFetching(true);
+    if (page === 1) setFetching(true);
     getUserEvents(type, page, checkedState, walletAddress)
-      .then((events) => {
-        setEvents(events);
+      .then((newEvents) => {
         setFetching(false);
+        if (page === 1 && newEvents.length === 0) {
+          setNoEvent(true);
+        }
+        if (page !== 1) {
+          setEvents((prevEvents) => [...prevEvents, ...newEvents]);
+        } else {
+          setEvents(newEvents);
+        }
+        if (
+          page !== 1 &&
+          newEvents.length === 0 &&
+          (prevContentType as ContentType) === type
+        ) {
+          setEndOfPage(true);
+        }
+
+        if ((prevContentType as ContentType) !== type) {
+          setEndOfPage(false);
+          setPage(1);
+          setNoEvent(false);
+        }
+        setFetchMoreContent(false);
       })
       .catch((error) => {
         console.log(error);
         setFetching(false);
       });
-  }, [checkedState, page, type, walletAddress]);
+  }, [checkedState, page, prevContentType, type, walletAddress]);
   const onChangeHandler = (pos: number) => {
     const updatedCheckedSate = checkedState.map((item, idx) =>
       idx === pos ? !item : item
     );
     console.log(updatedCheckedSate);
     setChecked(updatedCheckedSate);
+    setPage(1);
+    setEndOfPage(false);
+    setNoEvent(false);
   };
+
   return (
     <div className="row">
       <div className="col-sm-3">
@@ -76,10 +113,11 @@ export const Events = ({ contentType, walletAddress }: IEventProps) => {
           events={events}
           hasContent={true}
           fetching={fetching}
-          endOfPage={false}
-          fetchMoreContent={false}
-          pageChangeHandler={function (): void {
-            throw new Error("Function not implemented.");
+          endOfPage={endOfPage}
+          fetchMoreContent={fetchMoreContent}
+          noEvent={noEvent}
+          pageChangeHandler={() => {
+            pageChangeHandler();
           }}
         />
       </div>

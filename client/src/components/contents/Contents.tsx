@@ -28,7 +28,6 @@ export const Contents = ({ contentType, walletAddress }: IEventProps) => {
   const prevContentType = usePrevious(contentType);
 
   useEffect(() => {
-    contentTypeReset();
     if (page === 1) setFirstFetching(true);
     getUserContents(walletAddress, contentType, sort, page, searchQuery)
       .then((newContents) => {
@@ -41,8 +40,20 @@ export const Contents = ({ contentType, walletAddress }: IEventProps) => {
         } else {
           setContents(newContents);
         }
-        if (page !== 1 && newContents.length === 0) {
+        if (
+          page !== 1 &&
+          newContents.length === 0 &&
+          (prevContentType as ContentType) === contentType
+        ) {
           setEndOfPage(true);
+        }
+        if ((prevContentType as ContentType) !== contentType) {
+          inputRef.current!.value = "";
+          setSearchQuery("");
+          setContents([]);
+          setEndOfPage(false);
+          setPage(1);
+          setNoContent(false);
         }
         setFetchMoreContent(false);
       })
@@ -50,19 +61,7 @@ export const Contents = ({ contentType, walletAddress }: IEventProps) => {
         setFirstFetching(false);
         console.log(error);
       });
-  }, [contentType, page, sort, walletAddress, searchQuery]);
-
-  const contentTypeReset = () => {
-    if ((prevContentType as ContentType) !== contentType) {
-      inputRef.current!.value = "";
-      setSearchQuery("");
-      setContents([]);
-      setEndOfPage(false);
-      setPage(1);
-      setNoContent(false);
-      // setSearchQuery("");
-    }
-  };
+  }, [contentType, page, sort, walletAddress, searchQuery, prevContentType]);
 
   const sortSelected = (sort: SortType) => {
     console.log(sort);
@@ -119,17 +118,14 @@ export const Contents = ({ contentType, walletAddress }: IEventProps) => {
         ) : (
           <div>
             <div className="btn-load-more-wrapper">
-              {!noContent &&
-                !endOfPage &&
-                !firstFetching &&
-                !fetchMoreContent && (
-                  <button
-                    className="btn-explore btn-load-more"
-                    onClick={pageChangeHandler}
-                  >
-                    Load more contents
-                  </button>
-                )}
+              {!endOfPage && !fetchMoreContent && (
+                <button
+                  className="btn-explore btn-load-more"
+                  onClick={pageChangeHandler}
+                >
+                  Load more contents
+                </button>
+              )}
             </div>
             {endOfPage && (
               <div className="end-of-contents-text">

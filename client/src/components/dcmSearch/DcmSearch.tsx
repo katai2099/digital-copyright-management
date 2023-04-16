@@ -6,7 +6,12 @@ import { User } from "../../model/User";
 import { Content } from "../../model/Content";
 import { search } from "../../controllers/user";
 import { ISearchResult } from "../../model/Common";
-import { debounce, fromWei, getImageSrc } from "../../utils";
+import {
+  debounce,
+  fromWei,
+  generateRandomLinearGradient,
+  getImageSrc,
+} from "../../utils";
 import { useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
 import { UseDcm } from "../../contexts/UseDcm";
@@ -139,7 +144,6 @@ export const DcmSearch = (props: IDcmSearchProps) => {
                         {" "}
                         <div className="ether-price-wrapper">
                           <EtherIcon />{" "}
-                          {/*  {fromWei(event.price.toString(), state)} */}
                           <div className="ether-price">
                             {fromWei(content.price.toString(), state)}
                           </div>
@@ -181,7 +185,10 @@ export const DcmSearch = (props: IDcmSearchProps) => {
                   >
                     <div className="item-result">
                       <div className="item-result-info">
-                        <div className="item-result-img user" />
+                        <div
+                          className="item-result-img user"
+                          style={{ background: generateRandomLinearGradient() }}
+                        />
                         <div className="item-result-title">
                           {`${user.firstname} ${user.lastname}`}
                         </div>

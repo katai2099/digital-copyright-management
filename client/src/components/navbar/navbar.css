@@ -40,19 +40,18 @@
 }
 
 .search-input {
-  /* margin-left: 6px; */
   width: 680px;
   border: none;
   padding: 8px 8px 8px 36px;
   border: none;
   border-radius: 8px;
   background-color: #666;
+  color: #fff;
 }
 
 .search-input:focus,
 .search-input:hover {
   outline: none;
-  /* background-color: #888; */
 }
 
 .search-input::placeholder {

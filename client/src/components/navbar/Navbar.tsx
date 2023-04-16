@@ -169,7 +169,7 @@ export const Navbar = () => {
                   }}
                 >
                   <i className="las la-photo-video profile-logo"></i>
-                  Content
+                  Profile
                 </div>
                 <div
                   className="profile-area-button"
@@ -180,7 +180,7 @@ export const Navbar = () => {
                   }}
                 >
                   <i className="las la-cog profile-logo"></i>
-                  Settings
+                  Management
                 </div>
                 <div
                   className="profile-area-button"

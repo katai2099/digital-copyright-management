@@ -1,4 +1,4 @@
-import { faCopy, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -21,6 +21,8 @@ import Skeleton from "react-loading-skeleton";
 import { UseDcm } from "../../contexts/UseDcm";
 import { getCoinRate } from "../../controllers/web3";
 import { coinRateActions } from "../../contexts/state";
+import { toast } from "react-toastify";
+import { generateRandomLinearGradient } from "../../utils";
 
 export const Profile = () => {
   const { dispatch } = UseDcm();
@@ -73,11 +75,23 @@ export const Profile = () => {
     }
   };
 
+  const lineargradient = generateRandomLinearGradient();
+
   return (
     <div className="profile-wrapper">
-      <div className="profile-cover-image"></div>
+      <div
+        className="profile-cover-image"
+        style={
+          user.username !== "katai2099" ? { background: lineargradient } : {}
+        }
+      />
       <div className="home-wrapper">
-        <div className="profile-image"></div>
+        <div
+          className="profile-image"
+          style={
+            user.username !== "katai2099" ? { background: lineargradient } : {}
+          }
+        />
         <br />
         <div className="wallet-name">
           {fetchingUser ? (
@@ -98,6 +112,9 @@ export const Profile = () => {
                 className="wallet-detail-box"
                 onClick={() => {
                   navigator.clipboard.writeText(user.walletAddress);
+                  toast.success("Copied to clipboard", {
+                    hideProgressBar: true,
+                  });
                 }}
               >
                 {user.walletAddress.substring(0, 6)}{" "}
@@ -110,6 +127,9 @@ export const Profile = () => {
                   className="wallet-detail-box"
                   onClick={() => {
                     navigator.clipboard.writeText(user.username);
+                    toast.success("Copied to clipboard", {
+                      hideProgressBar: true,
+                    });
                   }}
                 >
                   {user.username}{" "}
