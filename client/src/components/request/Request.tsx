@@ -19,6 +19,7 @@ import { Modal } from "../common/Modal";
 import { ApproveRequestBody, RejectRequestBody } from "../common/Common";
 import Skeleton from "react-loading-skeleton";
 import { toast } from "react-toastify";
+import { ClipLoader } from "react-spinners";
 
 export const RequestComponent = () => {
   const { state, dispatch } = UseDcm();
@@ -27,31 +28,95 @@ export const RequestComponent = () => {
   const [licensingRequest, setLicensingRequest] = useState<Request[]>([]);
   const [contractBalance, setContractBalance] = useState<string>("");
   const [userType, setUserType] = useState<UserType>(UserType.LICENSER);
-  const [showOption, setShowOption] = useState<string>("all");
+  const [showOption, setShowOption] = useState<string>("Pending");
   const [isApprove, setIsApprove] = useState<boolean>(false);
   const [processRequestIndex, setProcessRequestIndex] = useState<number>(0);
   const [processingRequestId, setProssessingRequestId] = useState<number>(0);
   const [rejectReason, setRejectReason] = useState<string>("");
   const [errorTextArea, setErrorTextArea] = useState<boolean>(false);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
-  //fetching
+
+  //pagination
   const [fetchingLicenser, setFetchingLicenser] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(1);
+  const [endOfPage, setEndOfPage] = useState<boolean>(false);
+  const [fetchMoreContent, setFetchMoreContent] = useState<boolean>(false);
+  const [noRequest, setNoRequest] = useState<boolean>(false);
+
+  const pageChangeHandler = () => {
+    setFetchMoreContent(true);
+    setPage((oldValue) => oldValue + 1);
+  };
+
+  const resetFilter = () => {
+    setPage(1);
+    setEndOfPage(false);
+    setNoRequest(false);
+    if (userType === UserType.LICENSER) {
+      setLicenserRequest([]);
+    } else {
+      setLicensingRequest([]);
+    }
+  };
+
   useEffect(() => {
-    setFetchingLicenser(true);
-    getLicenserRequests(state.web3State.account)
-      .then((requests) => {
-        setLicenserRequest(requests);
-        setFetchingLicenser(false);
-      })
-      .then(() => getLicensingRequests(state.web3State.account))
-      .then((requests) => {
-        setLicensingRequest(requests);
-      })
-      .catch((error) => {
-        setFetchingLicenser(false);
-        console.log(error);
-      });
-  }, [state.web3State.account]);
+    if (userType === UserType.LICENSER) {
+      if (page === 1) setFetchingLicenser(true);
+      getLicenserRequests(state.web3State.account, page, showOption)
+        .then((newRequests) => {
+          setFetchingLicenser(false);
+          if (page === 1 && newRequests.length === 0) {
+            setNoRequest(true);
+          }
+          if (page !== 1) {
+            setLicenserRequest((prevRequest) => [
+              ...prevRequest,
+              ...newRequests,
+            ]);
+          } else {
+            setLicenserRequest(newRequests);
+          }
+          if (page !== 1 && newRequests.length === 0) {
+            setEndOfPage(true);
+          }
+          setFetchMoreContent(false);
+        })
+        .catch((error) => {
+          setFetchingLicenser(false);
+          setFetchMoreContent(false);
+          console.log(error);
+        });
+    }
+  }, [page, showOption, state.web3State.account, userType]);
+
+  useEffect(() => {
+    if (userType === UserType.LICENSING) {
+      if (page === 1) setFetchingLicenser(true);
+      getLicensingRequests(state.web3State.account, page, showOption)
+        .then((newRequests) => {
+          setFetchingLicenser(false);
+          if (page === 1 && newRequests.length === 0) {
+            setNoRequest(true);
+          }
+          if (page !== 1) {
+            setLicensingRequest((prevRequest) => [
+              ...prevRequest,
+              ...newRequests,
+            ]);
+          } else {
+            setLicensingRequest(newRequests);
+          }
+          if (page !== 1 && newRequests.length === 0) {
+            setEndOfPage(true);
+          }
+          setFetchMoreContent(false);
+        })
+        .catch((error) => {
+          setFetchingLicenser(false);
+          console.log(error);
+        });
+    }
+  }, [page, showOption, state.web3State.account, userType]);
 
   useEffect(() => {
     state.web3State.contract?.methods
@@ -70,7 +135,14 @@ export const RequestComponent = () => {
     if (newType !== userType) {
       console.log(newType);
       setUserType(newType);
+      resetFilter();
+    }
+    if (newType === UserType.LICENSER) {
+      setShowOption("Pending");
+      setLicensingRequest([]);
+    } else {
       setShowOption("all");
+      setLicenserRequest([]);
     }
   };
 
@@ -110,6 +182,7 @@ export const RequestComponent = () => {
         licenserRequest[processRequestIndex].requestType = req.requestType;
         licenserRequest[processRequestIndex].rejectReason = req.rejectReason;
         setLicenserRequest(licenserRequest);
+        setRejectReason("");
       })
       .catch((err) => {
         handleError(err);
@@ -228,6 +301,7 @@ export const RequestComponent = () => {
                         className="form-select"
                         onChange={(event) => {
                           setShowOption(event.currentTarget.value);
+                          resetFilter();
                         }}
                         value={showOption}
                       >
@@ -305,9 +379,16 @@ export const RequestComponent = () => {
                         </div>
                       </td>
                       <td>
-                        {new Date(
-                          Number(request.timestamp) * 1000
-                        ).toDateString()}
+                        <div>
+                          {new Date(
+                            Number(request.timestamp) * 1000
+                          ).toDateString()}
+                        </div>
+                        <div>
+                          {new Date(
+                            Number(request.timestamp) * 1000
+                          ).toLocaleTimeString()}
+                        </div>
                       </td>
                       <td>
                         <div
@@ -414,6 +495,37 @@ export const RequestComponent = () => {
               })}
             </tbody>
           </table>
+          {!fetchingLicenser && noRequest ? (
+            <div className="no-contents">No requests</div>
+          ) : (
+            <div>
+              <div className="btn-load-more-wrapper">
+                {!endOfPage && !fetchMoreContent && !fetchingLicenser && (
+                  <button
+                    className="btn-explore btn-load-more"
+                    onClick={pageChangeHandler}
+                  >
+                    Load more
+                  </button>
+                )}
+              </div>
+              {endOfPage && (
+                <div className="end-of-contents-text">
+                  You have reached the end
+                </div>
+              )}
+            </div>
+          )}
+          {fetchMoreContent && (
+            <div style={{ margin: "10px 0", textAlign: "center" }}>
+              <ClipLoader
+                color="#88a9ea"
+                size={50}
+                loading={true}
+                speedMultiplier={0.9}
+              />
+            </div>
+          )}
         </div>
       </div>
     )

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { ContentType } from "../../model/Content";
 import { getRequest } from "../../controllers/clientRequest";
 import { IPFS_URL } from "../../constant";
+import { ClipLoader } from "react-spinners";
 
 interface IContentZoomProps {
   open: boolean;
@@ -19,6 +20,7 @@ export const ContentZoom = ({
   fileUrl,
 }: IContentZoomProps) => {
   const [fileContent, setFileContent] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const handleEsc = (event: KeyboardEvent) => {
@@ -43,18 +45,27 @@ export const ContentZoom = ({
       };
       reader.readAsText(file!);
     }
-    if (file) {
+    if (file && open) {
       if (contentType === ContentType.TEXT) {
         readFile();
       }
     }
 
-    if (fileUrl && contentType === ContentType.TEXT) {
-      getRequest<string>(`${IPFS_URL}${fileUrl}`).then((res) => {
-        setFileContent(res);
-      });
+    if (fileUrl && contentType === ContentType.TEXT && open) {
+      setLoading(true);
+      getRequest<string>(`${IPFS_URL}${fileUrl}`)
+        .then((res) => {
+          setLoading(false);
+
+          setFileContent(res);
+        })
+        .catch(() => {
+          setLoading(false);
+
+          setFileContent("Something went wrong. Please try again later");
+        });
     }
-  }, [contentType, file, fileUrl]);
+  }, [contentType, file, fileUrl, open]);
 
   if (!open) return null;
 
@@ -73,6 +84,16 @@ export const ContentZoom = ({
               src={file ? URL.createObjectURL(file!) : `${IPFS_URL}${fileUrl}`}
               alt=""
             />
+          )}
+          {contentType === ContentType.TEXT && loading && (
+            <div style={{ margin: "10px 0", textAlign: "center" }}>
+              <ClipLoader
+                color="#88a9ea"
+                size={50}
+                loading={true}
+                speedMultiplier={0.9}
+              />
+            </div>
           )}
           {contentType === ContentType.TEXT && (
             <div className="text-file-contents">{fileContent}</div>

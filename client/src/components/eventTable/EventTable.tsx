@@ -136,7 +136,7 @@ export const EventTable = ({
       ) : (
         <div>
           <div className="btn-load-more-wrapper">
-            {!endOfPage && !fetchMoreContent && (
+            {!endOfPage && !fetchMoreContent && !fetching && (
               <button
                 className="btn-explore btn-load-more"
                 onClick={pageChangeHandler}

@@ -1,5 +1,4 @@
 import "./App.css";
-import { Footer } from "./components/footer/Footer";
 import { Navbar } from "./components/navbar/Navbar";
 import { DcmProvider } from "./contexts/DcmProvider";
 import { Main } from "./pages/main/Main";
@@ -14,7 +13,6 @@ function App() {
       <div className="App">
         <Navbar />
         <Main />
-        <Footer />
       </div>
     </DcmProvider>
   );

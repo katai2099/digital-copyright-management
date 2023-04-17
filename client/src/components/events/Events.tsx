@@ -62,6 +62,7 @@ export const Events = ({ contentType, walletAddress }: IEventProps) => {
       .catch((error) => {
         console.log(error);
         setFetching(false);
+        setFetchMoreContent(false);
       });
   }, [checkedState, page, prevContentType, type, walletAddress]);
   const onChangeHandler = (pos: number) => {

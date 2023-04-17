@@ -1,4 +1,3 @@
-import moment from "moment";
 import "./agreement.css";
 import { EtherIcon } from "../common/Icon";
 import { Link } from "react-router-dom";
@@ -108,7 +107,6 @@ export const AgreementComponent = ({ walletAddress }: IAgreement) => {
                 <div>
                   <div className="ether-price-wrapper">
                     <EtherIcon />{" "}
-                    {/*  {fromWei(event.price.toString(), state)} */}
                     <div className="ether-price">
                       {fromWei(agreement.price.toString(), state)}
                     </div>
@@ -120,21 +118,36 @@ export const AgreementComponent = ({ walletAddress }: IAgreement) => {
                 </div>
               </td>
               <td className="no-wrap">
-                <Link to={`/profile/${agreement.licensee}`}>
-                  {agreement.licensees.firstname +
-                    " " +
-                    agreement.licensees.lastname}
-                </Link>
+                {isLicenser ? (
+                  <Link to={`/profile/${agreement.licensee}`}>
+                    {agreement.licensees.firstname +
+                      " " +
+                      agreement.licensees.lastname}
+                  </Link>
+                ) : (
+                  <Link to={`/profile/${agreement.licenser}`}>
+                    {agreement.licensers.firstname +
+                      " " +
+                      agreement.licensers.lastname}
+                  </Link>
+                )}
               </td>
-              <td className="no-wrap">
+              <td className="">
                 <div>{agreement.purposeOfUse}</div>
               </td>
               <td className="no-wrap">
                 <Link to="#">
-                  {moment(
-                    new Date(Number(agreement.timestamp) * 1000)
-                  ).fromNow()}
-                  <i className="las la-external-link-alt link-icon"></i>
+                  <div>
+                    {new Date(
+                      Number(agreement.timestamp) * 1000
+                    ).toDateString()}
+                    <i className="las la-external-link-alt link-icon"></i>
+                  </div>
+                  <div>
+                    {new Date(
+                      Number(agreement.timestamp) * 1000
+                    ).toLocaleTimeString()}
+                  </div>
                 </Link>
               </td>
             </tr>

@@ -109,6 +109,7 @@ export const Launch = () => {
       .then((res) => {
         toast.success(
           "Content Registered Successfully. Redirect to Detail page",
+
           {
             onClose: () => {
               navigate(`/content/${res}`);
@@ -116,6 +117,7 @@ export const Launch = () => {
             onClick: () => {
               navigate(`/content/${res}`);
             },
+            hideProgressBar: false,
           }
         );
       })
@@ -123,9 +125,7 @@ export const Launch = () => {
         handleError(error);
         if (error instanceof AxiosError) {
           if (error.response?.data.statusCode === 409) {
-            toast.error(error.response.data.message, {
-              hideProgressBar: true,
-            });
+            toast.error(error.response.data.message);
             setSubmitError({
               contentId: error.response.data.contentId,
               message: error.response.data.message,

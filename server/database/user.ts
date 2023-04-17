@@ -52,7 +52,8 @@ export async function updateUser(user: IUser): Promise<users> {
       },
       data: {
         username: user.username === "" ? user.walletAddress : user.username,
-        email: user.email,
+        firstname: user.firstname,
+        lastname: user.lastname,
       },
     });
     return updateUser;

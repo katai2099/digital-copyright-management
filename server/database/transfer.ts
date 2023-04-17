@@ -19,7 +19,7 @@ export async function createTransferEvent(transfer: ITransfer) {
   }
 }
 
-export async function getTransferEvent(walletAddress: string) {
+export async function getTransferEvent(walletAddress: string, page: number) {
   try {
     const transfers = await prisma.transferEvent.findMany({
       where: {
@@ -28,6 +28,8 @@ export async function getTransferEvent(walletAddress: string) {
       orderBy: {
         timestamp: "desc",
       },
+      skip: (page - 1) * 15,
+      take: 15,
     });
     return transfers;
   } catch (error) {

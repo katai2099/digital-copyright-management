@@ -118,7 +118,7 @@ export const Contents = ({ contentType, walletAddress }: IEventProps) => {
         ) : (
           <div>
             <div className="btn-load-more-wrapper">
-              {!endOfPage && !fetchMoreContent && (
+              {!endOfPage && !fetchMoreContent && !firstFetching && (
                 <button
                   className="btn-explore btn-load-more"
                   onClick={pageChangeHandler}

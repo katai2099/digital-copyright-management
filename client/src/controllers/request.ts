@@ -107,31 +107,49 @@ export function rejectAgreement(
     });
 }
 
-export function getLicenserRequests(walletAddress: string): Promise<Request[]> {
-  return getLicenserRequestsWorker(walletAddress)
+export function getLicenserRequests(
+  walletAddress: string,
+  page: number,
+  filter: string
+): Promise<Request[]> {
+  return getLicenserRequestsWorker(walletAddress, page, filter)
     .then((requests) => Promise.resolve(requests))
     .catch((err) => Promise.reject(err));
 }
 
-function getLicenserRequestsWorker(walletAddress: string): Promise<Request[]> {
+function getLicenserRequestsWorker(
+  walletAddress: string,
+  page: number,
+  filter: string
+): Promise<Request[]> {
   return getRequest<Request[]>(`${REQUEST_ROUTE}/licenser/`, {
     address: walletAddress,
+    page: page,
+    filter: filter,
   })
     .then((requests) => Promise.resolve(requests))
     .catch((err) => Promise.reject(err));
 }
 
 export function getLicensingRequests(
-  walletAddress: string
+  walletAddress: string,
+  page: number,
+  filter: string
 ): Promise<Request[]> {
-  return getLicensingRequestsWorker(walletAddress)
+  return getLicensingRequestsWorker(walletAddress, page, filter)
     .then((requests) => Promise.resolve(requests))
     .catch((err) => Promise.reject(err));
 }
 
-function getLicensingRequestsWorker(walletAddress: string) {
+function getLicensingRequestsWorker(
+  walletAddress: string,
+  page: number,
+  filter: string
+) {
   return getRequest<Request[]>(`${REQUEST_ROUTE}/licensing/`, {
     address: walletAddress,
+    page: page,
+    filter: filter,
   })
     .then((requests) => Promise.resolve(requests))
     .catch((err) => Promise.reject(err));

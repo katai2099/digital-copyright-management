@@ -9,6 +9,24 @@ import { toJSON } from "../utils/utils";
 
 export const userRouter = Router();
 
+userRouter.get("/transaction/", async (req: Request, res: Response) => {
+  const { address, page } = req.query;
+  console.log("T:AKLJ:F");
+  if (!address) {
+    return res.status(400).send("Missing wallet address");
+  }
+  try {
+    const transactions = await getTransferEvent(
+      address as string,
+      Number(page)
+    );
+    return res.status(200).send(toJSON(transactions));
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send("Internal Server Error");
+  }
+});
+
 userRouter.get("/:walletAddress", async (req: Request, res: Response) => {
   const { walletAddress } = req.params;
   if (!walletAddress) {
@@ -42,20 +60,3 @@ userRouter.put("/:walletAddress", async (req: Request, res: Response) => {
     return res.status(err.errorCode).send(err.message);
   }
 });
-
-userRouter.get(
-  "/transaction/:walletAddress",
-  async (req: Request, res: Response) => {
-    const { walletAddress } = req.params;
-    if (!walletAddress) {
-      return res.status(400).send("Missing wallet address");
-    }
-    try {
-      const transactions = await getTransferEvent(walletAddress);
-      return res.status(200).send(toJSON(transactions));
-    } catch (error) {
-      console.log(error);
-      return res.status(500).send("Internal Server Error");
-    }
-  }
-);

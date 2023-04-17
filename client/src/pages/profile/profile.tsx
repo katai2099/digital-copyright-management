@@ -112,9 +112,7 @@ export const Profile = () => {
                 className="wallet-detail-box"
                 onClick={() => {
                   navigator.clipboard.writeText(user.walletAddress);
-                  toast.success("Copied to clipboard", {
-                    hideProgressBar: true,
-                  });
+                  toast.success("Copied to clipboard");
                 }}
               >
                 {user.walletAddress.substring(0, 6)}{" "}
@@ -127,9 +125,7 @@ export const Profile = () => {
                   className="wallet-detail-box"
                   onClick={() => {
                     navigator.clipboard.writeText(user.username);
-                    toast.success("Copied to clipboard", {
-                      hideProgressBar: true,
-                    });
+                    toast.success("Copied to clipboard");
                   }}
                 >
                   {user.username}{" "}

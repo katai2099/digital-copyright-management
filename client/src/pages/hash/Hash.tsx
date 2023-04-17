@@ -76,9 +76,7 @@ export const Hash = () => {
       .catch((error) => {
         if (error instanceof AxiosError) {
           if (error.response?.data.statusCode === 409) {
-            toast.error(error.response.data.message, {
-              hideProgressBar: true,
-            });
+            toast.error(error.response.data.message);
             setSubmitError({
               contentId: error.response.data.contentId,
               message: error.response.data.message,

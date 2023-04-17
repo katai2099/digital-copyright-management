@@ -13,9 +13,13 @@ import { Request as requestModel } from "../models/Request";
 export const requestRouter = Router();
 
 requestRouter.get("/licenser/", async (req: Request, res: Response) => {
-  const { address } = req.query;
+  const { address, page, filter } = req.query;
   try {
-    const request = await getLicenserRequests(address as string);
+    const request = await getLicenserRequests(
+      address as string,
+      Number(page),
+      filter as string
+    );
     return res.status(200).send(toJSON(request));
   } catch (error) {
     console.log(error);
@@ -24,9 +28,14 @@ requestRouter.get("/licenser/", async (req: Request, res: Response) => {
 });
 
 requestRouter.get("/licensing/", async (req: Request, res: Response) => {
-  const { address } = req.query;
+  const { address, page, filter } = req.query;
+  console.log(address, page, filter);
   try {
-    const request = await getLicensingRequests(address as string);
+    const request = await getLicensingRequests(
+      address as string,
+      Number(page),
+      filter as string
+    );
     return res.status(200).send(toJSON(request));
   } catch (error) {
     console.log(error);

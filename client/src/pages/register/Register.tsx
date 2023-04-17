@@ -53,7 +53,7 @@ export const Register = () => {
           <div className="username-note">
             *Note that your username will be publicly available on the website.
             Also your profile can be easily accessed from <br />
-            &nbsp;&nbsp;<strong>blabla.com/profile/username</strong>
+            &nbsp;&nbsp;<strong>.../profile/username</strong>
           </div>
           <div className="personal-info">Personal Info</div>
           <div className="firstname-wrapper">

@@ -25,10 +25,10 @@ export const REJECT_TRANSACTION = "You have rejected a transaction";
 export const METAMASK_REJECTION_CODE = 4001;
 
 export enum SettingTab {
-  Profile,
-  Request,
-  Agreement,
-  Transaction,
+  Profile = "profile",
+  Request = "request",
+  Agreement = "agreement",
+  Transaction = "transaction",
 }
 
 export const ContentTypes = [

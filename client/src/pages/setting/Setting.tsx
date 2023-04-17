@@ -5,7 +5,7 @@ import "./setting.css";
 import { AgreementComponent } from "../../components/agreements/Agreement";
 import { RequestComponent } from "../../components/request/Request";
 import { SettingTab } from "../../constant";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ProfileUpdate } from "../../components/profileUpdate/ProfileUpdate";
 import { TransactionComponent } from "../../components/transaction/Transaction";
 import { getCoinRate } from "../../controllers/web3";
@@ -14,10 +14,19 @@ export const Setting = () => {
   const { state, dispatch } = UseDcm();
   const navigate = useNavigate();
   const [tab, setTab] = useState<SettingTab>(SettingTab.Profile);
-
   const tabChangeHandler = (newTab: SettingTab) => {
     setTab(newTab);
+    navigate(`/settings/${newTab}`);
   };
+
+  const { option } = useParams();
+  useEffect(() => {
+    if (Object.values(SettingTab).some((key) => key === option)) {
+      setTab(option as SettingTab);
+    } else {
+      navigate(`/settings`);
+    }
+  }, [navigate, option]);
 
   useEffect(() => {
     getCoinRate().then((rate) => {
@@ -68,7 +77,7 @@ export const Setting = () => {
             </div>
           </div>
         </div>
-        <div className="profile-update-area col-sm-8 profile-box">
+        <div className="profile-update-area col-sm-9 profile-box">
           {tab === SettingTab.Agreement && (
             <AgreementComponent walletAddress={state.web3State.account} />
           )}

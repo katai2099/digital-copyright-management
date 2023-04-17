@@ -20,7 +20,7 @@ export const Main = () => {
       )}
       <ToastContainer
         position="top-right"
-        hideProgressBar={false}
+        hideProgressBar={true}
         closeOnClick={true}
         pauseOnHover={true}
         draggable={true}
@@ -35,6 +35,7 @@ export const Main = () => {
         <Route path="/content/:id" element={<Detail />} />
         <Route path="/explore" element={<Explore />} />
         <Route path="/profile/:walletAddress" element={<Profile />} />
+        <Route path="/settings/:option" element={<Setting />} />
         <Route path="/settings" element={<Setting />} />
       </Routes>
     </div>

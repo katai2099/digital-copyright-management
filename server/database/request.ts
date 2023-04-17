@@ -1,27 +1,6 @@
 import { IRequest, IRequestEvent, RequestType } from "../models/Request";
 import { prisma } from "./prisma";
 
-// export async function checkIfContentIsInPending(
-//   walletAddress: string,
-//   contentId: number
-// ) {
-//   try {
-//     const request = await prisma.requests.findFirstOrThrow({
-//       where: {
-//         AND: [
-//           { contentId: contentId },
-//           { licensee: walletAddress },
-//           { requestType: RequestType.PENDING },
-//         ],
-//       },
-//     });
-//     return request;
-//   } catch (error) {
-//     console.log(error);
-//     throw new Error();
-//   }
-// }
-
 export async function createRequest(request: IRequest) {
   try {
     const newRequest = await prisma.requests.create({
@@ -45,13 +24,24 @@ export async function createRequest(request: IRequest) {
 }
 
 //licenser request
-export async function getLicenserRequests(walletAddress: string) {
+export async function getLicenserRequests(
+  walletAddress: string,
+  page: number,
+  filter: string
+) {
   try {
     const requests = await prisma.requests.findMany({
       where: {
-        content: {
-          ownerAddress: walletAddress,
-        },
+        AND: [
+          {
+            content: {
+              ownerAddress: walletAddress,
+            },
+          },
+          {
+            ...(filter !== "all" ? { requestType: filter } : {}),
+          },
+        ],
       },
       include: {
         content: true,
@@ -61,6 +51,8 @@ export async function getLicenserRequests(walletAddress: string) {
       orderBy: {
         timestamp: "desc",
       },
+      skip: (page - 1) * 15,
+      take: 15,
     });
     return requests;
   } catch (error) {
@@ -69,11 +61,20 @@ export async function getLicenserRequests(walletAddress: string) {
   }
 }
 //licensing request
-export async function getLicensingRequests(walletAddress: string) {
+export async function getLicensingRequests(
+  walletAddress: string,
+  page: number,
+  filter: string
+) {
   try {
     const requests = await prisma.requests.findMany({
       where: {
-        licensee: walletAddress,
+        AND: [
+          {
+            licensee: walletAddress,
+          },
+          { ...(filter !== "all" ? { requestType: filter } : {}) },
+        ],
       },
       include: {
         content: {
@@ -87,6 +88,8 @@ export async function getLicensingRequests(walletAddress: string) {
       orderBy: {
         timestamp: "desc",
       },
+      skip: (page - 1) * 15,
+      take: 15,
     });
     return requests;
   } catch (error) {
