@@ -1,7 +1,8 @@
 import { Request, Response, Router } from "express";
 import {
   createAgreement,
-  getAgreementByWalletAddress,
+  getLicenserAgreement,
+  getLicensingAgreement,
 } from "../database/agreement";
 import { Agreement } from "../models/Agreement";
 import { toJSON } from "../utils/utils";
@@ -19,13 +20,27 @@ agreementRouter.post("/", async (req: Request, res: Response) => {
   }
 });
 
-agreementRouter.get("/:walletAddress", async (req: Request, res: Response) => {
-  const { walletAddress } = req.params;
-  if (!walletAddress) {
-    return res.status(400).send("Wallet address missing");
-  }
+agreementRouter.get("/licensing/", async (req: Request, res: Response) => {
+  const { address, page } = req.query;
   try {
-    const agreements = await getAgreementByWalletAddress(walletAddress);
+    const agreements = await getLicensingAgreement(
+      address as string,
+      Number(page)
+    );
+    return res.status(200).send(toJSON(agreements));
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send("Internal Server Error");
+  }
+});
+
+agreementRouter.get("/licenser/", async (req: Request, res: Response) => {
+  const { address, page } = req.query;
+  try {
+    const agreements = await getLicenserAgreement(
+      address as string,
+      Number(page)
+    );
     return res.status(200).send(toJSON(agreements));
   } catch (error) {
     console.log(error);
