@@ -71,6 +71,7 @@ export const Hash = () => {
     }
     hashDigitalContent(selectedFile, fileType, dispatch)
       .then((val) => {
+        toast.success("File is unique");
         setUniqueContent(true);
       })
       .catch((error) => {

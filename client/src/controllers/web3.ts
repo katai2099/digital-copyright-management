@@ -36,6 +36,7 @@ export function getCoinRate(): Promise<IConversionRate> {
 
 export async function startLogin(dispatch: React.Dispatch<AnyAction>) {
   try {
+    //TODO : connect metamask on launch page
     const walletAddress = await connectMetamask(dispatch);
     console.log("start login wallet " + walletAddress);
     const user = await login({ walletAddress });

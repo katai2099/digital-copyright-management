@@ -49,7 +49,8 @@
   align-items: center;
   padding: 8px 12px;
   border-radius: 10px;
-  background-color: #888;
+  background-color: #f2f2f2;
+  border: 1px solid #bbc0c5;
   cursor: pointer;
   margin-bottom: 8px;
 }
@@ -62,6 +63,7 @@
 .setting-option:hover {
   background-color: #fff;
   font-weight: 500;
+  box-shadow: 0 0 10px #0000001a;
 }
 
 .profile-box {

@@ -1,3 +1,5 @@
+import { InternalServerError as serverErrorMsg } from "../models/common";
+
 import {
   PrismaClientKnownRequestError,
   PrismaClientRustPanicError,
@@ -17,8 +19,15 @@ export class HashingError extends Error {
   }
 }
 
-export class DatabaseError extends Error {
+export class InternalServerError extends Error {
   errorCode: number = 500;
+  constructor() {
+    super(serverErrorMsg);
+  }
+}
+
+export class DatabaseError extends Error {
+  errorCode: number = 400;
   constructor(errorMsg: string, errorCode?: number) {
     super(errorMsg);
     if (errorCode) {
@@ -31,22 +40,21 @@ export const handlePrismaError = (err: any) => {
   console.log(err.message);
 
   if (err instanceof PrismaClientKnownRequestError) {
-    // An operation failed because it depends on one or more records that were required but not found. Record to update not found.
-
-    // Unique constraint failed on the constraint: `users_username_key`
-    console.log("PrismaClientKnownRequestError");
-    console.log(err.meta);
-    throw new DatabaseError(err.message);
+    const splitErrorMsg = err.message.split("\n");
+    const errMsg = splitErrorMsg[4] ? splitErrorMsg[4] : err.message;
+    throw new DatabaseError(errMsg);
   } else if (err instanceof PrismaClientValidationError) {
     // Argument where of type usersWhereUniqueInput needs at least one argument.
     console.log("PrismaClientValidationError");
     throw new DatabaseError(err.message);
   } else if (err instanceof PrismaClientRustPanicError) {
     console.log("PrismaClientRustPanicError");
+    throw new DatabaseError(err.message);
   } else if (err instanceof PrismaClientUnknownRequestError) {
     console.log("PrismaClientUnknownRequestError");
+    throw new DatabaseError(err.message);
   }
-  throw new DatabaseError(err.message);
+  throw new InternalServerError();
 };
 
 export const BODY_VALIDATION_FAIL = "Body validation failed";

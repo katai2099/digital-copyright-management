@@ -1,6 +1,10 @@
 import { users } from "@prisma/client";
 import { IUser } from "../models/User";
-import { DatabaseError, handlePrismaError } from "../utils/Error";
+import {
+  DatabaseError,
+  InternalServerError,
+  handlePrismaError,
+} from "../utils/Error";
 import { prisma } from "./prisma";
 
 export async function createUser(user: IUser): Promise<users> {
@@ -9,7 +13,7 @@ export async function createUser(user: IUser): Promise<users> {
     const newUser = await prisma.users.create({
       data: {
         walletAddress: user.walletAddress,
-        username: user.username === "" ? user.walletAddress : user.username,
+        username: user.username,
         firstname: user.firstname,
         lastname: user.lastname,
         email: user.email,
@@ -39,8 +43,10 @@ export async function getUserByWalletAddress(
     });
     return user;
   } catch (err: any) {
-    console.log(err);
-    throw new DatabaseError(err.message, 410);
+    if (err.code === "P2025") {
+      throw new DatabaseError(err.message, 404);
+    }
+    return handlePrismaError(err);
   }
 }
 
@@ -51,7 +57,7 @@ export async function updateUser(user: IUser): Promise<users> {
         walletAddress: user.walletAddress,
       },
       data: {
-        username: user.username === "" ? user.walletAddress : user.username,
+        username: user.username,
         firstname: user.firstname,
         lastname: user.lastname,
       },
@@ -84,8 +90,7 @@ export async function getUsersBySearchTerm(
       },
     });
     return users;
-  } catch (error) {
-    console.log(error);
-    throw new Error();
+  } catch (err) {
+    return handlePrismaError(err);
   }
 }

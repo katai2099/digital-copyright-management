@@ -47,7 +47,7 @@ export const DcmProvider = ({ children }: IDcmProviderProps) => {
           })
           .catch((error) => {
             if (error instanceof AxiosError) {
-              if (error.response?.status === 410) {
+              if (error.response?.status === 404) {
                 navigate("/register");
               }
             }

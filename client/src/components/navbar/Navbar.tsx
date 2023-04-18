@@ -7,6 +7,7 @@ import { UseDcm } from "../../contexts/UseDcm";
 import { disconnectMetamask, startLogin } from "../../controllers/web3";
 import "./navbar.css";
 import { DcmSearch } from "../dcmSearch/DcmSearch";
+import { generateRandomLinearGradient } from "../../utils";
 
 export const Navbar = () => {
   const { state, dispatch } = UseDcm();
@@ -157,25 +158,30 @@ export const Navbar = () => {
                 id="profile-nav"
                 onClick={(event) => profileClickHandler(event)}
               >
-                <img src="../../img/cookie.jpg" className="profile-img"></img>
+                <img
+                  style={
+                    state.user.username !== "katai2099"
+                      ? { background: generateRandomLinearGradient() }
+                      : {}
+                  }
+                  src="../../img/cookie.jpg"
+                  className="profile-img"
+                  alt=""
+                />
               </div>
               <div id="profile-menu" className="profile-menu">
                 <div
                   className="profile-area-button"
                   onClick={() => {
-                    // profileClickHandler();
-
                     navigate(`/profile/${state.web3State.account}`);
                   }}
                 >
-                  <i className="las la-photo-video profile-logo"></i>
-                  Profile
+                  <i className="las la-user profile-logo"></i>
+                  {state.user.firstname + " " + state.user.lastname}
                 </div>
                 <div
                   className="profile-area-button"
                   onClick={() => {
-                    // profileClickHandler();
-
                     navigate("/settings");
                   }}
                 >
@@ -190,14 +196,7 @@ export const Navbar = () => {
                   Logout
                 </div>
                 <hr className="profile-menu-divider" />
-                <div
-                  className="profile-fund"
-                  onClick={() => {
-                    // profileClickHandler();
-                    // navigate("/profile");
-                    console.log(remainingBalance);
-                  }}
-                >
+                <div className="profile-fund">
                   <i className="las la-wallet"></i>
                   <div className="wallet-info">
                     <div className="wallet-address">
@@ -223,5 +222,33 @@ export const Navbar = () => {
         </div>
       </div>
     </nav>
-  ) : null;
+  ) : (
+    <nav className="">
+      <div className="nav-bar">
+        <div className="left-area">
+          <Link
+            className=""
+            to="/"
+            style={{ textDecoration: "none" }}
+            onClick={() => {
+              setIsOpen(false);
+            }}
+          >
+            <div className="logo navbar-brand">
+              <span style={{ marginLeft: "15px" }}>
+                <i
+                  className="las la-cubes"
+                  style={{ fontSize: "56px", color: "#88a9ea" }}
+                ></i>
+              </span>
+              <div style={{ color: "#88a9ea" }}>
+                Copyright <br />
+                Management
+              </div>
+            </div>
+          </Link>
+        </div>
+      </div>
+    </nav>
+  );
 };

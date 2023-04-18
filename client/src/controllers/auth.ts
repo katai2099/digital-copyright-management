@@ -16,6 +16,7 @@ function loginWorker(walletAddress: ILoginPostData): Promise<IUser> {
 }
 
 export function register(user: IUser) {
+  // return Promise.resolve();
   return registerWorker(user)
     .then((user) => Promise.resolve(user))
     .catch((error) => Promise.reject(error));

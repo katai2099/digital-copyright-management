@@ -175,8 +175,6 @@ export function solidityRequestTypeToRequestType(
   }
 }
 
-export function prismaModelToObject() {}
-
 export function handleDCMError(error: any, res: Response) {
   if (error instanceof HashingError) {
     return res.status(error.errorCode).send({

@@ -17,7 +17,7 @@ export const Accordion = ({
     setOpen((prev) => !prev);
   };
   return (
-    <div>
+    <div className="dcm-accordion-wrapper">
       <button
         id={`dcm-accordion-button${title}`}
         className={`dcm-accordion ${open ? "active" : ""}`}

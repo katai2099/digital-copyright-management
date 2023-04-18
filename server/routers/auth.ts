@@ -17,8 +17,7 @@ authRouter.post("/register", async (req: Request, res: Response) => {
     const newUser = await createUser(user);
     return res.status(HttpStatusCode.Created).send(newUser);
   } catch (error: any) {
-    const err = error as DatabaseError;
-    return res.status(HttpStatusCode.InternalServerError).send(err.message);
+    return res.status(error.errorCode).send(error.message);
   }
 });
 

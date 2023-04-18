@@ -1,14 +1,21 @@
 import { useEffect, useState } from "react";
 import { UseDcm } from "../../contexts/UseDcm";
 import { IUser, User } from "../../model/User";
-import { updateUser, userUpdateValidation } from "../../controllers/user";
+import {
+  registerErrorHandler,
+  updateUser,
+  userUpdateValidation,
+} from "../../controllers/user";
 import { userActions } from "../../contexts/state";
 import { isObjectEmpty, keyValuePair, shallowCompare } from "../../utils";
+import { ClipLoader } from "react-spinners";
+import { toast } from "react-toastify";
 
 export const ProfileUpdate = () => {
   const { state, dispatch } = UseDcm();
   const [user, setUser] = useState<IUser>(new User());
   const [errors, setErrors] = useState<keyValuePair>({});
+  const [updating, setUpdating] = useState<boolean>(false);
 
   useEffect(() => {
     console.log(state.user);
@@ -23,11 +30,20 @@ export const ProfileUpdate = () => {
       setErrors(errors);
       return;
     }
+    setUpdating(true);
     updateUser(user)
       .then(() => {
+        setUpdating(false);
         dispatch({ type: userActions.update, data: user });
       })
-      .catch((error) => {
+      .catch((err) => {
+        const error = registerErrorHandler(err);
+        if (!isObjectEmpty(error)) {
+          setErrors(error);
+        } else {
+          toast.error("Something went wrong");
+        }
+        setUpdating(false);
         console.log("TRY NA CATCH ERROR ");
       });
   };
@@ -46,18 +62,18 @@ export const ProfileUpdate = () => {
         <div className="input-wrapper">
           <input
             type="text"
-            defaultValue={
-              state.user.username === ""
-                ? state.user.walletAddress
-                : state.user.username
-            }
             value={user.username}
             onChange={(event) => {
+              if (errors.username && event.currentTarget.value !== "") {
+                const { username, ...newErrors } = errors;
+                setErrors(newErrors);
+              }
               setUser({ ...user, username: event?.currentTarget.value });
             }}
           />
         </div>
       </div>
+      {errors.username && <div className="error-text">{errors.username}</div>}
       <div className="username-note">
         *Note that your username will be publicly available on the website. Also
         your profile can be easily accessed from <br />
@@ -120,7 +136,23 @@ export const ProfileUpdate = () => {
         onClick={saveChangeButtonHandler}
         disabled={shallowCompare(state.user, user)}
       >
-        Save Changes
+        {!updating ? (
+          "Save Changes"
+        ) : (
+          <div
+            style={{
+              textAlign: "center",
+              marginTop: "5px",
+            }}
+          >
+            <ClipLoader
+              color="#88a9ea"
+              size={20}
+              loading={true}
+              speedMultiplier={0.9}
+            />
+          </div>
+        )}
       </button>
     </div>
   );

@@ -82,7 +82,7 @@ const userReducer = (state: IUser, action: AnyAction) => {
   switch (type) {
     case userActions.create: {
       window.localStorage.setItem(APP_STATE_KEY, JSON.stringify(data));
-      return { ...data };
+      return data;
     }
     case userActions.update: {
       const newData = { ...state, ...data };
