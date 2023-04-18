@@ -18,6 +18,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { AxiosError } from "axios";
 import { IErrorResponse } from "../../model/Common";
 import { ContentZoom } from "../../components/contentZoom/ContentZoom";
+import { ClipLoader } from "react-spinners";
 
 export const Launch = () => {
   //TODO: Add loading modal when upload
@@ -40,6 +41,7 @@ export const Launch = () => {
     statusCode: 0,
   });
   const [fullscreen, setFullscreen] = useState<boolean>(false);
+  const [fetchingEtherPrice, setFetchingEtherPrice] = useState<boolean>(false);
 
   function resetExistingContentError() {
     if (submitError.contentId) {
@@ -87,11 +89,14 @@ export const Launch = () => {
       return;
     }
     setDisplayModal(true);
+    setFetchingEtherPrice(true);
     getCurrentUsdToEth()
       .then((res) => {
         setCurrentUsdToEth(Number(res));
+        setFetchingEtherPrice(false);
       })
       .catch((error) => {
+        setFetchingEtherPrice(false);
         console.log(error);
       });
   };
@@ -170,10 +175,23 @@ export const Launch = () => {
         confirmTitle="Confirm"
         onConfirm={confirmClickHandler}
       >
-        <div>{`The final price for your content in Eth is ${
-          currentUsdToEth * Number(content.price)
-        }`}</div>
-        <div>{`Current USD to ETH rate is ${currentUsdToEth}`}</div>
+        {fetchingEtherPrice ? (
+          <div style={{ margin: "10px 0", textAlign: "center" }}>
+            <ClipLoader
+              color="#88a9ea"
+              size={50}
+              loading={true}
+              speedMultiplier={0.9}
+            />
+          </div>
+        ) : (
+          <>
+            <div>{`The final price for your content in Eth is ${
+              currentUsdToEth * Number(content.price)
+            }`}</div>
+            <div>{`Current USD to ETH rate is ${currentUsdToEth}`}</div>
+          </>
+        )}
       </Modal>
       <header className="launch-content-header">
         <h2>Submit a Content</h2>

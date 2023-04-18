@@ -2,7 +2,8 @@ import { AgreementOption } from "./model/Common";
 import { ContentType } from "./model/Content";
 
 export const SERVER_URL = "http://127.0.0.1:8082";
-export const IPFS_URL = "https://ipfs.io/ipfs/";
+// export const IPFS_URL = "https://ipfs.io/ipfs/";
+export const IPFS_URL = "http://localhost:8080/ipfs/";
 export const GOERLI_TEST_NET_URL = "https://goerli.etherscan.io/address/";
 export const CRYPTO_COMPARE_API_URL = "https://min-api.cryptocompare.com";
 export const CRYPTO_COMPARE_API_KEY =

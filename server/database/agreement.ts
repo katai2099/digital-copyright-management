@@ -38,6 +38,9 @@ export async function getLicenserAgreement(
         licensees: true,
         content: true,
       },
+      orderBy: {
+        timestamp: "desc",
+      },
       skip: (page - 1) * 15,
       take: 15,
     });
@@ -63,6 +66,9 @@ export async function getLicensingAgreement(
         licensers: true,
         licensees: true,
         content: true,
+      },
+      orderBy: {
+        timestamp: "desc",
       },
       skip: (page - 1) * 15,
       take: 15,

@@ -5,6 +5,7 @@ import {
   getAudioHash,
   getImageHash,
   getTextHash,
+  recognizeAudioHash,
 } from "../controllers/hashing";
 import multer from "multer";
 import { convert, handleDCMError } from "../utils/utils";
@@ -12,6 +13,7 @@ import { AxiosError } from "axios";
 import { getAudioByHash } from "../database/content";
 import { Content } from "../models/Content";
 import { HashingError } from "../utils/Error";
+import { IErrorResponse } from "../models/common";
 const storage = multer.memoryStorage();
 export const upload = multer({ storage: storage });
 export const hashingRouter = Router();
@@ -50,18 +52,22 @@ hashingRouter.post(
   upload.single("audio"),
   async (req: Request, res: Response) => {
     try {
-      const hash = await getAudioHash(req.file!.buffer, req.file!.originalname);
-      res.send(hash);
+      const hash = await recognizeAudioHash(
+        req.file!.buffer,
+        req.file!.originalname
+      );
+      return res.send(hash);
     } catch (error) {
       if (error instanceof AxiosError) {
         if (error.response?.status == 400) {
           const sha = error.response.data;
           const audio = await getAudioByHash(sha);
           const content = convert<Content>(audio);
-          throw new HashingError(
-            content.id,
-            "Audio with similar content already exists"
-          );
+          return res.status(409).send({
+            message: "Audio with similar content already exists",
+            statusCode: 409,
+            contentId: content.id,
+          } as IErrorResponse);
         }
       }
     }

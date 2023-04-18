@@ -1,11 +1,12 @@
 import { AxiosError } from "axios";
 import { BufferObject, imageHash } from "image-hash";
 import { Tlsh } from "tlsh_ts";
-import { axiosRequest } from "./networkCall";
 import { getContentsByContentType } from "../database/content";
 import { ContentType } from "../models/Content";
 import { hexToBin, isSimilarHammingDistance } from "../utils/utils";
 import { HashingError } from "../utils/Error";
+import { postRequest } from "./networkCall";
+import FormData from "form-data";
 
 export const compareImageHash = async (hash: string): Promise<void> => {
   const images = await getContentsByContentType(ContentType.IMAGE);
@@ -63,18 +64,29 @@ export const getTextHash = async (text: string) => {
 
 export const getAudioHash = async (audio: Buffer, filename: string) => {
   const formData = new FormData();
-  formData.append("audio", new Blob([audio]), filename);
+  formData.append("audio", audio, filename);
   try {
-    const res = await axiosRequest(
-      "/hash/audio",
-      "POST",
-      undefined,
-      undefined,
-      formData
-    );
-    return res.data;
+    const res = await postRequest<string>("/hash/audio", formData, null, true);
+    return res;
   } catch (err) {
-    // console.log(err);
+    if (err instanceof AxiosError) {
+      throw err;
+    }
+  }
+};
+
+export const recognizeAudioHash = async (audio: Buffer, filename: string) => {
+  const formData = new FormData();
+  formData.append("audio", audio, filename);
+  try {
+    const res = await postRequest<string>(
+      "/hash/recognise",
+      formData,
+      null,
+      true
+    );
+    return res;
+  } catch (err) {
     if (err instanceof AxiosError) {
       throw err;
     }

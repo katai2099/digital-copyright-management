@@ -22,6 +22,7 @@ import Skeleton from "react-loading-skeleton";
 import { toast } from "react-toastify";
 import { EthereumPriceWrapper } from "../../components/common/Common";
 import { ContentZoom } from "../../components/contentZoom/ContentZoom";
+import { ClipLoader } from "react-spinners";
 
 export const Detail = () => {
   const { state, dispatch } = UseDcm();
@@ -47,6 +48,8 @@ export const Detail = () => {
   const [isError, setIsError] = useState<boolean>(false);
   const [fetching, setFetching] = useState<boolean>(false);
   const [fetchingUser, setFetchingUser] = useState<boolean>(false);
+
+  const [fetchingEtherPrice, setFetchingEtherPrice] = useState<boolean>(false);
 
   useEffect(() => {
     window.scroll(0, 0);
@@ -103,11 +106,14 @@ export const Detail = () => {
 
   const updateButtonClickHandler = () => {
     setIsConfirmUI(true);
+    setFetchingEtherPrice(true);
     getCurrentUsdToEth()
       .then((res) => {
         setCurrentUsdToEth(Number(res));
+        setFetchingEtherPrice(false);
       })
       .catch((error) => {
+        setFetchingEtherPrice(false);
         handleError(error);
         console.log(error);
       });
@@ -396,39 +402,50 @@ export const Detail = () => {
           }}
           extraZ={true}
         >
-          <div className="detail-page-modal px-4">
-            {isConfirmUI ? (
-              <div>
-                <div>{`The final price for your content in Eth is ${
-                  currentUsdToEth * newPrice
-                }`}</div>
-                <div>{`Current USD to ETH rate is ${currentUsdToEth}`}</div>
-              </div>
-            ) : (
-              <>
-                <legend className="w-auto ">Copyright info</legend>
-                <ContentPriceInput
-                  onChange={(price: number) => {
-                    setNewPrice(price);
-                  }}
-                  ethToUsd={state.coinRate.ETHToUSD}
-                  usdToEth={state.coinRate.USDToETH}
-                  onConvert={(price: number) => {
-                    setNewPrice(price);
-                  }}
-                  isModal={true}
-                />
-                <label>Field of use</label>
-                <textarea
-                  placeholder="Usually define the scope of license covered and its restriction"
-                  rows={6}
-                  onChange={(event) => {
-                    setNewFieldOfUse(event.currentTarget.value);
-                  }}
-                />
-              </>
-            )}
-          </div>
+          {fetchingEtherPrice ? (
+            <div style={{ margin: "10px 0", textAlign: "center" }}>
+              <ClipLoader
+                color="#88a9ea"
+                size={50}
+                loading={true}
+                speedMultiplier={0.9}
+              />
+            </div>
+          ) : (
+            <div className="detail-page-modal px-4">
+              {isConfirmUI ? (
+                <div>
+                  <div>{`The final price for your content in Eth is ${
+                    currentUsdToEth * newPrice
+                  }`}</div>
+                  <div>{`Current USD to ETH rate is ${currentUsdToEth}`}</div>
+                </div>
+              ) : (
+                <>
+                  <legend className="w-auto ">Copyright info</legend>
+                  <ContentPriceInput
+                    onChange={(price: number) => {
+                      setNewPrice(price);
+                    }}
+                    ethToUsd={state.coinRate.ETHToUSD}
+                    usdToEth={state.coinRate.USDToETH}
+                    onConvert={(price: number) => {
+                      setNewPrice(price);
+                    }}
+                    isModal={true}
+                  />
+                  <label>Field of use</label>
+                  <textarea
+                    placeholder="Usually define the scope of license covered and its restriction"
+                    rows={6}
+                    onChange={(event) => {
+                      setNewFieldOfUse(event.currentTarget.value);
+                    }}
+                  />
+                </>
+              )}
+            </div>
+          )}
         </Modal>
         <Modal
           title={"Please enter request info"}
