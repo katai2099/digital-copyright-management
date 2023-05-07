@@ -12,14 +12,18 @@ contract CopyrightManagement {
         REJECTED,
         APPROVED
     }
+    struct User {
+        address walletAddress;
+        string firstname;
+        string lastname;
+        string emailAddress;
+    }
     struct Content {
         address ownerAddress;
         uint256 Id;
         string pHash;
         string IPFSAddress;
         string title;
-        string ownerName;
-        string ownerEmail;
         string desc;
         string fieldOfUse;
         uint256 price;
@@ -47,6 +51,7 @@ contract CopyrightManagement {
         string rejectReason;
         uint256 timestamp;
     }
+    event addUserEvent(address indexed _caller, User _user, uint256 timestamp);
     event addContentEvent(
         address indexed _caller,
         Content _content,
@@ -68,16 +73,6 @@ contract CopyrightManagement {
         Request _request,
         uint256 timestamp
     );
-
-    uint256 public contentCount;
-    uint256 public agreementCount;
-    uint256 public requestCount;
-
-    mapping(uint256 => Content) public contents;
-    mapping(uint256 => Agreement) public agreements;
-    mapping(uint256 => Request) public requests;
-    mapping(address => uint256) public balances;
-
     event transferEvent(
         address _caller,
         address _receiver,
@@ -85,25 +80,63 @@ contract CopyrightManagement {
         uint256 _timestamp
     );
 
+    uint256 public userCount;
+    uint256 public contentCount;
+    uint256 public agreementCount;
+    uint256 public requestCount;
+    mapping(address => bool) public whitelists;
+    mapping(address => User) public users;
+    mapping(uint256 => Content) public contents;
+    mapping(uint256 => Agreement) public agreements;
+    mapping(uint256 => Request) public requests;
+    mapping(address => uint256) public balances;
+
+    modifier isWhitelisted(address _address) {
+        require(whitelists[_address], "You need to be whitelisted");
+        _;
+    }
+
+    function addUser(
+        string memory _firstname,
+        string memory _lastname,
+        string memory _email
+    ) public {
+        whitelists[msg.sender] = true;
+        User memory user = User(msg.sender, _firstname, _lastname, _email);
+        users[msg.sender] = user;
+        emit addUserEvent(msg.sender, user, block.timestamp);
+    }
+
+    function updateUser(
+        string memory _firstname,
+        string memory _lastname
+    ) public isWhitelisted(msg.sender) {
+        users[msg.sender].firstname = _firstname;
+        users[msg.sender].lastname = _lastname;
+    }
+
     function addContent(
         string memory _pHash,
         string memory _IPFSAddress,
         string memory _title,
-        string memory _ownerName,
-        string memory _ownerEmail,
         string memory _desc,
         string memory _fieldOfUse,
         uint256 _price,
         ContentType _contentType
-    ) public {
+    ) public isWhitelisted(msg.sender) {
+        for (uint256 i = 0; i < contentCount; i++) {
+            Content memory tmpContent = contents[i];
+            require(
+                keccak256(bytes(tmpContent.pHash)) != keccak256(bytes(_pHash)),
+                "Content with same hash already exist"
+            );
+        }
         Content memory content = Content(
             msg.sender,
             contentCount,
             _pHash,
             _IPFSAddress,
             _title,
-            _ownerName,
-            _ownerEmail,
             _desc,
             _fieldOfUse,
             _price,
@@ -119,12 +152,13 @@ contract CopyrightManagement {
         uint256 _id,
         uint256 _price,
         string memory _fieldOfUse
-    ) public {
+    ) public isWhitelisted(msg.sender) {
+        Content memory content = contents[_id];
+        require((bytes(content.pHash)).length != 0, "content does not exists");
         require(
             msg.sender == contents[_id].ownerAddress,
             "You are not the owner of the content"
         );
-        Content memory content = contents[_id];
         uint256 lastPrice = content.price;
         contents[_id].price = _price;
         string memory lastFieldOfUse = content.fieldOfUse;
@@ -145,8 +179,9 @@ contract CopyrightManagement {
         uint256 _contentId,
         string memory _purposeOfUse,
         string memory _fieldOfUse
-    ) public payable {
+    ) public payable isWhitelisted(msg.sender) {
         Content memory content = contents[_contentId];
+        require((bytes(content.pHash)).length != 0, "content does not exists");
         require(
             msg.sender != content.ownerAddress,
             "You are the owner.You are free to use your own content"
@@ -155,7 +190,6 @@ contract CopyrightManagement {
             msg.value >= content.price,
             "Amount of Ether provided is less than content price"
         );
-        require((bytes(content.title)).length != 0, "content does not exists");
         for (uint256 i = 0; i < requestCount; i++) {
             Request memory tmpRequest = requests[i];
             if (
@@ -164,7 +198,7 @@ contract CopyrightManagement {
             ) {
                 require(
                     tmpRequest.requestType != RequestType.PENDING,
-                    "There exist pending request"
+                    "There exist a pending request"
                 );
                 require(
                     tmpRequest.requestType != RequestType.APPROVED,
@@ -203,10 +237,13 @@ contract CopyrightManagement {
     function rejectAgreement(
         uint256 _requestId,
         string memory _rejectReason
-    ) public payable {
+    ) public payable isWhitelisted(msg.sender) {
         Request memory request = requests[_requestId];
+        require(
+            bytes(request.purposeOfUse).length != 0,
+            "Request does not exist"
+        );
         Content memory content = contents[request.contentId];
-        require((bytes(content.title)).length != 0, "content does not exists");
         require(
             content.ownerAddress == msg.sender,
             "You are not the owner of the content"
@@ -217,20 +254,16 @@ contract CopyrightManagement {
         );
         require(
             request.requestType != RequestType.REJECTED,
-            "You cannot reject rejected request"
+            "You cannot reject a rejected request"
         );
         require(
             balances[msg.sender] > 0,
             "You have no balance left in the smart contract"
         );
-        require(
-            balances[msg.sender] >= request.price,
-            "It seems like there is no pending request for you"
-        );
-        requests[_requestId].requestType = RequestType.REJECTED;
-        requests[_requestId].rejectReason = _rejectReason;
         balances[msg.sender] -= request.price;
         payable(request.licensee).transfer(request.price);
+        requests[_requestId].requestType = RequestType.REJECTED;
+        requests[_requestId].rejectReason = _rejectReason;
         emit updateRequestEvent(
             msg.sender,
             requests[_requestId],
@@ -244,10 +277,15 @@ contract CopyrightManagement {
         );
     }
 
-    function approveAgreement(uint256 _requestId) public payable {
+    function approveAgreement(
+        uint256 _requestId
+    ) public payable isWhitelisted(msg.sender) {
         Request memory request = requests[_requestId];
+        require(
+            bytes(request.purposeOfUse).length != 0,
+            "Request does not exist"
+        );
         Content memory content = contents[request.contentId];
-        require((bytes(content.title)).length != 0, "content does not exists");
         require(
             content.ownerAddress == msg.sender,
             "You are not the owner of the content"
@@ -263,10 +301,6 @@ contract CopyrightManagement {
         require(
             balances[msg.sender] > 0,
             "You have no balance left in the smart contract"
-        );
-        require(
-            balances[msg.sender] >= request.price,
-            "It seems like there is no pending request for you"
         );
         requests[_requestId].requestType = RequestType.APPROVED;
         Agreement memory agreement = Agreement(

@@ -79,7 +79,6 @@ app.use(
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
 app.use("/hash", hashingRouter);
-app.use("/auth", authRouter);
 app.use("/contents", contentRouter);
 app.use("/submit", submitRouter);
 app.use("/events", eventRouter);
