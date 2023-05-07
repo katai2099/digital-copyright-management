@@ -31,8 +31,9 @@ export const ProfileUpdate = () => {
       return;
     }
     setUpdating(true);
-    updateUser(user)
+    updateUser(user, state, dispatch)
       .then(() => {
+        toast.success("update success");
         setUpdating(false);
         dispatch({ type: userActions.update, data: user });
       })
@@ -56,28 +57,6 @@ export const ProfileUpdate = () => {
         <div className="input-wrapper">
           <input type="text" defaultValue={state.user.walletAddress} disabled />
         </div>
-      </div>
-      <div className="username-wrapper">
-        <label className="setting-input-label">Username</label>
-        <div className="input-wrapper">
-          <input
-            type="text"
-            value={user.username}
-            onChange={(event) => {
-              if (errors.username && event.currentTarget.value !== "") {
-                const { username, ...newErrors } = errors;
-                setErrors(newErrors);
-              }
-              setUser({ ...user, username: event?.currentTarget.value });
-            }}
-          />
-        </div>
-      </div>
-      {errors.username && <div className="error-text">{errors.username}</div>}
-      <div className="username-note">
-        *Note that your username will be publicly available on the website. Also
-        your profile can be easily accessed from <br />
-        &nbsp;&nbsp;<strong>.../profile/username</strong>
       </div>
       <div className="personal-info">Personal Info</div>
       <div className="firstname-wrapper">

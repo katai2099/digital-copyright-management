@@ -84,7 +84,7 @@ contract CopyrightManagement {
     uint256 public contentCount;
     uint256 public agreementCount;
     uint256 public requestCount;
-    mapping(address => bool) public whitelists;
+    mapping(uint256 => address) public usersList;
     mapping(address => User) public users;
     mapping(uint256 => Content) public contents;
     mapping(uint256 => Agreement) public agreements;
@@ -92,7 +92,10 @@ contract CopyrightManagement {
     mapping(address => uint256) public balances;
 
     modifier isWhitelisted(address _address) {
-        require(whitelists[_address], "You need to be whitelisted");
+        require(
+            bytes(users[_address].emailAddress).length != 0,
+            "You need to be whitelisted"
+        );
         _;
     }
 
@@ -101,9 +104,17 @@ contract CopyrightManagement {
         string memory _lastname,
         string memory _email
     ) public {
-        whitelists[msg.sender] = true;
+        for (uint i = 0; i < userCount; i++) {
+            require(
+                keccak256(bytes(users[usersList[i]].emailAddress)) !=
+                    keccak256(bytes(_email)),
+                "user with the same email already exists"
+            );
+        }
         User memory user = User(msg.sender, _firstname, _lastname, _email);
         users[msg.sender] = user;
+        usersList[userCount] = msg.sender;
+        userCount++;
         emit addUserEvent(msg.sender, user, block.timestamp);
     }
 

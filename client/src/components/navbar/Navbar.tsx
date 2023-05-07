@@ -160,7 +160,8 @@ export const Navbar = () => {
               >
                 <img
                   style={
-                    state.user.username !== "katai2099"
+                    state.user.walletAddress !==
+                    "0xA90D7fB9CfdF1c33C0bC0bE58605C4f2Bfc40972"
                       ? { background: generateRandomLinearGradient() }
                       : {}
                   }

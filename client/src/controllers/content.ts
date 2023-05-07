@@ -308,8 +308,6 @@ export function submitDigitalContent(
           content.pHash,
           content.IPFSAddress,
           content.title,
-          `${state.user.firstname} ${state.user.lastname}`,
-          state.user.email,
           content.desc,
           content.fieldOfUse,
           state.web3State.web3?.utils.toWei(

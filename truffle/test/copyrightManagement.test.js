@@ -38,16 +38,7 @@ contract("Copyright Management", function () {
   });
 
   //add user
-  it("1.add new user should add user to whitelist", async () => {
-    const accounts = await web3.eth.getAccounts();
-    const account1 = accounts[0];
-    await this.CopyrightManagement.addUser(firstname, lastname, email, {
-      from: account1,
-    });
-    const whitelist = await this.CopyrightManagement.whitelists(account1);
-    assert.isTrue(whitelist);
-  });
-  it("2.add new user function should add user data to smart contract", async () => {
+  it("1.add new user function should add user data to smart contract", async () => {
     const accounts = await web3.eth.getAccounts();
     const account1 = accounts[0];
     const expectedUser = {
@@ -67,6 +58,16 @@ contract("Copyright Management", function () {
       emailAddress: user.emailAddress,
     };
     assert.deepEqual(actualUser, expectedUser);
+  });
+  it("2.add new user with existing email address should throw an errro", async () => {
+    const accounts = await web3.eth.getAccounts();
+    const account1 = accounts[0];
+    await expectRevert(
+      this.CopyrightManagement.addUser(firstname, lastname, email, {
+        from: account1,
+      }),
+      "user with the same email already exists"
+    );
   });
   //update user
   it("3.non whitelisted user update data should throw an error", async () => {
@@ -337,9 +338,14 @@ contract("Copyright Management", function () {
     const accounts = await web3.eth.getAccounts();
     const owner = accounts[0];
     const account4 = accounts[3];
-    await this.CopyrightManagement.addUser(firstname2, lastname2, email2, {
-      from: account4,
-    });
+    await this.CopyrightManagement.addUser(
+      firstname2,
+      lastname2,
+      "test3@test.com",
+      {
+        from: account4,
+      }
+    );
 
     await this.CopyrightManagement.requestAgreement(
       0,
@@ -496,7 +502,7 @@ contract("Copyright Management", function () {
   it("29.approve request when you are not the owner of the content should throw an error ", async () => {
     const accounts = await web3.eth.getAccounts();
     const account6 = accounts[5];
-    await this.CopyrightManagement.addUser("test", "test", "test", {
+    await this.CopyrightManagement.addUser("test", "test", "test5@test.com", {
       from: account6,
     });
     await this.CopyrightManagement.requestAgreement(
@@ -558,7 +564,7 @@ contract("Copyright Management", function () {
     const accounts = await web3.eth.getAccounts();
     const account7 = accounts[6];
     const owner = accounts[0];
-    await this.CopyrightManagement.addUser("test", "test", "test", {
+    await this.CopyrightManagement.addUser("test", "test", "test6@test.com", {
       from: account7,
     });
     await this.CopyrightManagement.requestAgreement(
@@ -593,7 +599,7 @@ contract("Copyright Management", function () {
     const accounts = await web3.eth.getAccounts();
     const account8 = accounts[7];
     const owner = accounts[0];
-    await this.CopyrightManagement.addUser("test", "test", "test", {
+    await this.CopyrightManagement.addUser("test", "test", "test7@test.com", {
       from: account8,
     });
     await this.CopyrightManagement.requestAgreement(

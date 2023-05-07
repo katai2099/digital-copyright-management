@@ -50,9 +50,8 @@ export const Register = () => {
     }
     dispatch({ type: userActions.create, data: user });
     setRegistering(true);
-    register(user)
-      .then((res) => {
-        // dispatch({ type: userActions.create, data: user });
+    register(user, state, dispatch)
+      .then(() => {
         setRegistering(false);
         toast.success("Registration Complete. redirect to homepage", {
           onClose: () => {
@@ -68,7 +67,8 @@ export const Register = () => {
           },
         });
       })
-      .catch((err) => {
+      .catch((err: any) => {
+        console.log(err);
         const error = registerErrorHandler(err);
         if (!isObjectEmpty(error)) {
           setErrors(error);
@@ -91,34 +91,6 @@ export const Register = () => {
             <div className="input-wrapper">
               <input type="text" value={state.web3State.account} disabled />
             </div>
-          </div>
-          <div className="username-wrapper">
-            <label className="setting-input-label">Username</label>
-            <div
-              className={`input-wrapper ${
-                errors.username ? "input-wrapper-error" : ""
-              }`}
-            >
-              <input
-                type="text"
-                value={user.username}
-                onChange={(event) => {
-                  if (errors.username && event.currentTarget.value !== "") {
-                    const { username, ...newErrors } = errors;
-                    setErrors(newErrors);
-                  }
-                  setUser({ ...user, username: event?.currentTarget.value });
-                }}
-              />
-            </div>
-          </div>
-          {errors.username && (
-            <div className="error-text">{errors.username}</div>
-          )}
-          <div className="username-note">
-            *Note that your username will be publicly available on the website.
-            Also your profile can be easily accessed from <br />
-            &nbsp;&nbsp;<strong>.../profile/username</strong>
           </div>
           <div className="personal-info">Personal Info</div>
           <div className="firstname-wrapper">

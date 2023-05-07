@@ -82,14 +82,18 @@ export const Profile = () => {
       <div
         className="profile-cover-image"
         style={
-          user.username !== "katai2099" ? { background: lineargradient } : {}
+          user.walletAddress !== "0xA90D7fB9CfdF1c33C0bC0bE58605C4f2Bfc40972"
+            ? { background: lineargradient }
+            : {}
         }
       />
       <div className="home-wrapper">
         <div
           className="profile-image"
           style={
-            user.username !== "katai2099" ? { background: lineargradient } : {}
+            user.walletAddress !== "0xA90D7fB9CfdF1c33C0bC0bE58605C4f2Bfc40972"
+              ? { background: lineargradient }
+              : {}
           }
         />
         <br />
@@ -120,20 +124,6 @@ export const Profile = () => {
                   <FontAwesomeIcon icon={faCopy} />
                 </i>
               </div>
-              {user.username !== "" && (
-                <div
-                  className="wallet-detail-box"
-                  onClick={() => {
-                    navigator.clipboard.writeText(user.username);
-                    toast.success("Copied to clipboard");
-                  }}
-                >
-                  {user.username}{" "}
-                  <i>
-                    <FontAwesomeIcon icon={faCopy} />
-                  </i>
-                </div>
-              )}
               <a
                 href={`${GOERLI_TEST_NET_URL}${user.walletAddress}`}
                 target="_blank"

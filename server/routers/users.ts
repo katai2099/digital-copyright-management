@@ -1,7 +1,11 @@
 import { HttpStatusCode } from "axios";
 import { Request, Response, Router } from "express";
 import { isValidRequestBody } from "../bodyValidation";
-import { getUserByWalletAddress, updateUser } from "../database/user";
+import {
+  getUserByEmail,
+  getUserByWalletAddress,
+  updateUser,
+} from "../database/user";
 import { IUser, User } from "../models/User";
 import { BODY_VALIDATION_FAIL, DatabaseError } from "../utils/Error";
 import { getTransferEvent } from "../database/transfer";
@@ -55,6 +59,22 @@ userRouter.put("/:walletAddress", async (req: Request, res: Response) => {
   try {
     const updatedUser = await updateUser(user);
     return res.status(HttpStatusCode.Ok).send(updatedUser);
+  } catch (error: any) {
+    const err: DatabaseError = error;
+    return res.status(err.errorCode).send(err.message);
+  }
+});
+
+userRouter.get("/email/:email", async (req: Request, res: Response) => {
+  const { email } = req.params;
+  try {
+    const user = await getUserByEmail(email);
+    if (user) {
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .send("user with the same email already exists");
+    }
+    return res.status(HttpStatusCode.Ok).send("OK");
   } catch (error: any) {
     const err: DatabaseError = error;
     return res.status(err.errorCode).send(err.message);

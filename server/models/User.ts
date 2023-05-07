@@ -1,5 +1,4 @@
 export interface IUser {
-  username: string;
   firstname: string;
   lastname: string;
   email: string;
@@ -8,7 +7,6 @@ export interface IUser {
 
 export class User implements IUser {
   constructor(
-    public username = "",
     public firstname = "",
     public lastname = "",
     public email = "",

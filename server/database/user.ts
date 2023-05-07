@@ -1,10 +1,6 @@
 import { users } from "@prisma/client";
 import { IUser } from "../models/User";
-import {
-  DatabaseError,
-  InternalServerError,
-  handlePrismaError,
-} from "../utils/Error";
+import { DatabaseError, handlePrismaError } from "../utils/Error";
 import { prisma } from "./prisma";
 
 export async function createUser(user: IUser): Promise<users> {
@@ -13,7 +9,6 @@ export async function createUser(user: IUser): Promise<users> {
     const newUser = await prisma.users.create({
       data: {
         walletAddress: user.walletAddress,
-        username: user.username,
         firstname: user.firstname,
         lastname: user.lastname,
         email: user.email,
@@ -35,9 +30,6 @@ export async function getUserByWalletAddress(
           {
             walletAddress: walletAddress,
           },
-          {
-            username: walletAddress,
-          },
         ],
       },
     });
@@ -57,7 +49,6 @@ export async function updateUser(user: IUser): Promise<users> {
         walletAddress: user.walletAddress,
       },
       data: {
-        username: user.username,
         firstname: user.firstname,
         lastname: user.lastname,
       },
@@ -83,14 +74,22 @@ export async function getUsersBySearchTerm(
           {
             lastname: { contains: searchQuery },
           },
-          {
-            username: { contains: searchQuery },
-          },
         ],
       },
     });
     return users;
   } catch (err) {
     return handlePrismaError(err);
+  }
+}
+
+export async function getUserByEmail(email: string): Promise<users | null> {
+  try {
+    const user = await prisma.users.findFirst({
+      where: { email: email },
+    });
+    return user;
+  } catch (error) {
+    return handlePrismaError(error);
   }
 }
