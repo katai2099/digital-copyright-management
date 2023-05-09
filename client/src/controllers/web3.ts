@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Dispatch } from "react";
 import { AnyAction } from "redux";
 import Web3 from "web3";
 import {
@@ -34,13 +34,27 @@ export function getCoinRate(): Promise<IConversionRate> {
     .catch((error) => Promise.reject(error));
 }
 
-export async function startLogin(dispatch: React.Dispatch<AnyAction>) {
+export async function navbarLogin(dispatch: Dispatch<AnyAction>) {
   try {
     //TODO : connect metamask on launch page
-    const walletAddress = await connectMetamask(dispatch);
+    const web3 = new Web3(Web3.givenProvider || "ws://localhost:7545");
+    (window as any).web3 = web3;
+    const accounts = await web3.eth.requestAccounts();
+    //TODO: handle case where first connecting node is Ethereum
+    //it will return eth network id and our contract is not deployed on eth
+    //so we will never be able to find contract
+    //TODO: listen event when user login to metamask and update localstorage
+
+    //TODO: after enter user credential, login does not update state
+    //TODO: handle case when spamming login button HINT: check error throw
+
+    //TODO: handle case when user is on another network and try to login
+
+    const walletAddress = accounts[0];
     console.log("start login wallet " + walletAddress);
     const user = await login({ walletAddress });
     console.log(user);
+    connectMetamask(dispatch);
     return user;
   } catch (error) {
     console.log(error);
@@ -48,9 +62,31 @@ export async function startLogin(dispatch: React.Dispatch<AnyAction>) {
   }
 }
 
+export async function startLogin(dispatch: React.Dispatch<AnyAction>) {
+  try {
+    // TODO : connect metamask on launch page
+    const walletAddress = await connectMetamask(dispatch);
+    console.log("start login wallet " + walletAddress);
+    const user = await login({ walletAddress });
+    console.log(user);
+    dispatch({ type: userActions.create, data: user });
+    return user;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export const getCurrentUserWalletAddress = async (): Promise<string> => {
+  const web3 = new Web3(Web3.givenProvider || "ws://localhost:7545");
+  const accounts = await web3.eth.requestAccounts();
+  const account = accounts[0];
+  return account;
+};
+
 export const initMetamask = async (
   dispatch: React.Dispatch<AnyAction>
-): Promise<void> => {
+): Promise<string> => {
   const web3 = new Web3(Web3.givenProvider || "ws://localhost:7545");
   (window as any).web3 = web3;
   const networkId = await web3.eth.net.getId();
@@ -67,7 +103,7 @@ export const initMetamask = async (
       type: web3Actions.init,
       data: { artifact, web3, account, networkId, contract },
     });
-    return;
+    return address;
   } catch (err) {
     console.error(err);
     throw err;
@@ -79,7 +115,6 @@ export const connectMetamask = async (
 ): Promise<string> => {
   const provider = await detectEthereumProvider();
   if (provider) {
-    // window.alert("this work");
   } else {
     window.alert("No meta mask");
   }
@@ -96,13 +131,9 @@ export const connectMetamask = async (
 
   //TODO: handle case when user is on another network and try to login
 
-  // console.log(accounts);
   const account = accounts[0];
 
-  // console.log("this called on refresh");
-
   const networkId = await web3.eth.net.getId();
-  // console.log(networkId);
 
   let address: string, contract: Contract;
   try {
@@ -110,7 +141,6 @@ export const connectMetamask = async (
     contract = new web3.eth.Contract(contractAbi, address);
     (window as any).contract = contract;
 
-    //TODO:check why state does not update
     console.log(account);
     dispatch({
       type: web3Actions.init,

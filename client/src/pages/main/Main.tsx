@@ -24,7 +24,7 @@ export const Main = () => {
         closeOnClick={true}
         pauseOnHover={true}
         draggable={true}
-        autoClose={3000}
+        autoClose={2000}
       />
 
       <Routes>

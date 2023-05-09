@@ -34,7 +34,7 @@ export function register(
       const web3 = state.web3State;
       return web3.contract?.methods
         .addUser(user.firstname, user.lastname, user.email)
-        .send({ from: web3.account })
+        .send({ from: user.walletAddress })
         .on("transactionHash", function (transactionHash: any) {
           dispatch({
             type: loadingActions.setLoading,

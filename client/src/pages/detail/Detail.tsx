@@ -284,7 +284,13 @@ export const Detail = () => {
                   : ""
               }
               className="item-detail-button"
-              onClick={() => setRequestModalOpen(true)}
+              onClick={() => {
+                if (state.web3State.account) {
+                  setRequestModalOpen(true);
+                } else {
+                  toast.error("Please login/connect first");
+                }
+              }}
               disabled={isPending || isOwner || isAccepted}
             >
               {isPending ? "Pending" : isAccepted ? "Accepted" : "Request"}

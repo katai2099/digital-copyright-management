@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { ContentItems } from "../../components/latest-content/ContentItems";
 import { RadioOption } from "../../components/option/RadioOption";
-import { ContentFilter, contentFilters } from "../../constant";
+import {
+  ContentFilter,
+  WEB3_CONNECT_CACHED,
+  contentFilters,
+} from "../../constant";
 import { coinRateActions } from "../../contexts/state";
 import { UseDcm } from "../../contexts/UseDcm";
 import { getLatestContents } from "../../controllers/content";
-import { getCoinRate } from "../../controllers/web3";
+import { getCoinRate, startLogin } from "../../controllers/web3";
 import { ILatestContents } from "../../model/Common";
 import { Content, ContentType } from "../../model/Content";
 import "./home.css";
@@ -21,6 +25,16 @@ export const Home = () => {
   const { state, dispatch } = UseDcm();
   const [filter, setFilter] = useState<ContentFilter>(ContentFilter.ALL);
   const [fetching, setFetching] = useState<boolean>(false);
+  const passState = useLocation();
+  useEffect(() => {
+    const { state } = passState;
+    if (state) {
+      const { refresh } = state;
+      if (refresh) {
+        startLogin(dispatch);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     window.scroll(0, 0);

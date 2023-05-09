@@ -51,8 +51,8 @@ export const initialState: DcmState = {
 };
 
 const web3Actions = {
-  init: "INIT",
-  disconnect: "DISCONNECT",
+  init: "INIT_WEB3",
+  disconnect: "DISCONNECT_WEB3",
 };
 
 const web3Reducer = (state: Web3State, action: AnyAction) => {
@@ -72,9 +72,9 @@ const web3Reducer = (state: Web3State, action: AnyAction) => {
 };
 
 const userActions = {
-  create: "CREATE",
-  update: "UPDATE",
-  reset: "RESET",
+  create: "CREATE_USER",
+  update: "UPDATE_USER",
+  reset: "RESET_USER",
 };
 
 const userReducer = (state: IUser, action: AnyAction) => {
@@ -98,7 +98,7 @@ const userReducer = (state: IUser, action: AnyAction) => {
 };
 
 export const coinRateActions = {
-  set: "SET",
+  set: "SET_COINRATE",
 };
 
 const coinConversionReducer = (state: IConversionRate, action: AnyAction) => {
@@ -113,8 +113,8 @@ const coinConversionReducer = (state: IConversionRate, action: AnyAction) => {
 };
 
 export const loadingActions = {
-  setLoading: "LOADING-SET",
-  resetLoading: "LOADING-RESET",
+  setLoading: "LOADING_SET",
+  resetLoading: "LOADING_RESET",
 };
 
 const loadingReducer = (state: LoadingState, action: AnyAction) => {

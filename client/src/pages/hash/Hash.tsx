@@ -156,7 +156,7 @@ export const Hash = () => {
           <button className="submit-button" onClick={submitButtonClickHandler}>
             Submit
           </button>
-          {submitError.contentId && (
+          {submitError.contentId !== undefined && (
             <div className="already-exist-content">
               {submitError.message}{" "}
               <Link

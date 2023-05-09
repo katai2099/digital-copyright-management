@@ -119,16 +119,18 @@ export const RequestComponent = () => {
   }, [page, showOption, state.web3State.account, userType]);
 
   useEffect(() => {
-    state.web3State.contract?.methods
-      .balances(state.web3State.account)
-      .call()
-      .then((res: any) => {
-        setContractBalance(res);
-      })
-      .catch((err: any) => {
-        console.log(err);
-      });
-  }, [state, state.web3State.account, state.web3State.contract?.methods]);
+    if (state.web3State.contract && state && state.web3State.account) {
+      state.web3State.contract.methods
+        .balances(state.web3State.account)
+        .call()
+        .then((res: any) => {
+          setContractBalance(res);
+        })
+        .catch((err: any) => {
+          console.log(err);
+        });
+    }
+  }, [state, state.web3State.account]);
 
   const handlerUserTypeChange = (type: string) => {
     const newType = type as UserType;

@@ -4,7 +4,11 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { userActions } from "../../contexts/state";
 import { UseDcm } from "../../contexts/UseDcm";
-import { disconnectMetamask, startLogin } from "../../controllers/web3";
+import {
+  disconnectMetamask,
+  navbarLogin,
+  startLogin,
+} from "../../controllers/web3";
 import "./navbar.css";
 import { DcmSearch } from "../dcmSearch/DcmSearch";
 import { generateRandomLinearGradient } from "../../utils";
@@ -43,13 +47,13 @@ export const Navbar = () => {
     // connectMetamask(dispatch);
     setIsOpen(false);
 
-    startLogin(dispatch)
+    navbarLogin(dispatch)
       .then((user) => {
         dispatch({ type: userActions.create, data: user });
       })
       .catch((error) => {
         if (error instanceof AxiosError) {
-          if (error.response?.status === 410) {
+          if (error.response?.status === 404) {
             navigate("/register");
           }
         }
@@ -76,8 +80,6 @@ export const Navbar = () => {
     "/settings",
     "/hash",
   ];
-
-  console.log(location.pathname);
 
   const showNavBar =
     location.pathname === "/" ||

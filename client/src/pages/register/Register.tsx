@@ -11,59 +11,82 @@ import {
 import { isObjectEmpty, keyValuePair } from "../../utils";
 import { ClipLoader } from "react-spinners";
 import { toast } from "react-toastify";
-import { disconnectMetamask } from "../../controllers/web3";
+import { APP_STATE_KEY, WEB3_CONNECT_CACHED } from "../../constant";
+import {
+  getCurrentUserWalletAddress,
+  navbarLogin,
+  startLogin,
+} from "../../controllers/web3";
+import { AxiosError } from "axios";
 export const Register = () => {
   const { state, dispatch } = UseDcm();
   const [user, setUser] = useState<IUser>(new User());
   const [errors, setErrors] = useState<keyValuePair>({});
+  const [walletAddress, setWalletAddress] = useState<string>("");
   const [registering, setRegistering] = useState<boolean>(false);
+  const web3_cache = localStorage.getItem(WEB3_CONNECT_CACHED);
 
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   const cleanupFunction = () => {
-  //     if (state.user.walletAddress === "") {
-  //       disconnectMetamask(dispatch, state);
-  //     }
-  //   };
-  //   window.addEventListener("beforeunload", cleanupFunction);
-  //   return () => {
-  //     cleanupFunction();
-  //     window.removeEventListener("beforeunload", cleanupFunction);
-  //   };
-  // }, []);
+  useEffect(() => {
+    if (web3_cache === "injected") {
+      navigate("/");
+    }
+  }, [navigate, web3_cache]);
 
-  // useBeforeUnload(
-  //   React.useCallback(() => {
-  //     localStorage.stuff = state;
-  //   }, [state])
-  // );
+  useEffect(() => {
+    getCurrentUserWalletAddress().then((walletAddress) =>
+      setWalletAddress(walletAddress)
+    );
+  }, []);
+
+  useEffect(() => {
+    (window as any).ethereum.on("accountsChanged", function (account: any) {
+      // const web3_cache = localStorage.getItem(WEB3_CONNECT_CACHED);
+      if (web3_cache !== "injected") {
+        navbarLogin(dispatch)
+          .then((user) => {
+            console.log(user);
+            dispatch({ type: userActions.create, data: user });
+          })
+          .catch((error) => {
+            getCurrentUserWalletAddress().then((walletAddress) =>
+              setWalletAddress(walletAddress)
+            );
+          });
+      }
+    });
+  }, []);
 
   const submitButtonClickHandler = () => {
     //TODO: validation logic
-    user.walletAddress = state.web3State.account;
+    user.walletAddress = walletAddress;
     const errors = userRegisterValidation(user);
     if (!isObjectEmpty(errors)) {
       console.log(errors);
       setErrors(errors);
       return;
     }
-    dispatch({ type: userActions.create, data: user });
     setRegistering(true);
     register(user, state, dispatch)
       .then(() => {
         setRegistering(false);
+        dispatch({ type: userActions.create, data: user });
         toast.success("Registration Complete. redirect to homepage", {
           onClose: () => {
             console.log(state.user);
             navigate("/", {
               replace: true,
+              state: { refresh: true },
             });
+            localStorage.setItem(WEB3_CONNECT_CACHED, "injected");
           },
           onClick: () => {
             navigate("/", {
               replace: true,
+              state: { refresh: true },
             });
+            localStorage.setItem(WEB3_CONNECT_CACHED, "injected");
           },
         });
       })
@@ -89,7 +112,7 @@ export const Register = () => {
           <div className="wallet-info-wrapper">
             <label className="setting-input-label">Wallet Address</label>
             <div className="input-wrapper">
-              <input type="text" value={state.web3State.account} disabled />
+              <input type="text" value={walletAddress} disabled />
             </div>
           </div>
           <div className="personal-info">Personal Info</div>

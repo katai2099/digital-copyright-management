@@ -4,7 +4,7 @@ import { UseDcm } from "../../contexts/UseDcm";
 import "./setting.css";
 import { AgreementComponent } from "../../components/agreements/Agreement";
 import { RequestComponent } from "../../components/request/Request";
-import { SettingTab } from "../../constant";
+import { SettingTab, WEB3_CONNECT_CACHED } from "../../constant";
 import { useNavigate, useParams } from "react-router-dom";
 import { ProfileUpdate } from "../../components/profileUpdate/ProfileUpdate";
 import { TransactionComponent } from "../../components/transaction/Transaction";
@@ -20,6 +20,14 @@ export const Setting = () => {
   };
 
   const { option } = useParams();
+
+  useEffect(() => {
+    const web3_cache = localStorage.getItem(WEB3_CONNECT_CACHED);
+    if (!web3_cache) {
+      navigate("/");
+    }
+  });
+
   useEffect(() => {
     if (Object.values(SettingTab).some((key) => key === option)) {
       setTab(option as SettingTab);
